@@ -25,11 +25,13 @@ public class MarioView extends Application {
             @Override
             public void handle(long now) {
                 for (int i = 0; i < tickPerFrame; i++) {
-                    tick();
+//                    tick();
+                    // this method is going recalculates those things and changes the state of the model.
                 }
             }
-            at.start();
-        }
+
+        };
+        at.start();
 
 
         primaryStage.setTitle("SuperMario");
