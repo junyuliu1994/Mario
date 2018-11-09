@@ -17,24 +17,34 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class MarioGameView extends Application implements Observer{
 	
 	
 	Image i = new Image("file:marioRight2Lvl0.png", false);
+	Image backgroud = new Image("images/background.png");
+	Font font = Font.loadFont(getClass().getResourceAsStream("images/font.ttf"),13);
 
-	
+
 	public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) { 
-    	Canvas canvas = new Canvas(1280, 720);
+    public void start(Stage stage) {
+    	Canvas canvas = new Canvas(856, 550);
     	GraphicsContext gc = canvas.getGraphicsContext2D();
-    	gc.drawImage(i, 640, 360);
-    	
+		gc.drawImage(backgroud, 0,0);
+
+		// load main GUI
+		Image title = new Image("images/title.png");
+		gc.drawImage(title,200,50);
+		gc.setFont(font);
+		gc.fillText("\uD83C\uDD2F8012 Ninjigoku",445,285);
+    	//gc.drawImage(i, 640, 360);
+
     	Pane pane = new Pane();
     	pane.getChildren().add(canvas);
         Scene scene = new Scene(pane);
