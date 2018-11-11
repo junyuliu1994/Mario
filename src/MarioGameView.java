@@ -116,4 +116,8 @@ public class MarioGameView extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+    
+    private void initContent() {
+    	
+    }
 }
