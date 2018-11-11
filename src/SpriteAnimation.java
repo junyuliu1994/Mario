@@ -2,57 +2,128 @@ import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class SpriteAnimation extends Transition {
 
-    private final ImageView imageView;
-    private final int count;
-    private final int columns;
-    private final int offsetX;
-    private final int offsetY;
-    private final int width;
-    private final int height;
-    private final GraphicsContext gc;
+    private Image image;
+	private int count;
+    private int columns;
+    private int offsetX;
+    private int offsetY;
+    private int width;
+    private int height;
+    private double cor_x;
+    private double cor_y;
+    private GraphicsContext gc;
+    private int direction; //1 right 0 left
 
     private int lastIndex;
 
     public SpriteAnimation(
-            ImageView imageView, 
+            Image image, 
             Duration duration, 
             int count,   int columns,
             int offsetX, int offsetY,
-            int width,   int height, GraphicsContext gc) {
-        this.imageView = imageView;
+            int width,   int height, double cor_x, double cor_y, GraphicsContext gc, int direction) {
+        this.image = image;
         this.count     = count;
         this.columns   = columns;
         this.offsetX   = offsetX;
         this.offsetY   = offsetY;
         this.width     = width;
         this.height    = height;
+        this.cor_x = cor_x;
+        this.cor_y = cor_y;
         this.gc = gc;
+        this.direction = direction;
         setCycleDuration(duration);
         setInterpolator(Interpolator.LINEAR);
     }
 
-    protected void interpolate(double k) {
-        final int index = Math.min((int) Math.floor(k * count), count - 1);
+	protected void interpolate(double k) {
+        int index = Math.min((int) Math.floor(k * count), count - 1);
         if (index != lastIndex) {
-            final int x = (index % columns) * width  + offsetX;
+        	int x;
+        	if (direction == 1) {
+        		x = (index % columns) * width  + offsetX;
+        	}
+        	else {
+        		x =  offsetX - (index % columns) * width;
+        	}
             final int y = (index / columns) * height + offsetY;
+            
+            
             gc.clearRect(0, 0, 1280, 720);
-            gc.drawImage(imageView.getImage(), // the image to be drawn or null.
+            gc.drawImage(image, // the image to be drawn or null.
             		x, // the source rectangle's X coordinate position.
             		y, // the source rectangle's Y coordinate position.
             		width, // the source rectangle's width.
             		height, // the source rectangle's height.
-            		0, // the destination rectangle's X coordinate position.
-            		0, // the destination rectangle's Y coordinate position.
+            		cor_x, // the destination rectangle's X coordinate position.
+            		cor_y, // the destination rectangle's Y coordinate position.
             		width, // the destination rectangle's width.
             		height); // the destination rectangle's height. 
-            System.out.println("QWE");
             lastIndex = index;
         }
     }
+    
+    public Image getImage() {
+		return image;
+	}
+
+	public void setImage(Image image) {
+		this.image = image;
+	}
+
+	public int getOffsetX() {
+		return offsetX;
+	}
+
+	public void setOffsetX(int offsetX) {
+		this.offsetX = offsetX;
+	}
+
+	public int getOffsetY() {
+		return offsetY;
+	}
+
+	public void setOffsetY(int offsetY) {
+		this.offsetY = offsetY;
+	}
+	
+	public double getCor_x() {
+		return cor_x;
+	}
+
+	public void setCor_x(double d) {
+		this.cor_x = d;
+	}
+
+	public double getCor_y() {
+		return cor_y;
+	}
+
+	public void setCor_y(double cor_y) {
+		this.cor_y = cor_y;
+	}
+
+	public GraphicsContext getGc() {
+		return gc;
+	}
+
+	public void setGc(GraphicsContext gc) {
+		this.gc = gc;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
+
 }

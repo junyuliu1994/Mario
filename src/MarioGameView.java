@@ -11,52 +11,104 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MarioGameView extends Application {
-
-    private static final Image IMAGE = new Image("file:320px-The_Horse_in_Motion.jpg");
-    private static final int COLUMNS  =   4;
-    private static final int COUNT    =  10;
-    private static final int OFFSET_X =  10;
-    private static final int OFFSET_Y =  6;
-    private static final int WIDTH    = 75;
-    private static final int HEIGHT   = 50;
+	private GameModel gameModel= new GameModel();
+	private GameController gameController = new GameController(gameModel);
+	SpriteAnimation marioAnimation = null;
+	SpriteAnimation coinAnimation = null;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("The Horse in Motion");
+        primaryStage.setTitle("Mario Game");
         
-        Canvas canvas = new Canvas(1280, 720);
+        Canvas canvasForMario = new Canvas(1280, 720);
+        Canvas canvasForCoin = new Canvas(1280, 720);
         
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        
-
-        final ImageView imageView = new ImageView(IMAGE);
-        gc.drawImage(imageView.getImage(), // the image to be drawn or null.
-        		OFFSET_X, // the source rectangle's X coordinate position.
-        		OFFSET_Y, // the source rectangle's Y coordinate position.
-        		WIDTH, // the source rectangle's width.
-        		HEIGHT, // the source rectangle's height.
-        		0, // the destination rectangle's X coordinate position.
-        		0, // the destination rectangle's Y coordinate position.
-        		WIDTH, // the destination rectangle's width.
-        		HEIGHT); // the destination rectangle's height. 
+        GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
+        gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
+        		gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
+        		gameController.getMario().getOffset_y(), // the source rectangle's Y coordinate position.
+        		gameController.getMario().getWidth(), // the source rectangle's width.
+        		gameController.getMario().getHeight(), // the source rectangle's height.
+        		gameController.getMario().getX(), // the destination rectangle's X coordinate position.
+        		gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
+        		gameController.getMario().getWidth(), // the destination rectangle's width.
+        		gameController.getMario().getWidth()); // the destination rectangle's height. 
         
         Group root = new Group();
-        root.getChildren().add(canvas);
+        root.getChildren().add(canvasForMario);
+        root.getChildren().add(canvasForCoin);
         Scene scene = new Scene(root);
         
-
-        final Animation animation = new SpriteAnimation(
-                imageView,
+        
+        gameController.getCoins().add(new Coin(new Image("file:blocks.png"), 3, 3, 385, 16, 15, 16, 1000, 480));
+        GraphicsContext gcForCoin = canvasForCoin.getGraphicsContext2D();
+        coinAnimation = new SpriteAnimation(gameController.getCoins().get(0).getImage(),
                 Duration.millis(1000),
-                COUNT, COLUMNS,
-                OFFSET_X, OFFSET_Y,
-                WIDTH, HEIGHT, gc
+                gameController.getCoins().get(0).getCount(), gameController.getCoins().get(0).getCol(),
+                gameController.getCoins().get(0).getOffset_x(), gameController.getCoins().get(0).getOffset_y(),
+                gameController.getCoins().get(0).getWidth(), gameController.getCoins().get(0).getHeight(), 
+                gameController.getCoins().get(0).getX(), gameController.getCoins().get(0).getY(), gcForCoin, 1);
+        coinAnimation.setCycleCount(Animation.INDEFINITE);
+        coinAnimation.play();
+        
+        marioAnimation = new SpriteAnimation(
+        		gameController.getMario().getImage(),
+                Duration.millis(500),
+                gameController.getMario().getCount(), gameModel.getMario().getCol(),
+                gameController.getMario().getOffset_x(), gameModel.getMario().getOffset_y(),
+                gameController.getMario().getWidth(), gameModel.getMario().getHeight(), 
+                gameController.getMario().getX(), gameModel.getMario().getY(), gcForMario, 1
         );
-        animation.setCycleCount(Animation.INDEFINITE);
-        animation.play();
+        marioAnimation.setCycleCount(Animation.INDEFINITE);
+        scene.setOnKeyPressed(event -> {
+        	if (event.getCode().toString().equals("D")) {
+        		gameController.getMario().setImage(new Image("file:mario.png"));
+        		gameController.getMario().setOffset_x(80);
+        		gameController.getMario().setOffset_y(32);
+        		marioAnimation.setImage(gameController.getMario().getImage());
+        		marioAnimation.setOffsetX(gameController.getMario().getOffset_x());
+        		marioAnimation.setOffsetY(gameController.getMario().getOffset_y());
+        		marioAnimation.setDirection(1);
+        		marioAnimation.play();
+        		
+        		gameController.getCoins().get(0).setX(gameController.getCoins().get(0).getX() - Mario.SPEED);
+        		coinAnimation.setCor_x(coinAnimation.getCor_x() - Mario.SPEED);
+        	}
+        	else if (event.getCode().toString().equals("A")) {
+        		gameController.getMario().setImage(new Image("file:mario-ConvertImage.png"));
+        		gameController.getMario().setOffset_x(320);
+        		gameController.getMario().setOffset_y(32);
+        		marioAnimation.setImage(gameController.getMario().getImage());
+        		marioAnimation.setOffsetX(gameController.getMario().getOffset_x());
+        		marioAnimation.setOffsetY(gameController.getMario().getOffset_y());
+        		marioAnimation.setDirection(0);
+        		marioAnimation.play();
+        		
+        		gameController.getCoins().get(0).setX(gameController.getCoins().get(0).getX() + Mario.SPEED);
+        		coinAnimation.setCor_x(coinAnimation.getCor_x() + Mario.SPEED);
+        	}
+        });
+        
+        scene.setOnKeyReleased(event -> {
+        	if (marioAnimation != null) {
+        		gcForMario.clearRect(0,0,1280,720);
+        		gcForMario.drawImage(gameModel.getMario().getImage(), // the image to be drawn or null.
+        				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
+        				gameController.getMario().getOffset_y(), // the source rectangle's Y coordinate position.
+        				gameController.getMario().getWidth(), // the source rectangle's width.
+        				gameController.getMario().getHeight(), // the source rectangle's height.
+        				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
+        				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
+        				gameController.getMario().getWidth(), // the destination rectangle's width.
+        				gameController.getMario().getWidth()); // the destination rectangle's height. 
+        		
+        		marioAnimation.stop();
+        	}
+        });
+        
         
         primaryStage.setScene(scene);
         primaryStage.show();
