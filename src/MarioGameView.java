@@ -1,4 +1,5 @@
 import javafx.animation.Animation;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -37,7 +38,7 @@ public class MarioGameView extends Application {
         		gameController.getMario().getWidth(), // the destination rectangle's width.
         		gameController.getMario().getWidth()); // the destination rectangle's height. 
         
-        Group root = new Group();
+        Group root = new Group(); 
         root.getChildren().add(canvasForMario);
         root.getChildren().add(canvasForCoin);
         Scene scene = new Scene(root);
@@ -68,27 +69,29 @@ public class MarioGameView extends Application {
         		gameController.getMario().setImage(new Image("file:mario.png"));
         		gameController.getMario().setOffset_x(80);
         		gameController.getMario().setOffset_y(32);
+        		gameController.getMario().setX((int) (gameController.getMario().getX() + Mario.SPEED));
+        		
         		marioAnimation.setImage(gameController.getMario().getImage());
         		marioAnimation.setOffsetX(gameController.getMario().getOffset_x());
         		marioAnimation.setOffsetY(gameController.getMario().getOffset_y());
+        		marioAnimation.setCor_x(gameController.getMario().getX());
         		marioAnimation.setDirection(1);
         		marioAnimation.play();
         		
-        		gameController.getCoins().get(0).setX(gameController.getCoins().get(0).getX() - Mario.SPEED);
-        		coinAnimation.setCor_x(coinAnimation.getCor_x() - Mario.SPEED);
         	}
         	else if (event.getCode().toString().equals("A")) {
         		gameController.getMario().setImage(new Image("file:mario-ConvertImage.png"));
         		gameController.getMario().setOffset_x(320);
         		gameController.getMario().setOffset_y(32);
+        		gameController.getMario().setX((int) (gameController.getMario().getX() - Mario.SPEED));
+        		
         		marioAnimation.setImage(gameController.getMario().getImage());
         		marioAnimation.setOffsetX(gameController.getMario().getOffset_x());
         		marioAnimation.setOffsetY(gameController.getMario().getOffset_y());
+        		marioAnimation.setCor_x(gameController.getMario().getX());
         		marioAnimation.setDirection(0);
         		marioAnimation.play();
-        		
-        		gameController.getCoins().get(0).setX(gameController.getCoins().get(0).getX() + Mario.SPEED);
-        		coinAnimation.setCor_x(coinAnimation.getCor_x() + Mario.SPEED);
+        		        		
         	}
         });
         

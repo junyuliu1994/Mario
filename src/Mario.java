@@ -11,7 +11,7 @@ public class Mario {
     private int x;
 	private int y;
 	private int direction; //1 right 0 left
-	public final static double SPEED = 0.3;
+	public final static double SPEED = 5;
 
 	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction) {
     	this.image = image;
