@@ -10,7 +10,7 @@ public class SpriteAnimation extends Transition {
 
     private Image image;
 	private int count;
-    private int columns;
+	private int columns;
     private int offsetX;
     private int offsetY;
     private int width;
@@ -46,6 +46,8 @@ public class SpriteAnimation extends Transition {
     }
 
 	protected void interpolate(double k) {
+		
+		
         int index = Math.min((int) Math.floor(k * count), count - 1);
         if (index != lastIndex) {
         	int x;
@@ -79,6 +81,22 @@ public class SpriteAnimation extends Transition {
 
 	public void setImage(Image image) {
 		this.image = image;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public void setColumns(int columns) {
+		this.columns = columns;
 	}
 
 	public int getOffsetX() {

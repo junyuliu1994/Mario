@@ -11,7 +11,8 @@ public class Mario {
     private int x;
 	private int y;
 	private int direction; //1 right 0 left
-	public final static double SPEED = 5;
+	private double speed;
+	private double jumpSpeed;
 
 	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction) {
     	this.image = image;
@@ -111,8 +112,21 @@ public class Mario {
 		this.direction = direction;
 	}
 
-	public static double getSpeed() {
-		return SPEED;
+	public double getSpeed() {
+		return speed;
+	}
+	
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+	
+	public double getJumpSpeed() {
+		return jumpSpeed;
+	}
+
+
+	public void setJumpSpeed(double jumpSpeed) {
+		this.jumpSpeed = jumpSpeed;
 	}
 
 }
