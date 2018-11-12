@@ -15,6 +15,10 @@ public class GameController {
 		gameModel.setMario(mario);
 	}
 	
+	public ArrayList<Brick> getBricks() {
+		return gameModel.getBricks();
+	}
+	
 	public ArrayList<Coin> getCoins() {
 		return gameModel.getCoins();
 	}

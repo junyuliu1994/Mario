@@ -19,6 +19,7 @@ public class SpriteAnimation extends Transition {
     private double cor_y;
     private GraphicsContext gc;
     private int direction; //1 right 0 left
+    private boolean gcForM; //gc for mario or not
 
     private int lastIndex;
 
@@ -27,7 +28,7 @@ public class SpriteAnimation extends Transition {
             Duration duration, 
             int count,   int columns,
             int offsetX, int offsetY,
-            int width,   int height, double cor_x, double cor_y, GraphicsContext gc, int direction) {
+            int width,   int height, double cor_x, double cor_y, GraphicsContext gc, int direction, boolean gcForM) {
         this.image = image;
         this.count     = count;
         this.columns   = columns;
@@ -39,6 +40,7 @@ public class SpriteAnimation extends Transition {
         this.cor_y = cor_y;
         this.gc = gc;
         this.direction = direction;
+        this.gcForM = gcForM;
         setCycleDuration(duration);
         setInterpolator(Interpolator.LINEAR);
     }
@@ -55,8 +57,9 @@ public class SpriteAnimation extends Transition {
         	}
             final int y = (index / columns) * height + offsetY;
             
-            
-            gc.clearRect(0, 0, 1280, 720);
+            if (gcForM) {
+            	gc.clearRect(0, 0, 1280, 720);
+            }
             gc.drawImage(image, // the image to be drawn or null.
             		x, // the source rectangle's X coordinate position.
             		y, // the source rectangle's Y coordinate position.
