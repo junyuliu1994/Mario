@@ -12,9 +12,11 @@ public class Mario {
 	private int y;
 	private int direction; //1 right 0 left
 	private double speed;
-	private double jumpSpeed;
+	private double jumpHeight;
+	private double jumpMax;
+	private boolean jump;
 
-	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction) {
+	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction, int jumpHeight, int jumpMax, boolean jump) {
     	this.image = image;
         this.col  =   col;
         this.count    =  count;
@@ -25,10 +27,13 @@ public class Mario {
         this.x = x;
         this.y = y;
         this.direction = direction;
+        this.jumpHeight = jumpHeight;
+        this.jumpMax = jumpMax;
+        this.jump = jump;
     }
-    
 
-    public Image getImage() {
+
+	public Image getImage() {
 		return image;
 	}
 
@@ -120,13 +125,31 @@ public class Mario {
 		this.speed = speed;
 	}
 	
-	public double getJumpSpeed() {
-		return jumpSpeed;
+	public double getJumpHeight() {
+		return jumpHeight;
 	}
 
 
-	public void setJumpSpeed(double jumpSpeed) {
-		this.jumpSpeed = jumpSpeed;
+	public void setJumpHeight(double jumpHeight) {
+		this.jumpHeight = jumpHeight;
+	}
+	
+	public double getJumpMax() {
+		return jumpMax;
+	}
+
+
+	public void setJumpMax(double jumpMax) {
+		this.jumpMax = jumpMax;
+	}
+	
+	public boolean isJump() {
+		return jump;
+	}
+
+
+	public void setJump(boolean jump) {
+		this.jump = jump;
 	}
 
 }
