@@ -40,11 +40,12 @@ public class MarioGameView extends Application {
 			reDrawStuff();
 		}
 		else {
-    		gameController.getMario().setImage(new Image("file:mario.png"));
+			System.out.println("QWE");
+    		gameController.getMario().setImage(new Image("resources/mario.png"));
     		gameController.getMario().setCol(4);
 			gameController.getMario().setCount(4);
-    		gameController.getMario().setOffset_x(80);
-    		gameController.getMario().setOffset_y(32);
+    		gameController.getMario().setOffset_x(195);
+    		gameController.getMario().setOffset_y(80);
     		gameController.getMario().setDirection(1);
     		gameController.getMario().setX((int) (gameController.getMario().getX() + gameController.getMario().getSpeed()));
     		
@@ -60,11 +61,11 @@ public class MarioGameView extends Application {
     }
     
     private void moveLeft() {
-    	gameController.getMario().setImage(new Image("file:mario-ConvertImage.png"));
+    	gameController.getMario().setImage(new Image("resources/mario-ConvertImage.png"));
 		gameController.getMario().setCol(4);
 		gameController.getMario().setCount(4);
-		gameController.getMario().setOffset_x(320);
-		gameController.getMario().setOffset_y(32);
+		gameController.getMario().setOffset_x(791);
+		gameController.getMario().setOffset_y(80);
 		gameController.getMario().setDirection(0);
 		gameController.getMario().setX((int) (gameController.getMario().getX() + gameController.getMario().getSpeed()));
 		
@@ -81,10 +82,10 @@ public class MarioGameView extends Application {
     		gameController.getMario().setX((int) (gameController.getMario().getX() + gameController.getMario().getSpeed()));
 		}
 		else if (left == true) {
-    		gameController.getMario().setX((int) (gameController.getMario().getX() - gameController.getMario().getSpeed()));
+    		gameController.getMario().setX((int) (gameController.getMario().getX() + gameController.getMario().getSpeed()));
 		}
 		
-		gameController.getMario().setY((int) (gameController.getMario().getY() - 1));
+		gameController.getMario().setY((int) (gameController.getMario().getY() - 4));
 		gcForMario.clearRect(0,0,1280,720);
 		gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
         		gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
@@ -96,11 +97,18 @@ public class MarioGameView extends Application {
         		gameController.getMario().getWidth(), // the destination rectangle's width.
         		gameController.getMario().getWidth()); // the destination rectangle's height. 
 		
-		gameController.getMario().setJumpHeight(gameController.getMario().getJumpHeight() + 1);
+		gameController.getMario().setJumpHeight(gameController.getMario().getJumpHeight() + 4);
     }
     
     private void fall() {
-    	gameController.getMario().setY((int) (gameController.getMario().getY() + 1));
+    	if (right == true) {
+    		gameController.getMario().setX((int) (gameController.getMario().getX() + gameController.getMario().getSpeed()));
+		}
+		else if (left == true) {
+    		gameController.getMario().setX((int) (gameController.getMario().getX() + gameController.getMario().getSpeed()));
+		}
+    	
+    	gameController.getMario().setY((int) (gameController.getMario().getY() + 4));
 		gcForMario.clearRect(0,0,1280,720);
 		gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
         		gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
@@ -112,7 +120,7 @@ public class MarioGameView extends Application {
         		gameController.getMario().getWidth(), // the destination rectangle's width.
         		gameController.getMario().getWidth()); // the destination rectangle's height. 
 		
-		gameController.getMario().setJumpMax(gameController.getMario().getJumpMax() - 1);
+		gameController.getMario().setJumpMax(gameController.getMario().getJumpMax() - 4);
     }
     
     private void tick() {
@@ -123,18 +131,54 @@ public class MarioGameView extends Application {
     		moveLeft();
     	}
     	
-    	if (gameController.getMario().getJumpHeight() < 15 && gameController.getMario().isJump() == true) {
+    	if (gameController.getMario().getJumpHeight() < 40 && gameController.getMario().isJump() == true) {
     		jump();
     	}
     	
-    	if (gameController.getMario().getJumpMax() > -1 && gameController.getMario().getJumpHeight() == 15 && gameController.getMario().isJump() == true){
+    	if (gameController.getMario().getJumpMax() > -1 && gameController.getMario().getJumpHeight() == 40 && gameController.getMario().isJump() == true){
     		fall();
     	}
     	
-    	if (gameController.getMario().getJumpHeight() == 15 && gameController.getMario().getJumpMax() == 0 && gameController.getMario().isJump() == true) {
+    	if (gameController.getMario().getJumpHeight() == 40 && gameController.getMario().getJumpMax() == 0 && gameController.getMario().isJump() == true) {
     		gameController.getMario().setJumpHeight(0);
-    		gameController.getMario().setJumpMax(15);
+    		gameController.getMario().setJumpMax(40);
     		gameController.getMario().setJump(false);
+    		
+    		if (gameController.getMario().getDirection() == 1) {
+	    		gameController.getMario().setImage(new Image("resources/mario.png"));
+	    		gameController.getMario().setCol(4);
+	    		gameController.getMario().setCount(4);
+	    		gameController.getMario().setOffset_x(195);
+	        	gameController.getMario().setOffset_y(80);
+	    		gcForMario.clearRect(0,0,1280,720);
+	    		gcForMario.drawImage(gameModel.getMario().getImage(), // the image to be drawn or null.
+	    				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
+	    				gameController.getMario().getOffset_y(), // the source rectangle's Y coordinate position.
+	    				gameController.getMario().getWidth(), // the source rectangle's width.
+	    				gameController.getMario().getHeight(), // the source rectangle's height.
+	    				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
+	    				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
+	    				gameController.getMario().getWidth(), // the destination rectangle's width.
+	    				gameController.getMario().getHeight()); // the destination rectangle's height. 
+    		}
+    		else {
+    			gameController.getMario().setImage(new Image("resources/mario-ConvertImage.png"));
+    			gameController.getMario().setCol(4);
+    			gameController.getMario().setCount(4);
+    			gameController.getMario().setOffset_x(791);
+	        	gameController.getMario().setOffset_y(80);
+        		gameController.getMario().setSpeed(0);
+    			gcForMario.clearRect(0,0,1280,720);
+        		gcForMario.drawImage(gameModel.getMario().getImage(), // the image to be drawn or null.
+        				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
+        				gameController.getMario().getOffset_y(), // the source rectangle's Y coordinate position.
+        				gameController.getMario().getWidth(), // the source rectangle's width.
+        				gameController.getMario().getHeight(), // the source rectangle's height.
+        				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
+        				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
+        				gameController.getMario().getWidth(), // the destination rectangle's width.
+        				gameController.getMario().getHeight()); // the destination rectangle's height.
+    		}
     	}
 	}
     
@@ -193,30 +237,29 @@ public class MarioGameView extends Application {
         marioAnimation.setCycleCount(Animation.INDEFINITE);
         scene.setOnKeyPressed(event -> {
         	if (event.getCode().toString().equals("D")) {
-        		gameController.getMario().setSpeed(10);
+        		gameController.getMario().setSpeed(5);
         		right = true;
         		
         	}
         	else if (event.getCode().toString().equals("A")) {
-        		gameController.getMario().setSpeed(-1);
+        		gameController.getMario().setSpeed(-5);
         		left = true;	
         	}
         	else if (event.getCode().toString().equals("W")) {
         		gameController.getMario().setJump(true);
-        		System.out.println(gameController.getMario().getDirection());
         		if (gameController.getMario().getDirection() == 0) { //left jump
-        			gameController.getMario().setImage(new Image("file:mario-ConvertImage.png"));
+        			gameController.getMario().setImage(new Image("resources/mario-ConvertImage.png"));
         			gameController.getMario().setCol(1);
         			gameController.getMario().setCount(1);
-            		gameController.getMario().setOffset_x(240);
-            		gameController.getMario().setOffset_y(32);
+            		gameController.getMario().setOffset_x(591);
+            		gameController.getMario().setOffset_y(80);
         		}
         		else { //right jump
-        			gameController.getMario().setImage(new Image("file:mario.png"));
+        			gameController.getMario().setImage(new Image("resources/mario.png"));
         			gameController.getMario().setCol(1);
         			gameController.getMario().setCount(1);
-            		gameController.getMario().setOffset_x(160);
-            		gameController.getMario().setOffset_y(32);
+            		gameController.getMario().setOffset_x(396);
+            		gameController.getMario().setOffset_y(80);
         		}
         	}
         });
@@ -225,11 +268,11 @@ public class MarioGameView extends Application {
         	if (marioAnimation != null) {
         		if (event.getCode().toString().equals("D")) {
 	        		right = false;
-	        		gameController.getMario().setImage(new Image("file:mario.png"));
+	        		gameController.getMario().setImage(new Image("resources/mario.png"));
 	        		gameController.getMario().setCol(4);
 	        		gameController.getMario().setCount(4);
-	        		gameController.getMario().setOffset_x(80);
-		        	gameController.getMario().setOffset_y(32);
+	        		gameController.getMario().setOffset_x(195);
+		        	gameController.getMario().setOffset_y(80);
 	        		gameController.getMario().setSpeed(0);
 	        		gcForMario.clearRect(0,0,1280,720);
 	        		gcForMario.drawImage(gameModel.getMario().getImage(), // the image to be drawn or null.
@@ -240,16 +283,19 @@ public class MarioGameView extends Application {
 	        				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
 	        				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
 	        				gameController.getMario().getWidth(), // the destination rectangle's width.
-	        				gameController.getMario().getWidth()); // the destination rectangle's height. 
+	        				gameController.getMario().getHeight()); // the destination rectangle's height. 
 	        		
 	        		marioAnimation.stop();
         		}
         		
         		if (event.getCode().toString().equals("A")) {
 	        		left = false;
-	        		gameController.getMario().setImage(new Image("file:mario-ConvertImage.png"));
+	        		gameController.getMario().setImage(new Image("resources/mario-ConvertImage.png"));
         			gameController.getMario().setCol(4);
         			gameController.getMario().setCount(4);
+        			gameController.getMario().setOffset_x(791);
+		        	gameController.getMario().setOffset_y(80);
+	        		gameController.getMario().setSpeed(0);
         			gcForMario.clearRect(0,0,1280,720);
 	        		gcForMario.drawImage(gameModel.getMario().getImage(), // the image to be drawn or null.
 	        				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
@@ -259,7 +305,7 @@ public class MarioGameView extends Application {
 	        				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
 	        				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
 	        				gameController.getMario().getWidth(), // the destination rectangle's width.
-	        				gameController.getMario().getWidth()); // the destination rectangle's height. 
+	        				gameController.getMario().getHeight()); // the destination rectangle's height. 
 	        		
 	        		marioAnimation.stop();
         		}
