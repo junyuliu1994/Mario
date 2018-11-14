@@ -1,10 +1,51 @@
 import java.util.ArrayList;
 
+import javafx.scene.image.Image;
+
 public class GameController {
 	GameModel gameModel;
 	
+	public boolean isStart() {
+		return gameModel.isStart();
+	}
+
+	public void setStart(boolean start) {
+		gameModel.setStart(start);
+	}
 	public GameController(GameModel gameModel){
 		this.gameModel = gameModel;
+	}
+	
+	public Image getMarioImage() {
+		return gameModel.getMarioImage();
+	}
+
+	public void setMarioImage(Image marioImage) {
+		gameModel.setMarioImage(marioImage);;
+	}
+	
+	public Image getMarioConvertImage() {
+		return gameModel.getMarioConvertImage();
+	}
+
+	public void setMarioConvertImage(Image marioConvertImage) {
+		gameModel.setMarioConvertImage(marioConvertImage);
+	}
+	
+	public Image getBlocks() {
+		return gameModel.getBlocks();
+	}
+
+	public void setBlocks(Image blocks) {
+		gameModel.setBlocks(blocks);;
+	}
+	
+	public Image getBackground() {
+		return gameModel.getBackground();
+	}
+
+	public void setBackground(Image background) {
+		gameModel.setBackground(background);
 	}
 	
 	public Mario getMario() {

@@ -45,10 +45,24 @@ public class SpriteAnimation extends Transition {
         setInterpolator(Interpolator.LINEAR);
     }
 
-	protected void interpolate(double k) {
+	protected void interpolate(double k) {		
+		if (count == 1 && count == columns) {
+			gc.clearRect(0, 0, 1000, 520);
+			gc.drawImage(image, // the image to be drawn or null.
+					offsetX, // the source rectangle's X coordinate position.
+					offsetY, // the source rectangle's Y coordinate position.
+            		width, // the source rectangle's width.
+            		height, // the source rectangle's height.
+            		cor_x, // the destination rectangle's X coordinate position.
+            		cor_y, // the destination rectangle's Y coordinate position.
+            		width, // the destination rectangle's width.
+            		height); // the destination rectangle's height. 
+			this.stop();
+		}
 		
 		
         int index = Math.min((int) Math.floor(k * count), count - 1);
+
         if (index != lastIndex) {
         	int x;
         	if (direction == 1) {
@@ -57,11 +71,9 @@ public class SpriteAnimation extends Transition {
         	else {
         		x =  offsetX - (index % columns) * width;
         	}
-            final int y = (index / columns) * height + offsetY;
-            
-            if (gcForM) {
-            	gc.clearRect(0, 0, 1280, 720);
-            }
+            int y = (index / columns) * height + offsetY;
+			gc.clearRect(0, 0, 1000, 520);
+
             gc.drawImage(image, // the image to be drawn or null.
             		x, // the source rectangle's X coordinate position.
             		y, // the source rectangle's Y coordinate position.

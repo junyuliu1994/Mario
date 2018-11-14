@@ -1,4 +1,7 @@
+import javafx.animation.Animation;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 public class Mario {
 	private Image image;
@@ -15,8 +18,34 @@ public class Mario {
 	private double jumpHeight;
 	private double jumpMax;
 	private boolean jump;
+	private SpriteAnimation marioAnimation;
+	private boolean right;
+	private boolean left;
+	
+	private int rightRelease;
+	public int getRightRelease() {
+		return rightRelease;
+	}
 
-	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction, int jumpHeight, int jumpMax, boolean jump) {
+
+	public void setRightRelease(int rightRelease) {
+		this.rightRelease = rightRelease;
+	}
+
+
+	public int getLeftRelease() {
+		return leftRelease;
+	}
+
+
+	public void setLeftRelease(int leftRelease) {
+		this.leftRelease = leftRelease;
+	}
+
+
+	private int leftRelease;
+
+	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction, int jumpHeight, int jumpMax, boolean jump, GraphicsContext gc) {
     	this.image = image;
         this.col  =   col;
         this.count    =  count;
@@ -30,6 +59,14 @@ public class Mario {
         this.jumpHeight = jumpHeight;
         this.jumpMax = jumpMax;
         this.jump = jump;
+        
+        marioAnimation = new SpriteAnimation(this.getImage(),
+                Duration.millis(500),
+                this.getCount(), this.getCol(),
+                this.getOffset_x(), this.getOffset_y(),
+                this.getWidth(), this.getHeight(), 
+                this.getX(), this.getY(), gc, 1, true);
+        marioAnimation.setCycleCount(Animation.INDEFINITE);
     }
 
 
@@ -152,4 +189,33 @@ public class Mario {
 		this.jump = jump;
 	}
 
+	public SpriteAnimation getMarioAnimation() {
+		return marioAnimation;
+	}
+
+
+	public void setMarioAnimation(SpriteAnimation marioAnimation) {
+		this.marioAnimation = marioAnimation;
+	}
+
+
+	public boolean isRight() {
+		return right;
+	}
+
+
+	public void setRight(boolean right) {
+		this.right = right;
+	}
+
+
+	public boolean isLeft() {
+		return left;
+	}
+
+
+	public void setLeft(boolean left) {
+		this.left = left;
+	}
+	
 }
