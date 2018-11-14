@@ -58,14 +58,14 @@ public class MarioGameView extends Application implements Observer{
         scene.setOnKeyPressed(event -> {
         	if (event.getCode().toString().equals("D")) {
         		gameController.setStart(true);
-        		gameController.getMario().setSpeed(10);
+        		gameController.getMario().setSpeed(2);
         		gameController.getMario().setRight(true);
         		gameController.getMario().setRightRelease(-1);
         		
         	}
         	else if (event.getCode().toString().equals("A")) {
         		gameController.setStart(true);
-        		gameController.getMario().setSpeed(-1);
+        		gameController.getMario().setSpeed(-2);
         		gameController.getMario().setLeft(true);
         		gameController.getMario().setLeftRelease(-1);
         	}

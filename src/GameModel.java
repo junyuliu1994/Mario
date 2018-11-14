@@ -13,7 +13,7 @@ public class GameModel extends Observable{
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
 	private Canvas canvasForMario = new Canvas(1000, 480);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 40, false, gcForMario);
+	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 100, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
 
@@ -47,12 +47,16 @@ public class GameModel extends Observable{
 	 private void tick() {
 		 move(); 
 		 stop();
+		 if (!standOnBlocks()) {
+			 fall();
+		 }
 	}
 	 
 	 private void stop() {
 		 if (!((mario.getRightRelease() == 1 ||  mario.getLeftRelease() == 1) && mario.isJump()== false )) {
 			 return;
 		 }
+		 
 		 
 		 if (mario.getRightRelease() == 1 && mario.isJump() == false) {
 			 mario.setRightRelease(0);
@@ -80,6 +84,36 @@ public class GameModel extends Observable{
 		 }
 	 }
 	 
+	 private boolean standOnBlocks() {
+		 int leftF_x = mario.getX();
+		 int leftF_y = mario.getY() + mario.getHeight();
+		 
+		 int rightF_x = mario.getX() + mario.getWidth();
+		 int rightF_y = mario.getX() + mario.getHeight();
+		 
+		 for (int i = 0; i < bricks.size(); i++) {
+			 if (leftF_y == bricks.get(i).getY()) {
+				 if (leftF_x >= bricks.get(i).getX() && leftF_x <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+				   		mario.setJumpHeight(0);
+				   		mario.setJump(false);
+
+
+					 return true;
+				 }
+				 
+				 if (rightF_x >= bricks.get(i).getX() && rightF_x <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+				   		mario.setJumpHeight(0);
+				   		mario.setJump(false);
+
+
+					 return true;
+				 }
+			 }
+		 }
+		 
+		 return false;
+	 }
+	 	 
 	 //when mario cor_x > 1/2 of 1000, then move other stuff contains background
 	 private void moveMarioOrOhters() {
 		 if ((mario.getX() < 100 && background.getMoveLength() < 1000) || (background.getMoveLength() == 1000)) {
@@ -103,17 +137,41 @@ public class GameModel extends Observable{
 	    	moveLeft();
 	    }
 	    
-	   	if (mario.getJumpHeight() < 40 && mario.isJump() == true) {
+	   	if (mario.getJumpHeight() < mario.getJumpMax() && mario.isJump() == true) {
 	    	jump();
 	    }
+	   
+	   	if (mario.getJumpHeight() >= mario.getJumpMax()) {
+	   		if (mario.getDirection() == 1) {
+	   			mario.setImage(marioImage);
+	   			mario.setCol(1);
+	    		mario.setCount(0);
+	    		mario.setOffset_x(195);
+	    		mario.setOffset_y(80);
+	    		
+	    		setChanged();
+	        	notifyObservers();
+	    	}
+	    	else {
+	    		mario.setImage(marioConvertImage);
+	    		mario.setCol(1);
+	    		mario.setCount(0);
+	    		mario.setOffset_x(791);
+		       	mario.setOffset_y(80);
+		       			       	
+		       	setChanged();
+		    	notifyObservers();
+	    	}
+	   		
+	   	}
 	    
-	    if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 40 && mario.isJump() == true){
+	    /*if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 80 && mario.isJump() == true){
 	    	fall();
 	    }
 	   	
-	    if (mario.getJumpHeight() == 40 && mario.getJumpMax() == 0 && mario.isJump() == true) { //the finish jumping and stop status
+	    if (mario.getJumpHeight() == 80 && mario.getJumpMax() == 0 && mario.isJump() == true) { //the finish jumping and stop status
 	    	mario.setJumpHeight(0);
-	   		mario.setJumpMax(40);
+	   		mario.setJumpMax(80);
 	    	mario.setJump(false);
 	    	
 	    	if (mario.getDirection() == 1) {
@@ -136,7 +194,7 @@ public class GameModel extends Observable{
 		       	setChanged();
 		    	notifyObservers();
 	    	}
-	    }
+	    }*/
 }
 	
 	private void moveRight() {
@@ -194,7 +252,7 @@ public class GameModel extends Observable{
     	}
     	mario.setCol(1);
 		mario.setCount(0);
-		mario.setY((int) (mario.getY() - 4));
+		mario.setY((int) (mario.getY() - 8));
 		
 		mario.setJumpHeight(mario.getJumpHeight() + 4);
 		setChanged();
@@ -210,7 +268,6 @@ public class GameModel extends Observable{
 		}
     	
     	mario.setY((int) (mario.getY() + 4));
-		mario.setJumpMax(mario.getJumpMax() - 4);
 		setChanged();
 		notifyObservers();
     }
