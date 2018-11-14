@@ -1,10 +1,12 @@
 import java.util.ArrayList;
 import java.util.Observable;
 
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 public class GameModel extends Observable{
     // didn't use this info yet
@@ -102,6 +104,9 @@ public class GameModel extends Observable{
 //             System.out.println("reset coins");
              for (Coin coin : coins) {
                  coin.setX(coin.getX() - mario.getSpeed());
+                 gcForMario.drawImage(coin.getImage(), coin.getOffset_x(),coin.getOffset_y(),
+                         coin.getWidth(),coin.getHeight(), coin.getX() ,coin.getY(),
+                         coin.getWidth(), coin.getHeight());
              }
 
 	    }
