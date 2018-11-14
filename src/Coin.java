@@ -4,64 +4,47 @@ public class Coin {
 	private final static int SCORE = 100;
 	
 	private Image image;
-	private int col;
-	private int count;
-	private int offset_x;
-    private int offset_y;
+	private final int col = 3;
+	private final int count = 3;
+	private final int offset_x = 948;
+    private final int offset_y = 41;
+
+    // to remove the side of coins, have set this values
+    //    private final int BLOCK_WIDTH = 38;        // the pixels of one block
+    //    private final int BLOCK_HEIGHT = 37;
+    public SpriteAnimation animation;
     private int width;
     private int height;
     private double x;
 	private double y;
 	
-	public Coin(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y) {
-		this.image = image;
-		this.col = col;
-		this.count = count;
-		this.offset_x = offset_x;
-		this.offset_y = offset_y;
+	public Coin(Image image, int width, int height, int x, int y) {
+	    this.image = image;
 		this.width = width;
 		this.height = height;
 		this.x = x;
 		this.y = y;
 	}
-	
-	
+
+	void setAnimation(SpriteAnimation newAnimation) { this.animation = newAnimation;}
+//	SpriteAnimation getAnimation() {return this.animation;}
 	public Image getImage() {
 		return image;
 	}
 	public int getCol() {
 		return col;
 	}
-
-
-	public void setCol(int col) {
-		this.col = col;
-	}
-
-
 	public int getCount() {
 		return count;
-	}
-
-
-	public void setCount(int count) {
-		this.count = count;
-	}
-	public void setImage(Image image) {
-		this.image = image;
 	}
 	public int getOffset_x() {
 		return offset_x;
 	}
-	public void setOffset_x(int offset_x) {
-		this.offset_x = offset_x;
-	}
+
 	public int getOffset_y() {
 		return offset_y;
 	}
-	public void setOffset_y(int offset_y) {
-		this.offset_y = offset_y;
-	}
+
 	public int getWidth() {
 		return width;
 	}

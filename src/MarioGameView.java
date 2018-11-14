@@ -21,14 +21,14 @@ public class MarioGameView extends Application implements Observer{
 	private GameController gameController = new GameController(gameModel);
 //	SpriteAnimation coinAnimation = null;
 	Canvas canvasForMario = gameModel.getCanvasForMario();
-	GraphicsContext gcForMario = gameModel.getGcForMario();	
+	GraphicsContext gcForMario = gameModel.getGcForMario();
+//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
+    private Duration coinDuration = Duration.millis(1000);
 
     public static void main(String[] args) {
         launch(args);
     }
-    
-    
-    
+
     
     public void start(Stage primaryStage) {
     	gameModel.start();
@@ -41,38 +41,28 @@ public class MarioGameView extends Application implements Observer{
         root.getChildren().add(canvasForMario);
         Scene scene = new Scene(root);
 
-        
-        
-        
-        /*gameController.getCoins().add(new Coin(new Image("file:blocks.png"), 3, 3, 385, 16, 15, 16, 1000, 480));
-        coinAnimation = new SpriteAnimation(gameController.getCoins().get(0).getImage(),
-                Duration.millis(1000),
-                gameController.getCoins().get(0).getCount(), gameController.getCoins().get(0).getCol(),
-                gameController.getCoins().get(0).getOffset_x(), gameController.getCoins().get(0).getOffset_y(),
-                gameController.getCoins().get(0).getWidth(), gameController.getCoins().get(0).getHeight(), 
-                gameController.getCoins().get(0).getX(), gameController.getCoins().get(0).getY(), gcForStuff, 1, false);
-        coinAnimation.setCycleCount(Animation.INDEFINITE);
-        coinAnimation.play();*/
-        
+
         
         scene.setOnKeyPressed(event -> {
-        	if (event.getCode().toString().equals("D")) {
-        		gameController.setStart(true);
-        		gameController.getMario().setSpeed(10);
-        		gameController.getMario().setRight(true);
-        		gameController.getMario().setRightRelease(-1);
-        		
-        	}
-        	else if (event.getCode().toString().equals("A")) {
-        		gameController.setStart(true);
-        		gameController.getMario().setSpeed(-1);
-        		gameController.getMario().setLeft(true);
-        		gameController.getMario().setLeftRelease(-1);
-        	}
-        	else if (event.getCode().toString().equals("W")) {
-        		gameController.setStart(true);
-        		gameController.getMario().setJump(true);
-        	}
+            switch (event.getCode().toString()) {
+                case "D":
+                    gameController.setStart(true);
+                    gameController.getMario().setSpeed(10);
+                    gameController.getMario().setRight(true);
+                    gameController.getMario().setRightRelease(-1);
+
+                    break;
+                case "A":
+                    gameController.setStart(true);
+                    gameController.getMario().setSpeed(-1);
+                    gameController.getMario().setLeft(true);
+                    gameController.getMario().setLeftRelease(-1);
+                    break;
+                case "W":
+                    gameController.setStart(true);
+                    gameController.getMario().setJump(true);
+                    break;
+            }
         });
         
         scene.setOnKeyReleased(event -> {
@@ -127,7 +117,7 @@ public class MarioGameView extends Application implements Observer{
     				case '0':
     					break;
     				case '1':
-    					Brick brick = new Brick(gameController.getBlocks(), 0, 0, 40, 40, j*40, i*40);
+    					Brick brick = new Brick(gameController.getBlocks(), 40, 40, j*40, i*40);
     					gameController.getBricks().add(brick);
     					int index = gameController.getBricks().size() -1;
     					gcForMario.drawImage(gameController.getBricks().get(index).getImage(), // the image to be drawn or null.
@@ -140,6 +130,30 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getBricks().get(index).getWidth(), // the destination rectangle's width.
     							gameController.getBricks().get(index).getHeight()); // the destination rectangle's height. 
     					break;
+                    case '2':
+                        Coin coin = new Coin(gameModel.getBlocks(),38,37,j*40,i*40);
+//                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
+//                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
+                        gameController.getCoins().add(coin);
+//
+//                        gcForStuff.drawImage(coin.getImage(),
+//                                coin.getOffset_x(), coin.getOffset_y(),
+//                                BLOCK_WIDTH, BLOCK_HEIGHT,
+//                                coin.getX(),coin.getY(), BLOCK_WIDTH, BLOCK_HEIGHT
+//                        );
+                        int end = gameController.getCoins().size() -1;
+                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
+                                Duration.millis(1000),
+                                gameController.getCoins().get(end).getCount(), gameController.getCoins().get(end).getCol(),
+                                gameController.getCoins().get(end).getOffset_x(), gameController.getCoins().get(end).getOffset_y(),
+                                gameController.getCoins().get(end).getWidth(), gameController.getCoins().get(end).getHeight(),
+                                gameController.getCoins().get(end).getX(), gameController.getCoins().get(end).getY(), gcForMario, 1, false);
+                        coinAnimation2.setCycleCount(Animation.INDEFINITE);
+                        coin.setAnimation(coinAnimation2);
+                        System.out.println(gameController.getCoins().get(end).getX() +" and "+ gameController.getCoins().get(0).getY() );
+                        coinAnimation2.play();
+
+                        break;
     			}
     		}
     	}  
@@ -188,5 +202,20 @@ public class MarioGameView extends Application implements Observer{
 					gameController.getBricks().get(i).getWidth(), // the destination rectangle's width.
 					gameController.getBricks().get(i).getHeight()); // the destination rectangle's height. 
 		}
+
+//		System.out.println("redraw coins");
+		for (Coin coin : gameController.getCoins()) {
+//		    coin.animation.setOffsetX((int)coin.getX());
+//            coin.animation.
+		    coin.animation.stop();
+		    coin.animation = new SpriteAnimation(coin.getImage(), coinDuration, coin.getCount(),
+                    coin.getCol(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(), coin.getHeight(),
+                    coin.getX(), coin.getY(),gcForMario, 1, false);
+		    coin.animation.setCycleCount(Animation.INDEFINITE);
+		    coin.animation.play();
+        }
+//        for (Coin coin: gameController.getCoins()) {
+//            gcForMario.drawImage(coin.getImage(), coin.getX(),coin.getY(),coin.getWidth(),coin.getHeight());
+//        }
 	}
 }

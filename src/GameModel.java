@@ -7,11 +7,18 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class GameModel extends Observable{
+    // didn't use this info yet
+    private final int BLOCK_WIDTH = 40;
+    private final int BLOCK_HEIGHT = 40;
+
+    private final int WINDOW_WIDTH = 1000;
+    private final int WINDOW_HEIGHT = 480;
+
 	private Background background = new Background();
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
-	private Canvas canvasForMario = new Canvas(1000, 480);
+	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 40, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
@@ -39,7 +46,7 @@ public class GameModel extends Observable{
                        }
                }
 
-			
+
         };
         at.start();
 	}
@@ -50,11 +57,11 @@ public class GameModel extends Observable{
 	}
 	 
 	 private void stop() {
-		 if (!((mario.getRightRelease() == 1 ||  mario.getLeftRelease() == 1) && mario.isJump()== false )) {
+		 if (!((mario.getRightRelease() == 1 ||  mario.getLeftRelease() == 1) && !mario.isJump())) {
 			 return;
 		 }
 		 
-		 if (mario.getRightRelease() == 1 && mario.isJump() == false) {
+		 if (mario.getRightRelease() == 1 && !mario.isJump()) {
 			 mario.setRightRelease(0);
 			 
 			 mario.setImage(marioImage);
@@ -66,7 +73,7 @@ public class GameModel extends Observable{
 	    	 setChanged();
 	         notifyObservers();
 		 }
-		 else if (mario.getLeftRelease() == 1 && mario.isJump() == false) {
+		 else if (mario.getLeftRelease() == 1 && !mario.isJump()) {
 			 mario.setLeftRelease(0);
 			 
 			 mario.setImage(marioConvertImage);
@@ -86,32 +93,37 @@ public class GameModel extends Observable{
 			 mario.setX((int) (mario.getX() + mario.getSpeed()));
 		 }
 		 else {
-		    background.setOffset_x((int) (background.getOffset_x() + mario.getSpeed()));
-	    	background.setMoveLength((int) (background.getMoveLength() + mario.getSpeed()));
-		   		
-	   		for (int i = 0; i < bricks.size(); i++) {
-	   			bricks.get(i).setX(bricks.get(i).getX() - mario.getSpeed());
-	   		}
+		     background.setOffset_x((int) (background.getOffset_x() + mario.getSpeed()));
+	    	 background.setMoveLength((int) (background.getMoveLength() + mario.getSpeed()));
+
+             for (Brick brick : bricks) {
+                 brick.setX(brick.getX() - mario.getSpeed());
+             }
+//             System.out.println("reset coins");
+             for (Coin coin : coins) {
+                 coin.setX(coin.getX() - mario.getSpeed());
+             }
+
 	    }
 	 }
 	 
 	 public void move() {
-		if (mario.isRight() && mario.isJump() == false) {
+		if (mario.isRight() && !mario.isJump()) {
 		    moveRight();
 	    }
-	    else if (mario.isLeft() && mario.isJump() == false) {
+	    else if (mario.isLeft() && !mario.isJump()) {
 	    	moveLeft();
 	    }
 	    
-	   	if (mario.getJumpHeight() < 40 && mario.isJump() == true) {
+	   	if (mario.getJumpHeight() < 40 && mario.isJump()) {
 	    	jump();
 	    }
 	    
-	    if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 40 && mario.isJump() == true){
+	    if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 40 && mario.isJump()){
 	    	fall();
 	    }
 	   	
-	    if (mario.getJumpHeight() == 40 && mario.getJumpMax() == 0 && mario.isJump() == true) { //the finish jumping and stop status
+	    if (mario.getJumpHeight() == 40 && mario.getJumpMax() == 0 && mario.isJump()) { //the finish jumping and stop status
 	    	mario.setJumpHeight(0);
 	   		mario.setJumpMax(40);
 	    	mario.setJump(false);
@@ -175,10 +187,10 @@ public class GameModel extends Observable{
     }
     
     private void jump() {
-    	if (mario.isRight() == true) {
+    	if (mario.isRight()) {
     		moveMarioOrOhters();
 		}
-		else if (mario.isLeft() == true) {
+		else if (mario.isLeft()) {
     		mario.setX((int) (mario.getX() + mario.getSpeed()));
 		}
 		
@@ -202,10 +214,10 @@ public class GameModel extends Observable{
     }
     
     private void fall() {
-    	if (mario.isRight() == true) {
+    	if (mario.isRight()) {
     		moveMarioOrOhters();
 		}
-		else if (mario.isLeft() == true) {
+		else if (mario.isLeft()) {
     		mario.setX((int) (mario.getX() + mario.getSpeed()));
 		}
     	
