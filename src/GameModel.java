@@ -7,13 +7,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class GameModel extends Observable{
-	private Image background = new Image("resources/background_version3.png");
+	private Background background = new Background();
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
-	private Canvas canvasForMario = new Canvas(1000, 520);
+	private Canvas canvasForMario = new Canvas(1000, 480);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-	private Mario mario = new Mario(marioImage, 4, 4, 196, 80, 40, 40, 0, 440, 1, 0, 40, false, gcForMario);
+	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 40, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
 
@@ -59,16 +59,10 @@ public class GameModel extends Observable{
 			 
 			 mario.setImage(marioImage);
 			 mario.setCol(1);
-			 mario.setCount(1);
+			 mario.setCount(0);
 			 mario.setOffset_x(195);
 			 mario.setOffset_y(80);
 			 
-			 mario.getMarioAnimation().setImage(mario.getImage());
-		     mario.getMarioAnimation().setCount(mario.getCount());
-		     mario.getMarioAnimation().setColumns(mario.getCol());
-		     mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-		     mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-		     mario.getMarioAnimation().setDirection(1);
 	    	 setChanged();
 	         notifyObservers();
 		 }
@@ -77,24 +71,33 @@ public class GameModel extends Observable{
 			 
 			 mario.setImage(marioConvertImage);
 			 mario.setCol(1);
-			 mario.setCount(1);
+			 mario.setCount(0);
 			 mario.setOffset_x(791);
 			 mario.setOffset_y(80);
 			 
-			 mario.getMarioAnimation().setImage(mario.getImage());
-		     mario.getMarioAnimation().setCount(mario.getCount());
-		     mario.getMarioAnimation().setColumns(mario.getCol());
-		     mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-		     mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-		     mario.getMarioAnimation().setDirection(0);
 	    	 setChanged();
 	         notifyObservers();
 		 }
 	 }
 	 
+	 //when mario cor_x > 1/2 of 1000, then move other stuff contains background
+	 private void moveMarioOrOhters() {
+		 if ((mario.getX() < 100 && background.getMoveLength() < 1000) || (background.getMoveLength() == 1000)) {
+			 mario.setX((int) (mario.getX() + mario.getSpeed()));
+		 }
+		 else {
+		    background.setOffset_x((int) (background.getOffset_x() + mario.getSpeed()));
+	    	background.setMoveLength((int) (background.getMoveLength() + mario.getSpeed()));
+		   		
+	   		for (int i = 0; i < bricks.size(); i++) {
+	   			bricks.get(i).setX(bricks.get(i).getX() - mario.getSpeed());
+	   		}
+	    }
+	 }
+	 
 	 public void move() {
 		if (mario.isRight() && mario.isJump() == false) {
-		    	moveRight();
+		    moveRight();
 	    }
 	    else if (mario.isLeft() && mario.isJump() == false) {
 	    	moveLeft();
@@ -116,34 +119,20 @@ public class GameModel extends Observable{
 	    	if (mario.getDirection() == 1) {
 	   			mario.setImage(marioImage);
 	   			mario.setCol(1);
-	    		mario.setCount(1);
+	    		mario.setCount(0);
 	    		mario.setOffset_x(195);
 	    		mario.setOffset_y(80);
 	    		
-	    		mario.getMarioAnimation().setImage(mario.getImage());
-	        	mario.getMarioAnimation().setCount(mario.getCount());
-	        	mario.getMarioAnimation().setColumns(mario.getCol());
-	        	mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-	        	mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-	        	mario.getMarioAnimation().setCor_x(mario.getX());
-	        	mario.getMarioAnimation().setDirection(1);
 	    		setChanged();
 	        	notifyObservers();
 	    	}
 	    	else {
 	    		mario.setImage(marioConvertImage);
 	    		mario.setCol(1);
-	    		mario.setCount(1);
+	    		mario.setCount(0);
 	    		mario.setOffset_x(791);
 		       	mario.setOffset_y(80);
-		       	
-		       	mario.getMarioAnimation().setImage(mario.getImage());
-		    	mario.getMarioAnimation().setCount(mario.getCount());
-		    	mario.getMarioAnimation().setColumns(mario.getCol());
-		    	mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-		    	mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-		    	mario.getMarioAnimation().setCor_x(mario.getX());
-		    	mario.getMarioAnimation().setDirection(0);
+		       			       	
 		       	setChanged();
 		    	notifyObservers();
 	    	}
@@ -153,46 +142,41 @@ public class GameModel extends Observable{
 	private void moveRight() {
     	mario.setImage(marioImage);
     	mario.setCol(4);
-		mario.setCount(4);
-    	mario.setOffset_x(195);
-    	mario.setOffset_y(80);
+    	if (mario.getCount() < mario.getCol()) {
+    		mario.setOffset_x(mario.getLv1_offset_x()[mario.getCount()]);
+    		mario.setCount(mario.getCount()+1);
+    	}
+    	else {
+    		mario.setCount(0);
+    	}
     	mario.setDirection(1);
-    	mario.setX((int) (mario.getX() + mario.getSpeed()));
     	
-    	mario.getMarioAnimation().setImage(mario.getImage());
-    	mario.getMarioAnimation().setCount(mario.getCount());
-    	mario.getMarioAnimation().setColumns(mario.getCol());
-    	mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-    	mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-    	mario.getMarioAnimation().setCor_x(mario.getX());
-    	mario.getMarioAnimation().setDirection(1);
+    	moveMarioOrOhters();
+
     	setChanged();
     	notifyObservers();
     }
     
     private void moveLeft() {
     	mario.setImage(marioConvertImage);
-		mario.setCol(4);
-		mario.setCount(4);
-		mario.setOffset_x(791);
-		mario.setOffset_y(80);
-		mario.setDirection(0);
-		mario.setX((int) (mario.getX() + mario.getSpeed()));
+    	mario.setCol(4);
+    	if (mario.getCount() < mario.getCol()) {
+    		mario.setOffset_x(mario.getLv1_left_offset_x()[mario.getCount()]);
+    		mario.setCount(mario.getCount()+1);
+    	}
+    	else {
+    		mario.setCount(0);
+    	}
+    	mario.setDirection(0);
+    	mario.setX((int) (mario.getX() + mario.getSpeed()));
 		
-		mario.getMarioAnimation().setImage(mario.getImage());
-    	mario.getMarioAnimation().setCount(mario.getCount());
-    	mario.getMarioAnimation().setColumns(mario.getCol());
-    	mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-    	mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-    	mario.getMarioAnimation().setCor_x(mario.getX());
-		mario.getMarioAnimation().setDirection(0);
 		setChanged();
 		notifyObservers();
     }
     
     private void jump() {
     	if (mario.isRight() == true) {
-    		mario.setX((int) (mario.getX() + mario.getSpeed()));
+    		moveMarioOrOhters();
 		}
 		else if (mario.isLeft() == true) {
     		mario.setX((int) (mario.getX() + mario.getSpeed()));
@@ -209,15 +193,9 @@ public class GameModel extends Observable{
     		mario.setOffset_y(78);
     	}
     	mario.setCol(1);
-		mario.setCount(1);
+		mario.setCount(0);
 		mario.setY((int) (mario.getY() - 4));
-		mario.getMarioAnimation().setImage(mario.getImage());
-		mario.getMarioAnimation().setOffsetX(mario.getOffset_x());
-		mario.getMarioAnimation().setOffsetY(mario.getOffset_y());
-		mario.getMarioAnimation().setColumns(mario.getCol());
-		mario.getMarioAnimation().setCount(mario.getCount());
-		mario.getMarioAnimation().setCor_x(mario.getX());
-		mario.getMarioAnimation().setCor_y(mario.getY());
+		
 		mario.setJumpHeight(mario.getJumpHeight() + 4);
 		setChanged();
 		notifyObservers();
@@ -225,15 +203,13 @@ public class GameModel extends Observable{
     
     private void fall() {
     	if (mario.isRight() == true) {
-    		mario.setX((int) (mario.getX() + mario.getSpeed()));
+    		moveMarioOrOhters();
 		}
 		else if (mario.isLeft() == true) {
     		mario.setX((int) (mario.getX() + mario.getSpeed()));
 		}
     	
     	mario.setY((int) (mario.getY() + 4));
-    	mario.getMarioAnimation().setCor_x(mario.getX());
-		mario.getMarioAnimation().setCor_y(mario.getY());		
 		mario.setJumpMax(mario.getJumpMax() - 4);
 		setChanged();
 		notifyObservers();
@@ -263,12 +239,8 @@ public class GameModel extends Observable{
 		this.blocks = blocks;
 	}
     
-    public Image getBackground() {
+    public Background getBackground() {
 		return background;
-	}
-
-	public void setBackground(Image background) {
-		this.background = background;
 	}
 	
 	public Mario getMario() {

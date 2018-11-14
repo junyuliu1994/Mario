@@ -47,7 +47,7 @@ public class SpriteAnimation extends Transition {
 
 	protected void interpolate(double k) {		
 		if (count == 1 && count == columns) {
-			gc.clearRect(0, 0, 1000, 520);
+			System.out.println("2");
 			gc.drawImage(image, // the image to be drawn or null.
 					offsetX, // the source rectangle's X coordinate position.
 					offsetY, // the source rectangle's Y coordinate position.
@@ -72,7 +72,6 @@ public class SpriteAnimation extends Transition {
         		x =  offsetX - (index % columns) * width;
         	}
             int y = (index / columns) * height + offsetY;
-			gc.clearRect(0, 0, 1000, 520);
 
             gc.drawImage(image, // the image to be drawn or null.
             		x, // the source rectangle's X coordinate position.

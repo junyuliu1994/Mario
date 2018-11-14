@@ -21,7 +21,29 @@ public class Mario {
 	private SpriteAnimation marioAnimation;
 	private boolean right;
 	private boolean left;
+	private int [] lv1_offset_x = {195, 195+40, 195+40*2, 195+40*3};//right
+	private int [] lv1_left_offset_x = {791, 791-40, 791-40*2, 791-40*3};//left
 	
+	public int[] getLv1_left_offset_x() {
+		return lv1_left_offset_x;
+	}
+
+
+	public void setLv1_left_offset_x(int[] lv1_left_offset_x) {
+		this.lv1_left_offset_x = lv1_left_offset_x;
+	}
+
+
+	public int[] getLv1_offset_x() {
+		return lv1_offset_x;
+	}
+
+
+	public void setLv1_offset_x(int[] lv1_offset_x) {
+		this.lv1_offset_x = lv1_offset_x;
+	}
+
+
 	private int rightRelease;
 	public int getRightRelease() {
 		return rightRelease;

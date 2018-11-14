@@ -40,13 +40,10 @@ public class GameController {
 		gameModel.setBlocks(blocks);;
 	}
 	
-	public Image getBackground() {
+	public Background getBackground() {
 		return gameModel.getBackground();
 	}
 
-	public void setBackground(Image background) {
-		gameModel.setBackground(background);
-	}
 	
 	public Mario getMario() {
 		return gameModel.getMario();
