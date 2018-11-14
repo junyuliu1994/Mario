@@ -13,6 +13,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -24,6 +27,9 @@ public class MarioGameView extends Application implements Observer{
 	GraphicsContext gcForMario = gameModel.getGcForMario();
 //    GraphicsContext gcForStuff = gameModel.getGCForStuff();
     private Duration coinDuration = Duration.millis(1000);
+	Image background = new Image("resources/start_background.png");
+	Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
+	int curr = 1;
 
     public static void main(String[] args) {
         launch(args);
@@ -31,58 +37,15 @@ public class MarioGameView extends Application implements Observer{
 
     
     public void start(Stage primaryStage) {
-    	gameModel.start();
-    	gameModel.addObserver(this);
-        primaryStage.setTitle("Mario Game");
-        
-        
-        
-        Group root = new Group(); 
-        root.getChildren().add(canvasForMario);
-        Scene scene = new Scene(root);
 
-
-        
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode().toString()) {
-                case "D":
-                    gameController.setStart(true);
-                    gameController.getMario().setSpeed(10);
-                    gameController.getMario().setRight(true);
-                    gameController.getMario().setRightRelease(-1);
-
-                    break;
-                case "A":
-                    gameController.setStart(true);
-                    gameController.getMario().setSpeed(-1);
-                    gameController.getMario().setLeft(true);
-                    gameController.getMario().setLeftRelease(-1);
-                    break;
-                case "W":
-                    gameController.setStart(true);
-                    gameController.getMario().setJump(true);
-                    break;
-            }
-        });
-        
-        scene.setOnKeyReleased(event -> {
-        	if (gameController.getMario().getMarioAnimation() != null) {
-        		if (event.getCode().toString().equals("D")) {
-        			gameController.getMario().setRight(false);
-	        		gameController.getMario().setSpeed(0);
-	        		gameController.getMario().setRightRelease(1);
-        		}
-        		
-        		if (event.getCode().toString().equals("A")) {
-        			gameController.getMario().setLeft(false);
-	        		gameController.getMario().setSpeed(0);
-	        		gameController.getMario().setLeftRelease(1);
-        		}
-        	}
-        });
-        
-        initContent(); 
-        primaryStage.setScene(scene);
+		Group root = new Group();
+		root.getChildren().add(canvasForMario);
+		Scene scene = new Scene(root);
+		StartMenu(scene, gcForMario);
+		primaryStage.getIcons().add(new Image("resources/icon.png"));
+		//initGame(scene);
+		primaryStage.setTitle("Mario Game");
+		primaryStage.setScene(scene);
         primaryStage.show();
     }
     
@@ -217,5 +180,132 @@ public class MarioGameView extends Application implements Observer{
 //        for (Coin coin: gameController.getCoins()) {
 //            gcForMario.drawImage(coin.getImage(), coin.getX(),coin.getY(),coin.getWidth(),coin.getHeight());
 //        }
+	}
+
+	public void initGame(Scene scene){
+		gameModel.start();
+		gameModel.addObserver(this);
+
+
+		scene.setOnKeyPressed(event -> {
+			switch (event.getCode().toString()) {
+				case "D":
+					gameController.setStart(true);
+					gameController.getMario().setSpeed(10);
+					gameController.getMario().setRight(true);
+					gameController.getMario().setRightRelease(-1);
+
+					break;
+				case "A":
+					gameController.setStart(true);
+					gameController.getMario().setSpeed(-1);
+					gameController.getMario().setLeft(true);
+					gameController.getMario().setLeftRelease(-1);
+					break;
+				case "W":
+					gameController.setStart(true);
+					gameController.getMario().setJump(true);
+					break;
+			}
+		});
+
+		scene.setOnKeyReleased(event -> {
+			if (gameController.getMario().getMarioAnimation() != null) {
+				if (event.getCode().toString().equals("D")) {
+					gameController.getMario().setRight(false);
+					gameController.getMario().setSpeed(0);
+					gameController.getMario().setRightRelease(1);
+				}
+
+				if (event.getCode().toString().equals("A")) {
+					gameController.getMario().setLeft(false);
+					gameController.getMario().setSpeed(0);
+					gameController.getMario().setLeftRelease(1);
+				}
+			}
+		});
+
+		initContent();
+	}
+
+	private void MainGame(Scene scene,GraphicsContext gc){
+		gc.clearRect(0,0,856,550);
+		initGame(scene);
+		//goBackToMainMenu(scene,gc);
+	}
+
+	private void LoadGame(Scene scene, GraphicsContext gc){
+		gc.clearRect(0,0,856,550);
+		gc.fillText("WORKING ON IT", 300,250);
+		// TODO: do something
+		goBackToMainMenu(scene,gc);
+	}
+
+	private void aboutThisGame(Scene scene, GraphicsContext gc){
+		gc.clearRect(0,0,856,550);
+		gc.fillText("WORKING ON IT", 300,250);
+		// TODO: do something
+		goBackToMainMenu(scene,gc);
+	}
+
+	private void goBackToMainMenu(Scene scene,GraphicsContext gc){
+		scene.setOnKeyPressed(event -> {
+			if(event.getCode() == KeyCode.ESCAPE){
+				StartMenu(scene,gc);
+			}
+		});
+	}
+
+	public void reDrawStart(GraphicsContext gc){
+		gc.clearRect(0,0,1000,480);
+		gc.drawImage(background, 0,0);
+
+		// load main GUI
+		Image title = new Image("resources/title.png");
+		gc.drawImage(title,275,40);
+		gc.setFill(Color.WHITE);
+		gc.setFont(font);
+		gc.fillText("\uD83C\uDD2F8102 NINJIGOKU",520,275);
+		//gc.drawImage(i, 640, 360);
+
+		Font newfont = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),20);
+		gc.setFont(newfont);
+		gc.fillText("New Game",410, 330);
+		gc.fillText("Load Game",408, 360);
+		gc.fillText("About",410, 390);
+		gc.setFill(Color.BLACK);
+		if(curr == 1){
+			gc.fillText("New Game",410, 330);
+		}else if(curr == 2){
+			gc.fillText("Load Game",408, 360);
+		}else{
+			gc.fillText("About" ,410, 390);
+		}
+	}
+
+	private void StartMenu(Scene scene, GraphicsContext gc){
+		reDrawStart(gc);
+		scene.setOnKeyPressed(event -> {
+			if(event.getCode()==KeyCode.UP|| event.getCode() == KeyCode.W){
+				if(curr > 1){
+					curr --;
+					reDrawStart(gc);
+				}
+			}else if(event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S){
+				if(curr < 3){
+					curr ++;
+					reDrawStart(gc);
+				}
+				// set up entry
+			}else if(event.getCode() == KeyCode.ENTER){
+				if(curr == 1){
+					MainGame(scene, gc);
+				}else if(curr == 2){
+					LoadGame(scene, gc);
+				}else{
+					aboutThisGame(scene, gc);
+				}
+			}
+		});
 	}
 }
