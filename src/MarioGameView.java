@@ -192,42 +192,40 @@ public class MarioGameView extends Application implements Observer{
 
 
 		scene.setOnKeyPressed(event -> {
-			switch (event.getCode().toString()) {
-				case "D":
-					gameController.setStart(true);
-					gameController.getMario().setSpeed(10);
-					gameController.getMario().setRight(true);
-					gameController.getMario().setRightRelease(-1);
-
-					break;
-				case "A":
-					gameController.setStart(true);
-					gameController.getMario().setSpeed(-1);
-					gameController.getMario().setLeft(true);
-					gameController.getMario().setLeftRelease(-1);
-					break;
-				case "W":
-					gameController.setStart(true);
-					gameController.getMario().setJump(true);
-					break;
-			}
-		});
+        	if (event.getCode().toString().equals("D")) {
+        		gameController.setStart(true);
+        		gameController.getMario().setSpeed(2);
+        		gameController.getMario().setRight(true);
+        		gameController.getMario().setRightRelease(-1);
+        		
+        	}
+        	else if (event.getCode().toString().equals("A")) {
+        		gameController.setStart(true);
+        		gameController.getMario().setSpeed(-2);
+        		gameController.getMario().setLeft(true);
+        		gameController.getMario().setLeftRelease(-1);
+        	}
+        	else if (event.getCode().toString().equals("W")) {
+        		gameController.setStart(true);
+        		gameController.getMario().setJump(true);
+        	}
+        });
 
 		scene.setOnKeyReleased(event -> {
-			if (gameController.getMario().getMarioAnimation() != null) {
-				if (event.getCode().toString().equals("D")) {
-					gameController.getMario().setRight(false);
-					gameController.getMario().setSpeed(0);
-					gameController.getMario().setRightRelease(1);
-				}
-
-				if (event.getCode().toString().equals("A")) {
-					gameController.getMario().setLeft(false);
-					gameController.getMario().setSpeed(0);
-					gameController.getMario().setLeftRelease(1);
-				}
-			}
-		});
+        	if (gameController.getMario().getMarioAnimation() != null) {
+        		if (event.getCode().toString().equals("D")) {
+        			gameController.getMario().setRight(false);
+	        		gameController.getMario().setSpeed(0);
+	        		gameController.getMario().setRightRelease(1);
+        		}
+        		
+        		if (event.getCode().toString().equals("A")) {
+        			gameController.getMario().setLeft(false);
+	        		gameController.getMario().setSpeed(0);
+	        		gameController.getMario().setLeftRelease(1);
+        		}
+        	}
+        });
 
 		initContent();
 	}
@@ -312,4 +310,5 @@ public class MarioGameView extends Application implements Observer{
 			}
 		});
 	}
+
 }
