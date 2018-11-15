@@ -99,22 +99,22 @@ public class MarioGameView extends Application implements Observer{
 //                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
                         gameController.getCoins().add(coin);
 //
-//                        gcForStuff.drawImage(coin.getImage(),
-//                                coin.getOffset_x(), coin.getOffset_y(),
-//                                BLOCK_WIDTH, BLOCK_HEIGHT,
-//                                coin.getX(),coin.getY(), BLOCK_WIDTH, BLOCK_HEIGHT
-//                        );
-                        int end = gameController.getCoins().size() -1;
-                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
-                                Duration.millis(1000),
-                                gameController.getCoins().get(end).getCount(), gameController.getCoins().get(end).getCol(),
-                                gameController.getCoins().get(end).getOffset_x(), gameController.getCoins().get(end).getOffset_y(),
-                                gameController.getCoins().get(end).getWidth(), gameController.getCoins().get(end).getHeight(),
-                                gameController.getCoins().get(end).getX(), gameController.getCoins().get(end).getY(), gcForMario, 1, false);
-                        coinAnimation2.setCycleCount(Animation.INDEFINITE);
-                        coin.setAnimation(coinAnimation2);
-                        System.out.println(gameController.getCoins().get(end).getX() +" and "+ gameController.getCoins().get(0).getY() );
-                        coinAnimation2.play();
+                        gcForMario.drawImage(coin.getImage(),
+                                coin.getOffset_x(), coin.getOffset_y(),
+                                coin.getWidth(), coin.getHeight(),
+                                coin.getX(),coin.getY(), coin.getWidth(), coin.getHeight()
+                        );
+//                        int end = gameController.getCoins().size() -1;
+//                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
+//                                Duration.millis(1000),
+//                                gameController.getCoins().get(end).getCount(), gameController.getCoins().get(end).getCol(),
+//                                gameController.getCoins().get(end).getOffset_x(), gameController.getCoins().get(end).getOffset_y(),
+//                                gameController.getCoins().get(end).getWidth(), gameController.getCoins().get(end).getHeight(),
+//                                gameController.getCoins().get(end).getX(), gameController.getCoins().get(end).getY(), gcForMario, 1, false);
+//                        coinAnimation2.setCycleCount(Animation.INDEFINITE);
+//                        coin.setAnimation(coinAnimation2);
+//                        System.out.println(gameController.getCoins().get(end).getX() +" and "+ gameController.getCoins().get(0).getY() );
+//                        coinAnimation2.play();
 
                         break;
     			}
@@ -168,18 +168,22 @@ public class MarioGameView extends Application implements Observer{
 
 //		System.out.println("redraw coins");
 		for (Coin coin : gameController.getCoins()) {
-//		    coin.animation.setOffsetX((int)coin.getX());
-//            coin.animation.
-		    coin.animation.stop();
-		    coin.animation = new SpriteAnimation(coin.getImage(), coinDuration, coin.getCount(),
-                    coin.getCol(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(), coin.getHeight(),
-                    coin.getX(), coin.getY(),gcForMario, 1, false);
-		    coin.animation.setCycleCount(Animation.INDEFINITE);
-		    coin.animation.play();
-        }
-//        for (Coin coin: gameController.getCoins()) {
-//            gcForMario.drawImage(coin.getImage(), coin.getX(),coin.getY(),coin.getWidth(),coin.getHeight());
+////		    coin.animation.setOffsetX((int)coin.getX());
+////            coin.animation.
+//		    coin.animation.stop();
+//		    coin.animation = new SpriteAnimation(coin.getImage(), coinDuration, coin.getCount(),
+//                    coin.getCol(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(), coin.getHeight(),
+//                    coin.getX(), coin.getY(),gcForMario, 1, false);
+//		    coin.animation.setCycleCount(Animation.INDEFINITE);
+//		    coin.animation.play();
 //        }
+
+            gcForMario.drawImage(coin.getImage(),
+                    coin.getOffset_x(), coin.getOffset_y(),
+                    coin.getWidth(), coin.getHeight(),
+                    coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight()
+            );
+        }
 	}
 
 	public void initGame(Scene scene){

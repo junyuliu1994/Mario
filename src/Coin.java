@@ -4,10 +4,12 @@ public class Coin {
 	private final static int SCORE = 100;
 	
 	private Image image;
-	private final int col = 3;
-	private final int count = 3;
-	private final int offset_x = 948;
-    private final int offset_y = 41;
+	private  int col = 3;
+	private  int count = 3;
+	final int initial_offset_x = 948;
+	private int offset_x = 948;
+	final int initial_offset_y = 41;
+    private int offset_y = 41;
 
     // to remove the side of coins, have set this values
     //    private final int BLOCK_WIDTH = 38;        // the pixels of one block
@@ -34,13 +36,15 @@ public class Coin {
 	public int getCol() {
 		return col;
 	}
+	void setCount(int newCount) {this.count = newCount;}
 	public int getCount() {
 		return count;
 	}
+	public void setOffset_x(int x) {this.offset_x = x;}
 	public int getOffset_x() {
 		return offset_x;
 	}
-
+    void setoffset_y(int y) {this.offset_y = y;}
 	public int getOffset_y() {
 		return offset_y;
 	}

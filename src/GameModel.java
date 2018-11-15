@@ -52,10 +52,16 @@ public class GameModel extends Observable{
         };
         at.start();
 	}
-	
-	 private void tick() {
-		 move(); 
-		 stop();
+
+	private int flashCoinsCount = 0;
+	private void tick() {
+	    flashCoinsCount++;
+        if (flashCoinsCount == 8) {
+            flashCoins();
+            flashCoinsCount = 0;
+        }
+        move();
+        stop();
 	}
 	 
 	 private void stop() {
@@ -189,6 +195,18 @@ public class GameModel extends Observable{
 		
 		setChanged();
 		notifyObservers();
+    }
+    private void flashCoins(){
+        for (Coin coin : coins) {
+            if (coin.getCount() < coin.getCol()) {
+                coin.setOffset_x(coin.initial_offset_x + (coin.getWidth()*coin.getCount()));
+                coin.setCount(coin.getCount() + 1);
+            } else {
+                coin.setCount(0);
+            }
+        }
+        setChanged();
+        notifyObservers();
     }
     
     private void jump() {
