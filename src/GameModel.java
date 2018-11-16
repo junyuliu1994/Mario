@@ -16,6 +16,9 @@ public class GameModel extends Observable{
     private final int WINDOW_WIDTH = 1000;
     private final int WINDOW_HEIGHT = 480;
 
+    private int FALL_SPEED = 0;
+    private final int GRAVITY = 1;
+
 	private Background background = new Background();
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
@@ -61,10 +64,13 @@ public class GameModel extends Observable{
             flashCoinsCount = 0;
         }
         move(); 
-		 stop();
-		 if (!standOnBlocks()) {
-			 fall();
-		 }
+        stop();
+        if (!standOnBlocks()) {
+        	fall();
+        }
+//             {
+//            FALL_SPEED = 0;
+//        }
 	}
 	 
 	 private void stop() {
@@ -295,7 +301,7 @@ public class GameModel extends Observable{
     	}
     	mario.setCol(1);
 		mario.setCount(0);
-		mario.setY((int) (mario.getY() - 8));
+		mario.setY((int) (mario.getY() - 7));
 		
 		mario.setJumpHeight(mario.getJumpHeight() + 4);
 		setChanged();
@@ -303,14 +309,15 @@ public class GameModel extends Observable{
     }
     
     private void fall() {
+
     	if (mario.isRight()) {
     		moveMarioOrOhters();
 		}
 		else if (mario.isLeft()) {
     		mario.setX((int) (mario.getX() + mario.getSpeed()));
 		}
-    	
-    	mario.setY((int) (mario.getY() + 4));
+//    	FALL_SPEED += GRAVITY;
+    	mario.setY((mario.getY() + 4));
 		setChanged();
 		notifyObservers();
     }
