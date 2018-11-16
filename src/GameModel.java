@@ -60,11 +60,12 @@ public class GameModel extends Observable{
             flashCoins();
             flashCoinsCount = 0;
         }
+        
         move(); 
-		 stop();
-		 if (!standOnBlocks()) {
-			 fall();
-		 }
+        stop();
+        if (!standOnBlocks()) {
+        	fall();
+		}
 	}
 	 
 	 private void stop() {
@@ -100,23 +101,15 @@ public class GameModel extends Observable{
 	 }
 	 
 	 private boolean standOnBlocks() {
-		 int leftF_x = mario.getX();
-		 int leftF_y = mario.getY() + mario.getHeight();
-		 
-		 int rightF_x = mario.getX() + mario.getWidth();
-		 int rightF_y = mario.getX() + mario.getHeight();
-		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (leftF_y == bricks.get(i).getY()) {
-				 if (leftF_x >= bricks.get(i).getX() && leftF_x <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+			 if (mario.getLeftF_y() == bricks.get(i).getY()) {
+				 if (mario.getLeftF_x() >= bricks.get(i).getX() && mario.getLeftF_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 				   		mario.setJumpHeight(0);
 				   		mario.setJump(false);
-
-
 					 return true;
 				 }
 				 
-				 if (rightF_x >= bricks.get(i).getX() && rightF_x <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+				 if (mario.getRightF_x() >= bricks.get(i).getX() && mario.getRightF_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 				   		mario.setJumpHeight(0);
 				   		mario.setJump(false);
 
@@ -128,6 +121,49 @@ public class GameModel extends Observable{
 		 
 		 return false;
 	 }
+	 
+	 //ÓÒÒÆ¶¯ÊÜ×è
+	 private boolean moveRightStockByBlocks() {
+		 for (int i = 0; i < bricks.size(); i++) {
+			 if (mario.getRightH_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+				 if (mario.getRightH_y() >= bricks.get(i).getY() && mario.getRightH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
+					 return true;
+				 }
+			 }
+		 }
+		 
+		 for (int i = 0; i < bricks.size(); i++) {
+			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+				 if (mario.getRightTopC_y() >= bricks.get(i).getY() && mario.getRightTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
+					 return true;
+				 }
+			 }
+		 }
+		 
+		 return false;
+	 }
+	 
+	 //×óÒÆ¶¯ÊÜ×è
+	 private boolean moveLeftStockByBlocks() {
+		 for (int i = 0; i < bricks.size(); i++) {
+			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //×óÓÒÅöµ½·½¿éÓÒ±ß
+				 if (mario.getLeftH_y() >= bricks.get(i).getY() && mario.getLeftH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
+					 return true;
+				 }
+			 }
+		 }
+		 
+		 for (int i = 0; i < bricks.size(); i++) {
+			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+				 if (mario.getLeftTopC_y() >= bricks.get(i).getY() && mario.getLeftTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
+					 return true;
+				 }
+			 }
+		 }
+		 
+		 return false;
+	 }
+	 
 	 	 
 	 //when mario cor_x > 1/2 of 1000, then move other stuff contains background
 	 private void moveMarioOrOhters() {
@@ -152,12 +188,17 @@ public class GameModel extends Observable{
 	    }
 	 }
 	 
+	 
 	 public void move() {
 		if (mario.isRight() && !mario.isJump()) {
-		    moveRight();
+			if (!moveRightStockByBlocks()) {
+				moveRight();
+			}
 	    }
 	    else if (mario.isLeft() && !mario.isJump()) {
-	    	moveLeft();
+	    	if (!moveLeftStockByBlocks()) {
+	    		moveLeft();
+	    	}
 	    }
 	    
 	   	if (mario.getJumpHeight() < mario.getJumpMax() && mario.isJump() == true) {
@@ -275,39 +316,66 @@ public class GameModel extends Observable{
         notifyObservers();
     }
     
+    private boolean jumpStockByBrick() {
+    	for (int i = 0; i < bricks.size(); i++) {
+			 if (mario.getHead_y() == bricks.get(i).getY() + bricks.get(i).getHeight()) { 
+				 if (mario.getHead_x() >= bricks.get(i).getX() && mario.getHead_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+					 return true;
+				 }
+			 }
+		 }
+		 
+		 return false;
+    }
+    
     private void jump() {
-    	if (mario.isRight()) {
-    		moveMarioOrOhters();
-		}
-		else if (mario.isLeft()) {
-    		mario.setX((int) (mario.getX() + mario.getSpeed()));
-		}
-		
-    	if (mario.getDirection() == 1) {
-    		mario.setImage(marioImage);
-    		mario.setOffset_x(395);
-    		mario.setOffset_y(78);
+    	if (!jumpStockByBrick()) {
+	    	if (mario.isRight()) {
+	    		if (!moveRightStockByBlocks()) {
+	    			moveMarioOrOhters();
+	    		}
+			}
+			else if (mario.isLeft()) {
+				if (!moveLeftStockByBlocks()) {
+					mario.setX((int) (mario.getX() + mario.getSpeed()));
+				}
+			}
+			
+	    	if (mario.getDirection() == 1) {
+	    		mario.setImage(marioImage);
+	    		mario.setOffset_x(395);
+	    		mario.setOffset_y(78);
+	    	}
+	    	else {
+	    		mario.setImage(marioConvertImage);
+	    		mario.setOffset_x(591);
+	    		mario.setOffset_y(78);
+	    	}
+	    	mario.setCol(1);
+			mario.setCount(0);
+			mario.setY((int) (mario.getY() - 8));
+			
+			mario.setJumpHeight(mario.getJumpHeight() + 4);
+			setChanged();
+			notifyObservers();
     	}
     	else {
-    		mario.setImage(marioConvertImage);
-    		mario.setOffset_x(591);
-    		mario.setOffset_y(78);
+    		mario.setJumpHeight(mario.getJumpMax());
+    		setChanged();
+			notifyObservers();
     	}
-    	mario.setCol(1);
-		mario.setCount(0);
-		mario.setY((int) (mario.getY() - 8));
-		
-		mario.setJumpHeight(mario.getJumpHeight() + 4);
-		setChanged();
-		notifyObservers();
     }
     
     private void fall() {
     	if (mario.isRight()) {
-    		moveMarioOrOhters();
+    		if (!moveRightStockByBlocks()) {
+    			moveMarioOrOhters();
+    		}
 		}
 		else if (mario.isLeft()) {
-    		mario.setX((int) (mario.getX() + mario.getSpeed()));
+			if (!moveLeftStockByBlocks()) {
+				mario.setX((int) (mario.getX() + mario.getSpeed()));
+			}
 		}
     	
     	mario.setY((int) (mario.getY() + 4));
