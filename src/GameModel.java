@@ -22,7 +22,7 @@ public class GameModel extends Observable{
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 100, false, gcForMario);
+	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 96, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
 
@@ -322,9 +322,29 @@ public class GameModel extends Observable{
 				 if (mario.getHead_x() >= bricks.get(i).getX() && mario.getHead_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 					 return true;
 				 }
+				 
+				 if (mario.getLeft_tou_x() >= bricks.get(i).getX() && mario.getLeft_tou_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+					 return true;
+				 }
+				 
+				 if (mario.getRight_tou_x() >= bricks.get(i).getX() && mario.getRight_tou_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+					 return true;
+				 }
 			 }
 		 }
-		 
+    	
+    	for (int i = 0; i < bricks.size(); i++) {
+			 if (mario.getRightTopC_y() == bricks.get(i).getY()  + bricks.get(i).getHeight()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+				 if (mario.getRightTopC_x() >= bricks.get(i).getX() && mario.getRightTopC_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+					 return true;
+				 }
+				 
+				 if (mario.getLeftTopC_x() >= bricks.get(i).getX() && mario.getLeftTopC_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
+					 return true;
+				 }
+			 }
+    	}
+    	
 		 return false;
     }
     
@@ -353,7 +373,7 @@ public class GameModel extends Observable{
 	    	}
 	    	mario.setCol(1);
 			mario.setCount(0);
-			mario.setY((int) (mario.getY() - 8));
+			mario.setY((int) (mario.getY() - 12));
 			
 			mario.setJumpHeight(mario.getJumpHeight() + 4);
 			setChanged();
@@ -378,7 +398,7 @@ public class GameModel extends Observable{
 			}
 		}
     	
-    	mario.setY((int) (mario.getY() + 4));
+    	mario.setY((int) (mario.getY() + 8));
 		setChanged();
 		notifyObservers();
     }
