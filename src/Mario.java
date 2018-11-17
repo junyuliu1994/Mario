@@ -45,6 +45,12 @@ public class Mario {
 	private int rightTopC_x;
 	private int rightTopC_y;
 	
+	private int left_tou_x;
+	private int left_tou_y;
+	
+	private int right_tou_x;
+	private int right_tou_y;
+	
 	public int[] getLv1_left_offset_x() {
 		return lv1_left_offset_x;
 	}
@@ -188,10 +194,17 @@ public class Mario {
 		head_y = this.y;
 		
 		leftTopC_x = this.x + width/4;
-		leftTopC_y = this.y + height/3;
+		leftTopC_y = this.y + height/4;
 		
-		rightTopC_x = this.x + width*5/6;
-		rightTopC_y = this.y + height/3;
+		rightTopC_x = this.x + width*3/4;
+		rightTopC_y = this.y + height/4;
+		
+		left_tou_x = this.x + width/5;
+		left_tou_y = this.y;
+		
+		right_tou_x = this.x + width*4/5;
+		right_tou_y = this.y;
+		
 	}
 	
 	public int getX() {
@@ -426,6 +439,43 @@ public class Mario {
 		this.rightTopC_y = rightTopC_y;
 	}
 
+	public int getLeft_tou_x() {
+		return left_tou_x;
+	}
 
+
+	public void setLeft_tou_x(int left_tou_x) {
+		this.left_tou_x = left_tou_x;
+	}
+
+
+	public int getLeft_tou_y() {
+		return left_tou_y;
+	}
+
+
+	public void setLeft_tou_y(int left_tou_y) {
+		this.left_tou_y = left_tou_y;
+	}
+
+
+	public int getRight_tou_x() {
+		return right_tou_x;
+	}
+
+
+	public void setRight_tou_x(int right_tou_x) {
+		this.right_tou_x = right_tou_x;
+	}
+
+
+	public int getRight_tou_y() {
+		return right_tou_y;
+	}
+
+
+	public void setRight_tou_y(int right_tou_y) {
+		this.right_tou_y = right_tou_y;
+	}
 	
 }
