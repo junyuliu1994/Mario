@@ -16,6 +16,9 @@ public class GameModel extends Observable{
     private final int WINDOW_WIDTH = 1000;
     private final int WINDOW_HEIGHT = 480;
 
+    private final int GRAVITY = 1;
+    private int FALL_SPEED = 0;
+
 	private Background background = new Background();
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
@@ -65,7 +68,10 @@ public class GameModel extends Observable{
         stop();
         if (!standOnBlocks()) {
         	fall();
-		}
+		} else {
+            // reset fall speed
+            FALL_SPEED = 0;
+        }
 	}
 	 
 	 private void stop() {
@@ -122,10 +128,10 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 //ÓÒÒÆ¶¯ÊÜ×è
+	 //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	 private boolean moveRightStockByBlocks() {
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightH_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getRightH_x() == bricks.get(i).getX()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getRightH_y() >= bricks.get(i).getY() && mario.getRightH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -133,7 +139,7 @@ public class GameModel extends Observable{
 		 }
 		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getRightTopC_y() >= bricks.get(i).getY() && mario.getRightTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -143,10 +149,10 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 //×óÒÆ¶¯ÊÜ×è
+	 //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	 private boolean moveLeftStockByBlocks() {
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //×óÓÒÅöµ½·½¿éÓÒ±ß
+			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½
 				 if (mario.getLeftH_y() >= bricks.get(i).getY() && mario.getLeftH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -154,7 +160,7 @@ public class GameModel extends Observable{
 		 }
 		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getLeftTopC_y() >= bricks.get(i).getY() && mario.getLeftTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -303,6 +309,8 @@ public class GameModel extends Observable{
 		setChanged();
 		notifyObservers();
     }
+
+
     private void flashCoins(){
         for (Coin coin : coins) {
             if (coin.getCount() < coin.getCol()) {
@@ -329,6 +337,7 @@ public class GameModel extends Observable{
     }
     
     private void jump() {
+
     	if (!jumpStockByBrick()) {
 	    	if (mario.isRight()) {
 	    		if (!moveRightStockByBlocks()) {
@@ -377,7 +386,7 @@ public class GameModel extends Observable{
 				mario.setX((int) (mario.getX() + mario.getSpeed()));
 			}
 		}
-    	
+//    	FALL_SPEED+=GRAVITY;
     	mario.setY((int) (mario.getY() + 4));
 		setChanged();
 		notifyObservers();
