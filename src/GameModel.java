@@ -16,13 +16,16 @@ public class GameModel extends Observable{
     private final int WINDOW_WIDTH = 1000;
     private final int WINDOW_HEIGHT = 480;
 
+    private final int GRAVITY = 1;
+    private int FALL_SPEED = 0;
+
 	private Background background = new Background();
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 96, false, gcForMario);
+	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 176, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
 
@@ -65,7 +68,9 @@ public class GameModel extends Observable{
         stop();
         if (!standOnBlocks()) {
         	fall();
-		}
+		} else {
+            FALL_SPEED = 0;
+        }
 	}
 	 
 	 private void stop() {
@@ -122,10 +127,10 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 //ÓÒÒÆ¶¯ÊÜ×è
+	 //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	 private boolean moveRightStockByBlocks() {
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightH_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getRightH_x() == bricks.get(i).getX()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getRightH_y() >= bricks.get(i).getY() && mario.getRightH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -133,7 +138,7 @@ public class GameModel extends Observable{
 		 }
 		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getRightTopC_y() >= bricks.get(i).getY() && mario.getRightTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -143,10 +148,10 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 //×óÒÆ¶¯ÊÜ×è
+	 //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	 private boolean moveLeftStockByBlocks() {
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //×óÓÒÅöµ½·½¿éÓÒ±ß
+			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½
 				 if (mario.getLeftH_y() >= bricks.get(i).getY() && mario.getLeftH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -154,7 +159,7 @@ public class GameModel extends Observable{
 		 }
 		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getLeftTopC_y() >= bricks.get(i).getY() && mario.getLeftTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -334,7 +339,7 @@ public class GameModel extends Observable{
 		 }
     	
     	for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightTopC_y() == bricks.get(i).getY()  + bricks.get(i).getHeight()) { //ÓÒÊÖ´¥Åöµ½·½¿é×ó±ß
+			 if (mario.getRightTopC_y() == bricks.get(i).getY()  + bricks.get(i).getHeight()) { //ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				 if (mario.getRightTopC_x() >= bricks.get(i).getX() && mario.getRightTopC_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 					 return true;
 				 }
@@ -397,7 +402,7 @@ public class GameModel extends Observable{
 				mario.setX((int) (mario.getX() + mario.getSpeed()));
 			}
 		}
-    	
+    	FALL_SPEED+=8;
     	mario.setY((int) (mario.getY() + 8));
 		setChanged();
 		notifyObservers();
