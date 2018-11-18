@@ -263,7 +263,7 @@ public class MarioGameView extends Application implements Observer{
 		gc.drawImage(background, 0,0);
 
 		// load main GUI
-		Image title = new Image("resources/title.png");
+		Image title = new Image("resources/star1.png");
 		gc.drawImage(title,275,40);
 		gc.setFill(Color.WHITE);
 		gc.setFont(font);
