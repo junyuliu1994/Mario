@@ -117,6 +117,18 @@ public class MarioGameView extends Application implements Observer{
 //                        coinAnimation2.play();
 
 						break;
+
+                    case '3':
+                        Mushroom mushroom = new Mushroom(gameModel.getItemImage(),40,40,j*40,i*40);
+//                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
+//                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
+                        gameController.getMushrooms().add(mushroom);
+//
+                        gcForMario.drawImage(mushroom.getImage(),
+                                mushroom.getOffset_x(), mushroom.getOffset_y(),
+                                mushroom.getWidth(), mushroom.getHeight(),
+                                mushroom.getX(),mushroom.getY(), mushroom.getWidth(), mushroom.getHeight()
+                        );
 				}
 			}
 		}
@@ -184,6 +196,16 @@ public class MarioGameView extends Application implements Observer{
 					coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight()
 			);
 		}
+
+        for (Mushroom mushroom : gameController.getMushrooms()) {
+            if (mushroom != null) {
+                gcForMario.drawImage(mushroom.getImage(),
+                        mushroom.getOffset_x(), mushroom.getOffset_y(),
+                        mushroom.getWidth(), mushroom.getHeight(),
+                        mushroom.getX(), mushroom.getY(), mushroom.getWidth(), mushroom.getHeight()
+                );
+            }
+        }
 	}
 
 	public void initGame(Scene scene){
@@ -196,14 +218,12 @@ public class MarioGameView extends Application implements Observer{
 				gameController.setStart(true);
 				gameController.getMario().setSpeed(2);
 				gameController.getMario().setRight(true);
-				gameController.getMario().setRightRelease(-1);
 
 			}
 			else if (event.getCode().toString().equals("A")) {
 				gameController.setStart(true);
 				gameController.getMario().setSpeed(-2);
 				gameController.getMario().setLeft(true);
-				gameController.getMario().setLeftRelease(-1);
 			}
 			else if (event.getCode().toString().equals("W")) {
 				gameController.setStart(true);
@@ -216,13 +236,11 @@ public class MarioGameView extends Application implements Observer{
 				if (event.getCode().toString().equals("D")) {
 					gameController.getMario().setRight(false);
 					gameController.getMario().setSpeed(0);
-					gameController.getMario().setRightRelease(1);
 				}
 
 				if (event.getCode().toString().equals("A")) {
 					gameController.getMario().setLeft(false);
 					gameController.getMario().setSpeed(0);
-					gameController.getMario().setLeftRelease(1);
 				}
 			}
 		});
@@ -286,7 +304,6 @@ public class MarioGameView extends Application implements Observer{
 	}
 
 	private void StartMenu(Scene scene, GraphicsContext gc){
-		System.out.println("QWE");
 		reDrawStart(gc);
 		scene.setOnKeyPressed(event -> {
 			if(event.getCode()==KeyCode.UP|| event.getCode() == KeyCode.W){

@@ -61,5 +61,21 @@ public class GameController {
 		return gameModel.getCoins();
 	}
 
+	public ArrayList<Mushroom> getMushrooms() {
+		return gameModel.getMushrooms();
+	}
+
+	public void setMushrooms(ArrayList<Mushroom> mushrooms) {
+		gameModel.setMushrooms(mushrooms);
+	}
+
+	public Image getItemImage() {
+		return gameModel.getItemImage();
+	}
+
+	public void setItemImage(Image itemImage) {
+		gameModel.setItemImage(itemImage);
+	}
+
 
 }

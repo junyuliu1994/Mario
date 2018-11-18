@@ -16,18 +16,18 @@ public class GameModel extends Observable{
 	private final int WINDOW_WIDTH = 1000;
 	private final int WINDOW_HEIGHT = 480;
 
-	private final int GRAVITY = 1;
-	private int FALL_SPEED = 0;
-
 	private Background background = new Background();
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
+
+    private Image itemImage = new Image("resources/items.png");
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 176, false, gcForMario);
+	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 96, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
+    private ArrayList<Mushroom> mushrooms = new ArrayList<>();
 
 	private boolean start = false;
 	public boolean isStart() {
@@ -68,37 +68,43 @@ public class GameModel extends Observable{
 		stop();
 		if (!standOnBlocks()) {
 			fall();
-		} else {
-			FALL_SPEED = 0;
 		}
+
+        eatMushroom();
 	}
 
 	private void stop() {
-		if (!((mario.getRightRelease() == 1 ||  mario.getLeftRelease() == 1) && !mario.isJump())) {
+		if (mario.isRight() ||  mario.isLeft() || mario.isJump()) {
 			return;
 		}
 
 
-		if (mario.getRightRelease() == 1 && mario.isJump() == false) {
-			mario.setRightRelease(0);
-
-			mario.setImage(marioImage);
+		if (mario.getDirection() == 1) {
 			mario.setCol(1);
 			mario.setCount(0);
-			mario.setOffset_x(195);
-			mario.setOffset_y(80);
+            if (mario.getLevel() == 1) {
+                mario.setOffset_x(mario.getLv1_offset_x()[0]);
+                mario.setOffset_y(mario.getLv1_offset_y());
+            }
+            else if (mario.getLevel() == 2){
+                mario.setOffset_x(mario.getLv1_offset_x()[0]);
+                mario.setOffset_y(mario.getLv2_offset_y());
+            }
 
 			setChanged();
 			notifyObservers();
 		}
-		else if (mario.getLeftRelease() == 1 && !mario.isJump()) {
-			mario.setLeftRelease(0);
-
-			mario.setImage(marioConvertImage);
+		else{
 			mario.setCol(1);
 			mario.setCount(0);
-			mario.setOffset_x(791);
-			mario.setOffset_y(80);
+            if (mario.getLevel() == 1) {
+                mario.setOffset_x(mario.getLv1_left_offset_x()[0]);
+                mario.setOffset_y(mario.getLv1_offset_y());
+            }
+            else if (mario.getLevel() == 2){
+                mario.setOffset_x(mario.getLv1_left_offset_x()[0]);
+                mario.setOffset_y(mario.getLv2_left_offset_y());
+            }
 
 			setChanged();
 			notifyObservers();
@@ -106,6 +112,7 @@ public class GameModel extends Observable{
 	}
 
 	private boolean standOnBlocks() {
+	    System.out.println(mario.getLeftF_y());
 		for (int i = 0; i < bricks.size(); i++) {
 			if (mario.getLeftF_y() == bricks.get(i).getY()) {
 				if (mario.getLeftF_x() >= bricks.get(i).getX() && mario.getLeftF_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
@@ -125,6 +132,28 @@ public class GameModel extends Observable{
 		}
 
 		return false;
+	}
+
+	private void eatMushroom(){
+        for (int i = 0; i < mushrooms.size(); i++){
+            if (mushrooms.get(i) != null){
+                if (mario.getfCenter_x() >= mushrooms.get(i).getX() && mario.getfCenter_x() <= mushrooms.get(i).getX() + mushrooms.get(i).getWidth()){
+                    if (mario.getfCenter_y() >= mushrooms.get(i).getY() && mario.getfCenter_y() <= mushrooms.get(i).getY()+mushrooms.get(i).getHeight()){
+                        if (mario.getLevel() == 1) {
+                            mario.setOffset_y(mario.getLv2_offset_y());
+                            mario.setY(mario.getY() - mario.getHeight());
+                            mario.setHeight(mario.getHeight() * 2);
+                            mario.setLevel(mario.getLevel() + 1);
+                            mario.resetCollisionCor();
+
+                            mushrooms.set(i, null);
+                            setChanged();
+                            notifyObservers();
+                        }
+                    }
+                }
+            }
+        }
 	}
 
 	//���ƶ�����
@@ -185,11 +214,13 @@ public class GameModel extends Observable{
 //             System.out.println("reset coins");
 			for (Coin coin : coins) {
 				coin.setX(coin.getX() - mario.getSpeed());
-				gcForMario.drawImage(coin.getImage(), coin.getOffset_x(),coin.getOffset_y(),
-						coin.getWidth(),coin.getHeight(), coin.getX() ,coin.getY(),
-						coin.getWidth(), coin.getHeight());
 			}
 
+            for (Mushroom mushroom : mushrooms) {
+                if (mushroom != null) {
+                    mushroom.setX(mushroom.getX() - mario.getSpeed());
+                }
+            }
 		}
 	}
 
@@ -210,7 +241,7 @@ public class GameModel extends Observable{
 			jump();
 		}
 
-		if (mario.getJumpHeight() >= mario.getJumpMax()) {
+		/*if (mario.getJumpHeight() >= mario.getJumpMax()) {
 			if (mario.getDirection() == 1) {
 				mario.setImage(marioImage);
 				mario.setCol(1);
@@ -232,7 +263,7 @@ public class GameModel extends Observable{
 				notifyObservers();
 			}
 
-		}
+		}*/
 
 /*<<<<<<< HEAD
 	    if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 40 && mario.isJump()){
@@ -367,18 +398,28 @@ public class GameModel extends Observable{
 			}
 
 			if (mario.getDirection() == 1) {
-				mario.setImage(marioImage);
-				mario.setOffset_x(395);
-				mario.setOffset_y(78);
+			    if (mario.getLevel() == 1) {
+                    mario.setOffset_x(mario.getLv1_rjump_offset_x());
+                    mario.setOffset_y(mario.getLv1_rjump_offset_y());
+                }
+                else if (mario.getLevel() == 2){
+                    mario.setOffset_x(mario.getLv1_rjump_offset_x());
+                    mario.setOffset_y(mario.getLv2_rjump_offset_y());
+                }
 			}
 			else {
-				mario.setImage(marioConvertImage);
-				mario.setOffset_x(591);
-				mario.setOffset_y(78);
+                if (mario.getLevel() == 1) {
+                    mario.setOffset_x(mario.getLv1_ljump_offset_x());
+                    mario.setOffset_y(mario.getLv1_ljump_offset_y());
+                }
+                else if (mario.getLevel() == 2){
+                    mario.setOffset_x(mario.getLv1_ljump_offset_x());
+                    mario.setOffset_y(mario.getLv2_ljump_offset_y());
+                }
 			}
 			mario.setCol(1);
 			mario.setCount(0);
-			mario.setY((int) (mario.getY() - 12));
+			mario.setY((int) (mario.getY() - 8));
 
 			mario.setJumpHeight(mario.getJumpHeight() + 4);
 			setChanged();
@@ -402,8 +443,7 @@ public class GameModel extends Observable{
 				mario.setX((int) (mario.getX() + mario.getSpeed()));
 			}
 		}
-		FALL_SPEED+=8;
-		mario.setY((int) (mario.getY() + 8));
+		mario.setY((int) (mario.getY() + 4));
 		setChanged();
 		notifyObservers();
 	}
@@ -448,6 +488,14 @@ public class GameModel extends Observable{
 		return bricks;
 	}
 
+    public Image getItemImage() {
+        return itemImage;
+    }
+
+    public void setItemImage(Image itemImage) {
+        this.itemImage = itemImage;
+    }
+
 	public ArrayList<Coin> getCoins() {
 		return coins;
 	}
@@ -466,4 +514,12 @@ public class GameModel extends Observable{
 	public void setGcForMario(GraphicsContext gcForMario) {
 		this.gcForMario = gcForMario;
 	}
+
+    public ArrayList<Mushroom> getMushrooms() {
+        return mushrooms;
+    }
+
+    public void setMushrooms(ArrayList<Mushroom> mushrooms) {
+        this.mushrooms = mushrooms;
+    }
 }
