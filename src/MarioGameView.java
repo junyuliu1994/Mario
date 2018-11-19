@@ -228,7 +228,14 @@ public class MarioGameView extends Application implements Observer{
 			else if (event.getCode().toString().equals("W")) {
 				gameController.setStart(true);
 				gameController.getMario().setJump(true);
+			}else if(event.getCode() == KeyCode.ESCAPE){
+				if(!gameModel.getPaused()) {
+					gameModel.pause();
+				}else {
+					gameModel.resume();
+				}
 			}
+
 		});
 
 		scene.setOnKeyReleased(event -> {

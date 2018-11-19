@@ -33,6 +33,8 @@ public class GameModel extends Observable{
 	public boolean isStart() {
 		return start;
 	}
+	private boolean paused = false;
+	private AnimationTimer at;
 
 	public void setStart(boolean start) {
 		this.start = start;
@@ -42,7 +44,7 @@ public class GameModel extends Observable{
 
 	int canvasDistance;
 	public void start() {
-		AnimationTimer at = new AnimationTimer() {
+		at = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				// perform ticksPerFrame ticks
@@ -54,6 +56,20 @@ public class GameModel extends Observable{
 
 		};
 		at.start();
+	}
+
+	public boolean getPaused(){
+		return paused;
+	}
+
+	public void pause(){
+		at.stop();
+		paused = true;
+	}
+
+	public void resume(){
+		at.start();
+		paused = false;
 	}
 
 	private int flashCoinsCount = 0;
