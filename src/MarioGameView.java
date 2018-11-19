@@ -96,15 +96,15 @@ public class MarioGameView extends Application implements Observer{
 								gameController.getBricks().get(index).getHeight()); // the destination rectangle's height.
 						break;
 					case '2':
-						Coin coin = new Coin(gameModel.getBlocks(),38,37,j*40,i*40);
+						Wall wall = new Wall(gameModel.getBlocks(),40,40,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
 //                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
-						gameController.getCoins().add(coin);
+						gameController.getBricks().add(wall);
 //
-						gcForMario.drawImage(coin.getImage(),
-								coin.getOffset_x(), coin.getOffset_y(),
-								coin.getWidth(), coin.getHeight(),
-								coin.getX(),coin.getY(), coin.getWidth(), coin.getHeight()
+						gcForMario.drawImage(wall.getImage(),
+								wall.getOffset_x(), wall.getOffset_y(),
+								wall.getWidth(), wall.getHeight(),
+								wall.getX(),wall.getY(), wall.getWidth(), wall.getHeight()
 						);
 //                        int end = gameController.getCoins().size() -1;
 //                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
@@ -121,15 +121,15 @@ public class MarioGameView extends Application implements Observer{
 						break;
 
                     case '3':
-                        Mushroom mushroom = new Mushroom(gameModel.getItemImage(),40,40,j*40,i*40);
+                        QuestionBrick questionBrick = new QuestionBrick(gameModel.getBlocks(),40,40,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
 //                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
-                        gameController.getMushrooms().add(mushroom);
+                        gameController.getBricks().add(questionBrick);
 //
-                        gcForMario.drawImage(mushroom.getImage(),
-                                mushroom.getOffset_x(), mushroom.getOffset_y(),
-                                mushroom.getWidth(), mushroom.getHeight(),
-                                mushroom.getX(),mushroom.getY(), mushroom.getWidth(), mushroom.getHeight()
+                        gcForMario.drawImage(questionBrick.getImage(),
+								questionBrick.getOffset_x(), questionBrick.getOffset_y(),
+								questionBrick.getWidth(), questionBrick.getHeight(),
+								questionBrick.getX(),questionBrick.getY(), questionBrick.getWidth(), questionBrick.getHeight()
                         );
 				}
 			}
@@ -169,6 +169,9 @@ public class MarioGameView extends Application implements Observer{
 
 
 		for (int i = 0; i < gameController.getBricks().size(); i++) {
+		    if (gameController.getBricks().get(i) == null){
+		        continue;
+            }
 			gcForMario.drawImage(gameController.getBricks().get(i).getImage(), // the image to be drawn or null.
 					gameController.getBricks().get(i).getOffset_x(), // the source rectangle's X coordinate position.
 					gameController.getBricks().get(i).getOffset_y(), // the source rectangle's Y coordinate position.

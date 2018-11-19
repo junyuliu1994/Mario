@@ -2,8 +2,8 @@ import javafx.scene.image.Image;
 
 public class Brick {
 	private Image image;
-	private final int offset_x = 0;
-	private final int offset_y = 0;
+	private int offset_x = 0;
+	private int offset_y = 0;
 	private int width;
 	private int height;
 	private double x;
@@ -54,5 +54,13 @@ public class Brick {
 	}
 	public void setY(double y) {
 		this.y = y;
+	}
+
+	public void setOffset_x(int offset_x) {
+		this.offset_x = offset_x;
+	}
+
+	public void setOffset_y(int offset_y) {
+		this.offset_y = offset_y;
 	}
 }
