@@ -2,7 +2,7 @@ import javafx.scene.image.Image;
 
 public class Mushroom {
     private Image image;
-    private final int offset_x = 0;
+    private final int offset_x = 80;
     private final int offset_y = 0;
     private int width;
     private int height;

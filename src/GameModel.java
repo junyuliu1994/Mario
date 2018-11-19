@@ -75,6 +75,7 @@ public class GameModel extends Observable{
 			if (jumpToHoleDeath()) {
 				mario.setLevel(1);
 				mario.setDirection(1);
+				mario.setImage(marioImage);
 				mario.setOffset_x(mario.getLv1_offset_x()[0]);
 				mario.setOffset_y(mario.getLv1_offset_y());
 				mario.setHeight(mario.getInitialHeight());
