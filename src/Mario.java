@@ -70,6 +70,12 @@ public class Mario {
 	private int right_tou_x;
 	private int right_tou_y;
 
+	public int getInitialHeight() {
+		return initialHeight;
+	}
+
+	private final int initialHeight = 40;
+
 
 	public int getfCenter_y() {
 		return fCenter_y;

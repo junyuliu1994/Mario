@@ -19,6 +19,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
+
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
 	private GameController gameController = new GameController(gameModel);

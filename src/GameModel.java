@@ -28,7 +28,7 @@ public class GameModel extends Observable{
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
-
+	private Brick standBrick;
 	private boolean start = false;
 	public boolean isStart() {
 		return start;
@@ -38,9 +38,6 @@ public class GameModel extends Observable{
 		this.start = start;
 	}
 
-	int levelEnd;
-
-	int canvasDistance;
 	public void start() {
 		AnimationTimer at = new AnimationTimer() {
 			@Override
@@ -66,11 +63,41 @@ public class GameModel extends Observable{
 
 		move();
 		stop();
+
+
 		if (!standOnBlocks()) {
 			fall();
 		}
 
         eatMushroom();
+
+		if (mario.getLife() > 0){
+			if (jumpToHoleDeath()) {
+				mario.setLevel(1);
+				mario.setDirection(1);
+				mario.setOffset_x(mario.getLv1_offset_x()[0]);
+				mario.setOffset_y(mario.getLv1_offset_y());
+				mario.setHeight(mario.getInitialHeight());
+
+				mario.setLife(mario.getLife() - 1);
+				mario.setX((int)standBrick.getX());
+				mario.setY((int)standBrick.getY()-mario.getHeight());
+
+				System.out.println(mario.getX() + ", " + mario.getY());
+				setChanged();
+				notifyObservers();
+			}
+		}
+		else{
+			//gameover
+		}
+	}
+
+	private boolean jumpToHoleDeath(){
+		if (mario.getY() > 440){
+			return true;
+		}
+		return false;
 	}
 
 	private void stop() {
@@ -112,20 +139,19 @@ public class GameModel extends Observable{
 	}
 
 	private boolean standOnBlocks() {
-	    System.out.println(mario.getLeftF_y());
 		for (int i = 0; i < bricks.size(); i++) {
 			if (mario.getLeftF_y() == bricks.get(i).getY()) {
 				if (mario.getLeftF_x() >= bricks.get(i).getX() && mario.getLeftF_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 					mario.setJumpHeight(0);
 					mario.setJump(false);
+					standBrick = bricks.get(i);
 					return true;
 				}
 
 				if (mario.getRightF_x() >= bricks.get(i).getX() && mario.getRightF_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 					mario.setJumpHeight(0);
 					mario.setJump(false);
-
-
+					standBrick = bricks.get(i);
 					return true;
 				}
 			}
