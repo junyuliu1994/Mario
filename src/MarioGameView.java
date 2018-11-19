@@ -96,7 +96,7 @@ public class MarioGameView extends Application implements Observer{
                     case '2':
                         Coin coin = new Coin(gameModel.getBlocks(),38,37,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
-//                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
+//                       System.out.println("file:coin's location:"+j*40+" ,"+i*40);
                         gameController.getCoins().add(coin);
 //
                         gcForMario.drawImage(coin.getImage(),
@@ -104,6 +104,7 @@ public class MarioGameView extends Application implements Observer{
                                 coin.getWidth(), coin.getHeight(),
                                 coin.getX(),coin.getY(), coin.getWidth(), coin.getHeight()
                         );
+                        break;
 //                        int end = gameController.getCoins().size() -1;
 //                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
 //                                Duration.millis(1000),
@@ -115,8 +116,30 @@ public class MarioGameView extends Application implements Observer{
 //                        coin.setAnimation(coinAnimation2);
 //                        System.out.println(gameController.getCoins().get(end).getX() +" and "+ gameController.getCoins().get(0).getY() );
 //                        coinAnimation2.play();
-
-                        break;
+                    case '3':
+                    	Goomba goomba = new Goomba(0,40,j*40, i*40);
+                    	gameController.getGoombas().add(goomba);
+                        //System.out.println("file:goomba's location:"+ j*40+" ,"+i*40);
+                    	
+                    	int index2 = gameController.getGoombas().size() -1;
+                    	
+                    	/*
+                    	System.out.print(gameController.getGoombas().get(index2).getOffset_x() + " " + 
+    							gameController.getGoombas().get(index2).getOffset_y() + " " + 	gameController.getGoombas().get(index2).getWidth() 
+    							+ " " + gameController.getGoombas().get(index2).getHeight() );
+                    	System.out.println(gameController.getGoombas().get(index2).getX() + " " +  gameController.getGoombas().get(index2).getX());
+                    	*/
+                    	gcForMario.drawImage(gameController.getGoombas().get(index2).getImage(), // the image to be drawn or null.
+    							gameController.getGoombas().get(index2).getOffset_x(), // the source rectangle's X coordinate position.
+    							gameController.getGoombas().get(index2).getOffset_y(), // the source rectangle's Y coordinate position.
+    							gameController.getGoombas().get(index2).getWidth(), // the source rectangle's width.
+    							gameController.getGoombas().get(index2).getHeight(), // the source rectangle's height.
+    							gameController.getGoombas().get(index2).getX(), // the destination rectangle's X coordinate position.
+    							gameController.getGoombas().get(index2).getY(), // the destination rectangle's Y coordinate position.
+    							gameController.getGoombas().get(index2).getWidth(), // the destination rectangle's width.
+    							gameController.getGoombas().get(index2).getHeight());
+                    default:
+                    	
     			}
     		}
     	}  
@@ -182,10 +205,16 @@ public class MarioGameView extends Application implements Observer{
                     coin.getOffset_x(), coin.getOffset_y(),
                     coin.getWidth(), coin.getHeight(),
                     coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight()
-            );
+            );   
         }
+		
+		for(Goomba goomba: gameController.getGoombas()) {
+			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
+					goomba.getWidth(), goomba.getHeight(),
+					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
+		}
 	}
-
+	
 	public void initGame(Scene scene){
 		gameModel.start();
 		gameModel.addObserver(this);

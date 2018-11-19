@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
 
 import javafx.animation.Animation;
@@ -23,8 +24,16 @@ public class GameModel extends Observable{
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 100, false, gcForMario);
+	
+	
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
+	private ArrayList<Goomba> goombas = new ArrayList<>();
+	
+	
+	private final int monsterFrameRate = 4;
+	
+	private int goombaMovePattern = 0;
 
 	private boolean start = false;
 	public boolean isStart() {
@@ -35,9 +44,7 @@ public class GameModel extends Observable{
 		this.start = start;
 	}
 
-	int levelEnd;
 	
-	int canvasDistance;
 	public void start() {
         AnimationTimer at = new AnimationTimer() {
                @Override
@@ -48,12 +55,14 @@ public class GameModel extends Observable{
                        }
                }
 
-
         };
         at.start();
 	}
 
 	private int flashCoinsCount = 0;
+	private int monsterClockCount = 0;
+	private int monsterDeadClockCount = 0;
+	
 	private void tick() {
 	    flashCoinsCount++;
         if (flashCoinsCount == 8) {
@@ -61,14 +70,34 @@ public class GameModel extends Observable{
             flashCoinsCount = 0;
         }
         
+        //check monster dead if any
+        
+        monsterDead();
+       
+        
+        monsterClockCount++;
+        if (monsterClockCount == monsterFrameRate) {
+        	goombaMove();
+        	monsterClockCount = 0;
+        }
+        
+        
+
+        
+       
+      
+        
         move(); 
         stop();
         if (!standOnBlocks()) {
         	fall();
 		}
+        
+        
 	}
-	 
-	 private void stop() {
+	
+	
+	private void stop(){
 		 if (!((mario.getRightRelease() == 1 ||  mario.getLeftRelease() == 1) && !mario.isJump())) {
 			 return;
 		 }
@@ -95,6 +124,7 @@ public class GameModel extends Observable{
 			 mario.setOffset_x(791);
 			 mario.setOffset_y(80);
 			 
+		
 	    	 setChanged();
 	         notifyObservers();
 		 }
@@ -122,10 +152,10 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 //”““∆∂Ø ‹◊Ë
+	 
 	 private boolean moveRightStockByBlocks() {
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightH_x() == bricks.get(i).getX()) { //”“ ÷¥•≈ˆµΩ∑ΩøÈ◊Û±ﬂ
+			 if (mario.getRightH_x() == bricks.get(i).getX()) { 
 				 if (mario.getRightH_y() >= bricks.get(i).getY() && mario.getRightH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -133,7 +163,7 @@ public class GameModel extends Observable{
 		 }
 		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //”“ ÷¥•≈ˆµΩ∑ΩøÈ◊Û±ﬂ
+			 if (mario.getRightTopC_x() == bricks.get(i).getX()) { //ÔøΩÔøΩÔøΩ÷¥ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
 				 if (mario.getRightTopC_y() >= bricks.get(i).getY() && mario.getRightTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -143,10 +173,10 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 //◊Û“∆∂Ø ‹◊Ë
+	
 	 private boolean moveLeftStockByBlocks() {
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //◊Û”“≈ˆµΩ∑ΩøÈ”“±ﬂ
+			 if (mario.getLeftH_x() == bricks.get(i).getX() + bricks.get(i).getWidth()) { //ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ“±ÔøΩ
 				 if (mario.getLeftH_y() >= bricks.get(i).getY() && mario.getLeftH_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -154,7 +184,7 @@ public class GameModel extends Observable{
 		 }
 		 
 		 for (int i = 0; i < bricks.size(); i++) {
-			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //”“ ÷¥•≈ˆµΩ∑ΩøÈ◊Û±ﬂ
+			 if (mario.getLeftTopC_x() == bricks.get(i).getX()) { //ÔøΩÔøΩÔøΩ÷¥ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
 				 if (mario.getLeftTopC_y() >= bricks.get(i).getY() && mario.getLeftTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					 return true;
 				 }
@@ -164,7 +194,6 @@ public class GameModel extends Observable{
 		 return false;
 	 }
 	 
-	 	 
 	 //when mario cor_x > 1/2 of 1000, then move other stuff contains background
 	 private void moveMarioOrOhters() {
 		 if ((mario.getX() < 100 && background.getMoveLength() < 1000) || (background.getMoveLength() == 1000)) {
@@ -184,7 +213,14 @@ public class GameModel extends Observable{
                          coin.getWidth(),coin.getHeight(), coin.getX() ,coin.getY(),
                          coin.getWidth(), coin.getHeight());
              }
-
+             
+             for(Goomba goomba: goombas) {
+            	goomba.setX(goomba.getX() - mario.getSpeed());
+     			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
+     					goomba.getWidth(), goomba.getHeight(),
+     					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
+     		}
+         
 	    }
 	 }
 	 
@@ -299,7 +335,7 @@ public class GameModel extends Observable{
     	}
     	mario.setDirection(0);
     	mario.setX((int) (mario.getX() + mario.getSpeed()));
-		
+    	
 		setChanged();
 		notifyObservers();
     }
@@ -315,6 +351,168 @@ public class GameModel extends Observable{
         setChanged();
         notifyObservers();
     }
+    
+    //====These are method of monsters' movement
+    /**
+     * goombaMove
+     * This is method controls goomba's movement
+     * Goomba will intinally move to left if it collides with brick or sees cliff
+     * It turns around.
+     * 
+     * @param void
+     * @return void
+     * 
+     */
+    private void goombaMove(){
+    	for(Goomba goomba: goombas) {
+    		if(goomba.isDead) {
+    			
+        			goomba.setCount(2);
+        			goomba.setOffset_x(goomba.getIniOffsetX() + (goomba.getWidth()*goomba.getCount()));
+        		
+        			
+        		
+    		}else {
+    			
+    			//refresh Goombas' move Animation  	
+    			if (goomba.getCount() < 2) {
+        			goomba.setOffset_x(goomba.getIniOffsetX() + (goomba.getWidth()*goomba.getCount()));
+        			goomba.setCount(goomba.getCount() + 1);
+                } else {
+                	goomba.setCount(0);
+                }
+    			
+    			
+        		//goomba's actual Movement
+        		if(isLeftCollsion(goomba) || isLeftCliff(goomba)){
+        			goomba.setSpeed(5);
+        		}
+        		
+        		if(isRightCollison(goomba) || isRightCliff(goomba)) {
+        			goomba.setSpeed(-5);
+        		}
+        		goomba.setX(goomba.getX() + goomba.getSpeed());
+    			
+    		}
+    		
+    	
+    		
+			setChanged();
+	        notifyObservers();
+	        
+    	}
+    }
+ 
+    
+	/**
+     * This is helper method to determine if that Enemy objects collides with brick
+     * Checking the left side collision
+     * @param Monster Object
+     * @return boolean value
+     */
+    private boolean isLeftCollsion(Goomba goomba){
+ 
+    	//check if monster collide with brick
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(goomba.leftX == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
+    			if (goomba.leftY >= bricks.get(i).getY() && goomba.leftY <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    			return true;
+    		}
+    	}
+		return false;
+    }
+    
+    /**
+     * This is helper method to determine if that Monster objects' left is cliff
+     * @param Monster Object
+     * @return boolean value
+     */
+    
+    private boolean isLeftCliff(Goomba goomba) {
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(goomba.downLeftX <= bricks.get(i).getX() + bricks.get(i).getWidth() && goomba.downLeftX >= bricks.get(i).getX()) {
+    			if(goomba.downLeftY == bricks.get(i).getY()) {
+    				return false;
+    			}
+    		}
+    		
+    	}
+		return true;
+    }
+    
+    /**
+     * This is helper method to determine if that <onster objects collides with brick
+     * Checking the right side collision
+     * @param Monster Object
+     * @return boolean value
+     */
+    private boolean isRightCollison(Goomba goomba) {
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(goomba.rightX == bricks.get(i).getX()) {
+    			if (goomba.rightY >= bricks.get(i).getY() && goomba.rightY <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    			return true;
+    		}
+	    }
+    	
+		return false;
+    	
+    }
+    
+    /**
+     * This is helper method to determine if that Monster objects' right is cliff
+     * @param Monster Object
+     * @return boolean value
+     */
+    private boolean isRightCliff(Goomba goomba) {
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(goomba.downRightX <= bricks.get(i).getX() + bricks.get(i).getWidth() && goomba.downRightX >= bricks.get(i).getX()) {
+    			if(goomba.downLeftY == bricks.get(i).getY()) {
+    				return false;
+    			}
+    		}
+    	}
+		return true;
+    }
+    
+    /**
+     * check if this monster is step on by mario
+     * @param Monster - Monster objects need to be check
+     * @return boolean value
+     */
+    private boolean stepOnByMario(Goomba goomba) {
+    		if (mario.getLeftF_y() == goomba.getY()) {
+				 if (mario.getLeftF_x() >= goomba.getX() && mario.getLeftF_x() <=goomba.getX() + goomba.getWidth() && mario.isJump()) {
+					 return true;
+				 }
+				 if (mario.getRightF_x() >= goomba.getX() && mario.getRightF_x() <= goomba.getX() + goomba.getWidth() && mario.isJump()) {  
+					 return true;
+				 }
+			 }
+    	return false;
+    }
+    
+    
+    private void monsterDead() {
+    	 for(Iterator<Goomba> iterator = goombas.iterator(); iterator.hasNext();) {
+         	Goomba temp = iterator.next();
+         	if(stepOnByMario(temp)) {
+         		temp.isDead = true;
+         	}
+         }
+    }
+    
+    private void removeDeadMonster() {
+    	for(Iterator<Goomba> iterator = goombas.iterator(); iterator.hasNext();) {
+         	Goomba temp = iterator.next();
+         	if(temp.isDead) {
+         		iterator.remove();
+         		setChanged();
+    	        notifyObservers();
+         	}
+         }	
+	}
+    
+    
     
     private boolean jumpStockByBrick() {
     	for (int i = 0; i < bricks.size(); i++) {
@@ -383,6 +581,8 @@ public class GameModel extends Observable{
 		notifyObservers();
     }
     
+   
+    
     public Image getMarioImage() {
 		return marioImage;
 	}
@@ -426,6 +626,10 @@ public class GameModel extends Observable{
 	public ArrayList<Coin> getCoins() {
 		return coins;
 	}
+	
+	public ArrayList<Goomba> getGoombas() {
+		return goombas;
+	}
 	public Canvas getCanvasForMario() {
 		return canvasForMario;
 	}
@@ -441,4 +645,6 @@ public class GameModel extends Observable{
 	public void setGcForMario(GraphicsContext gcForMario) {
 		this.gcForMario = gcForMario;
 	}
+
+	
 }
