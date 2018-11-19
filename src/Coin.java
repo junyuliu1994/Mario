@@ -2,26 +2,26 @@ import javafx.scene.image.Image;
 
 public class Coin {
 	private final static int SCORE = 100;
-	
+
 	private Image image;
 	private  int col = 3;
 	private  int count = 3;
 	final int initial_offset_x = 948;
 	private int offset_x = 948;
 	final int initial_offset_y = 41;
-    private int offset_y = 41;
+	private int offset_y = 41;
 
-    // to remove the side of coins, have set this values
-    //    private final int BLOCK_WIDTH = 38;        // the pixels of one block
-    //    private final int BLOCK_HEIGHT = 37;
-    public SpriteAnimation animation;
-    private int width;
-    private int height;
-    private double x;
+	// to remove the side of coins, have set this values
+	//    private final int BLOCK_WIDTH = 38;        // the pixels of one block
+	//    private final int BLOCK_HEIGHT = 37;
+	public SpriteAnimation animation;
+	private int width;
+	private int height;
+	private double x;
 	private double y;
-	
+
 	public Coin(Image image, int width, int height, int x, int y) {
-	    this.image = image;
+		this.image = image;
 		this.width = width;
 		this.height = height;
 		this.x = x;
@@ -29,7 +29,7 @@ public class Coin {
 	}
 
 	void setAnimation(SpriteAnimation newAnimation) { this.animation = newAnimation;}
-//	SpriteAnimation getAnimation() {return this.animation;}
+	//	SpriteAnimation getAnimation() {return this.animation;}
 	public Image getImage() {
 		return image;
 	}
@@ -44,7 +44,7 @@ public class Coin {
 	public int getOffset_x() {
 		return offset_x;
 	}
-    void setoffset_y(int y) {this.offset_y = y;}
+	void setoffset_y(int y) {this.offset_y = y;}
 	public int getOffset_y() {
 		return offset_y;
 	}
