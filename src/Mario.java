@@ -215,10 +215,10 @@ public class Mario {
 	}
 
 	public void resetCollisionCor() {
-		leftF_x = this.x;;
+		leftF_x = this.x + width/10;
 		leftF_y = this.y + height;
 
-		rightF_x = this.x + width;
+		rightF_x = this.x + width*9/10;
 		rightF_y = this.y + height;
 
 		leftH_x = this.x;
