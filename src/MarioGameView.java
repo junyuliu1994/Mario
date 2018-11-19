@@ -19,24 +19,26 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
+
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
 	private GameController gameController = new GameController(gameModel);
-//	SpriteAnimation coinAnimation = null;
+	//	SpriteAnimation coinAnimation = null;
 	Canvas canvasForMario = gameModel.getCanvasForMario();
 	GraphicsContext gcForMario = gameModel.getGcForMario();
-//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
-    private Duration coinDuration = Duration.millis(1000);
+	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
+	private Duration coinDuration = Duration.millis(1000);
 	Image background = new Image("resources/start_background.png");
 	Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
 	int curr = 1;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+	public static void main(String[] args) {
+		launch(args);
+	}
 
-    
-    public void start(Stage primaryStage) {
+
+	public void start(Stage primaryStage) {
 
 		Group root = new Group();
 		root.getChildren().add(canvasForMario);
@@ -46,77 +48,84 @@ public class MarioGameView extends Application implements Observer{
 		//initGame(scene);
 		primaryStage.setTitle("Mario Game");
 		primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-    
-    
-    
-    private void initContent() {
-    	 gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
-    			 gameController.getBackground().getOffset_x(), // the source rectangle's X coordinate position.
-    			 gameController.getBackground().getOffset_y(), // the source rectangle's Y coordinate position.
-    			 gameController.getBackground().getWidth(), // the source rectangle's width.
-    			 gameController.getBackground().getHeight(), // the source rectangle's height.
-    			 gameController.getBackground().getX(), // the destination rectangle's X coordinate position.
-    			 gameController.getBackground().getY(), // the destination rectangle's Y coordinate position.
-    			 gameController.getBackground().getWidth(), // the destination rectangle's width.
-    			 gameController.getBackground().getHeight()); // the destination rectangle's height. 
-    	 
-    	
-    	 gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
-         		gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
-         		gameController.getMario().getOffset_y(), // the source rectangle's Y coordinate position.
-         		gameController.getMario().getWidth(), // the source rectangle's width.
-         		gameController.getMario().getHeight(), // the source rectangle's height.
-         		gameController.getMario().getX(), // the destination rectangle's X coordinate position.
-         		gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
-         		gameController.getMario().getWidth(), // the destination rectangle's width.
-         		gameController.getMario().getWidth()); // the destination rectangle's height. 
-    	     	    	 
-    	for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-    		String line = LevelData.LEVEL1[i];
-    		for (int j = 0; j < line.length(); j++) {
-    			switch (line.charAt(j)) {
-    				case '0':
-    					break;
-    				case '1':
-    					Brick brick = new Brick(gameController.getBlocks(), 40, 40, j*40, i*40);
-    					gameController.getBricks().add(brick);
-    					int index = gameController.getBricks().size() -1;
-    					gcForMario.drawImage(gameController.getBricks().get(index).getImage(), // the image to be drawn or null.
-    							gameController.getBricks().get(index).getOffset_x(), // the source rectangle's X coordinate position.
-    							gameController.getBricks().get(index).getOffset_y(), // the source rectangle's Y coordinate position.
-    							gameController.getBricks().get(index).getWidth(), // the source rectangle's width.
-    							gameController.getBricks().get(index).getHeight(), // the source rectangle's height.
-    							gameController.getBricks().get(index).getX(), // the destination rectangle's X coordinate position.
-    							gameController.getBricks().get(index).getY(), // the destination rectangle's Y coordinate position.
-    							gameController.getBricks().get(index).getWidth(), // the destination rectangle's width.
-    							gameController.getBricks().get(index).getHeight()); // the destination rectangle's height. 
-    					break;
-                    case '2':
-                        Coin coin = new Coin(gameModel.getBlocks(),38,37,j*40,i*40);
+		primaryStage.show();
+	}
+
+
+
+	private void initContent() {
+		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
+				gameController.getBackground().getOffset_x(), // the source rectangle's X coordinate position.
+				gameController.getBackground().getOffset_y(), // the source rectangle's Y coordinate position.
+				gameController.getBackground().getWidth(), // the source rectangle's width.
+				gameController.getBackground().getHeight(), // the source rectangle's height.
+				gameController.getBackground().getX(), // the destination rectangle's X coordinate position.
+				gameController.getBackground().getY(), // the destination rectangle's Y coordinate position.
+				gameController.getBackground().getWidth(), // the destination rectangle's width.
+				gameController.getBackground().getHeight()); // the destination rectangle's height.
+
+
+		gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
+				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
+				gameController.getMario().getOffset_y(), // the source rectangle's Y coordinate position.
+				gameController.getMario().getWidth(), // the source rectangle's width.
+				gameController.getMario().getHeight(), // the source rectangle's height.
+				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
+				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
+				gameController.getMario().getWidth(), // the destination rectangle's width.
+				gameController.getMario().getWidth()); // the destination rectangle's height.
+
+		for (int i = 0; i < LevelData.LEVEL1.length; i++) {
+			String line = LevelData.LEVEL1[i];
+			for (int j = 0; j < line.length(); j++) {
+				switch (line.charAt(j)) {
+					case '0':
+						break;
+					case '1':
+						Brick brick = new Brick(gameController.getBlocks(), 40, 40, j*40, i*40);
+						gameController.getBricks().add(brick);
+						int index = gameController.getBricks().size() -1;
+						gcForMario.drawImage(gameController.getBricks().get(index).getImage(), // the image to be drawn or null.
+								gameController.getBricks().get(index).getOffset_x(), // the source rectangle's X coordinate position.
+								gameController.getBricks().get(index).getOffset_y(), // the source rectangle's Y coordinate position.
+								gameController.getBricks().get(index).getWidth(), // the source rectangle's width.
+								gameController.getBricks().get(index).getHeight(), // the source rectangle's height.
+								gameController.getBricks().get(index).getX(), // the destination rectangle's X coordinate position.
+								gameController.getBricks().get(index).getY(), // the destination rectangle's Y coordinate position.
+								gameController.getBricks().get(index).getWidth(), // the destination rectangle's width.
+								gameController.getBricks().get(index).getHeight()); // the destination rectangle's height.
+						break;
+					case '2':
+						Wall wall = new Wall(gameModel.getBlocks(),40,40,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
-//                       System.out.println("file:coin's location:"+j*40+" ,"+i*40);
-                        gameController.getCoins().add(coin);
+
+//                   
+
+//                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
+						gameController.getBricks().add(wall);
+
+                   
+						gcForMario.drawImage(wall.getImage(),
+								wall.getOffset_x(), wall.getOffset_y(),
+								wall.getWidth(), wall.getHeight(),
+								wall.getX(),wall.getY(), wall.getWidth(), wall.getHeight()
+						);
+						break;
+						
+
+                    case '3':
+                        QuestionBrick questionBrick = new QuestionBrick(gameModel.getBlocks(),40,40,j*40,i*40);
+//                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
+//                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
+                        gameController.getBricks().add(questionBrick);
 //
-                        gcForMario.drawImage(coin.getImage(),
-                                coin.getOffset_x(), coin.getOffset_y(),
-                                coin.getWidth(), coin.getHeight(),
-                                coin.getX(),coin.getY(), coin.getWidth(), coin.getHeight()
+                        gcForMario.drawImage(questionBrick.getImage(),
+								questionBrick.getOffset_x(), questionBrick.getOffset_y(),
+								questionBrick.getWidth(), questionBrick.getHeight(),
+								questionBrick.getX(),questionBrick.getY(), questionBrick.getWidth(), questionBrick.getHeight()
                         );
                         break;
-//                        int end = gameController.getCoins().size() -1;
-//                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
-//                                Duration.millis(1000),
-//                                gameController.getCoins().get(end).getCount(), gameController.getCoins().get(end).getCol(),
-//                                gameController.getCoins().get(end).getOffset_x(), gameController.getCoins().get(end).getOffset_y(),
-//                                gameController.getCoins().get(end).getWidth(), gameController.getCoins().get(end).getHeight(),
-//                                gameController.getCoins().get(end).getX(), gameController.getCoins().get(end).getY(), gcForMario, 1, false);
-//                        coinAnimation2.setCycleCount(Animation.INDEFINITE);
-//                        coin.setAnimation(coinAnimation2);
-//                        System.out.println(gameController.getCoins().get(end).getX() +" and "+ gameController.getCoins().get(0).getY() );
-//                        coinAnimation2.play();
-                    case '3':
+                    case '4':
                     	Goomba goomba = new Goomba(0,40,j*40, i*40);
                     	gameController.getGoombas().add(goomba);
                         //System.out.println("file:goomba's location:"+ j*40+" ,"+i*40);
@@ -139,11 +148,22 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getGoombas().get(index2).getWidth(), // the destination rectangle's width.
     							gameController.getGoombas().get(index2).getHeight());
                     default:
-                    	
+
+                   
+                  
     			}
     		}
     	}  
     }
+
+
+
+			
+
+                        
+                   
+                        
+   
 
 	@Override
 	public void update(Observable o, Object arg1) {
@@ -152,7 +172,7 @@ public class MarioGameView extends Application implements Observer{
 		reDrawExceptionMario();
 		reDrawMario();
 	}
-	
+
 	private void reDrawMario() {
 		gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
 				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
@@ -162,22 +182,25 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
 				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
 				gameController.getMario().getWidth(), // the destination rectangle's width.
-				gameController.getMario().getHeight()); // the destination rectangle's height. 
+				gameController.getMario().getHeight()); // the destination rectangle's height.
 	}
-	
+
 	private void reDrawExceptionMario() {
 		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
-   			 gameController.getBackground().getOffset_x(), // the source rectangle's X coordinate position.
-   			 gameController.getBackground().getOffset_y(), // the source rectangle's Y coordinate position.
-   			 gameController.getBackground().getWidth(), // the source rectangle's width.
-   			 gameController.getBackground().getHeight(), // the source rectangle's height.
-   			 gameController.getBackground().getX(), // the destination rectangle's X coordinate position.
-   			 gameController.getBackground().getY(), // the destination rectangle's Y coordinate position.
-   			 gameController.getBackground().getWidth(), // the destination rectangle's width.
-   			 gameController.getBackground().getHeight()); // the destination rectangle's height. 
-		
-		
+				gameController.getBackground().getOffset_x(), // the source rectangle's X coordinate position.
+				gameController.getBackground().getOffset_y(), // the source rectangle's Y coordinate position.
+				gameController.getBackground().getWidth(), // the source rectangle's width.
+				gameController.getBackground().getHeight(), // the source rectangle's height.
+				gameController.getBackground().getX(), // the destination rectangle's X coordinate position.
+				gameController.getBackground().getY(), // the destination rectangle's Y coordinate position.
+				gameController.getBackground().getWidth(), // the destination rectangle's width.
+				gameController.getBackground().getHeight()); // the destination rectangle's height.
+
+
 		for (int i = 0; i < gameController.getBricks().size(); i++) {
+		    if (gameController.getBricks().get(i) == null){
+		        continue;
+            }
 			gcForMario.drawImage(gameController.getBricks().get(i).getImage(), // the image to be drawn or null.
 					gameController.getBricks().get(i).getOffset_x(), // the source rectangle's X coordinate position.
 					gameController.getBricks().get(i).getOffset_y(), // the source rectangle's Y coordinate position.
@@ -186,7 +209,7 @@ public class MarioGameView extends Application implements Observer{
 					gameController.getBricks().get(i).getX(), // the destination rectangle's X coordinate position.
 					gameController.getBricks().get(i).getY(), // the destination rectangle's Y coordinate position.
 					gameController.getBricks().get(i).getWidth(), // the destination rectangle's width.
-					gameController.getBricks().get(i).getHeight()); // the destination rectangle's height. 
+					gameController.getBricks().get(i).getHeight()); // the destination rectangle's height.
 		}
 
 //		System.out.println("redraw coins");
@@ -201,11 +224,23 @@ public class MarioGameView extends Application implements Observer{
 //		    coin.animation.play();
 //        }
 
-            gcForMario.drawImage(coin.getImage(),
-                    coin.getOffset_x(), coin.getOffset_y(),
-                    coin.getWidth(), coin.getHeight(),
-                    coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight()
-            );   
+
+			gcForMario.drawImage(coin.getImage(),
+					coin.getOffset_x(), coin.getOffset_y(),
+					coin.getWidth(), coin.getHeight(),
+					coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight()
+			);
+		}
+
+        for (Mushroom mushroom : gameController.getMushrooms()) {
+            if (mushroom != null) {
+                gcForMario.drawImage(mushroom.getImage(),
+                        mushroom.getOffset_x(), mushroom.getOffset_y(),
+                        mushroom.getWidth(), mushroom.getHeight(),
+                        mushroom.getX(), mushroom.getY(), mushroom.getWidth(), mushroom.getHeight()
+                );
+            }
+
         }
 		
 		for(Goomba goomba: gameController.getGoombas()) {
@@ -221,40 +256,36 @@ public class MarioGameView extends Application implements Observer{
 
 
 		scene.setOnKeyPressed(event -> {
-        	if (event.getCode().toString().equals("D")) {
-        		gameController.setStart(true);
-        		gameController.getMario().setSpeed(2);
-        		gameController.getMario().setRight(true);
-        		gameController.getMario().setRightRelease(-1);
-        		
-        	}
-        	else if (event.getCode().toString().equals("A")) {
-        		gameController.setStart(true);
-        		gameController.getMario().setSpeed(-2);
-        		gameController.getMario().setLeft(true);
-        		gameController.getMario().setLeftRelease(-1);
-        	}
-        	else if (event.getCode().toString().equals("W")) {
-        		gameController.setStart(true);
-        		gameController.getMario().setJump(true);
-        	}
-        });
+			if (event.getCode().toString().equals("D")) {
+				gameController.setStart(true);
+				gameController.getMario().setSpeed(2);
+				gameController.getMario().setRight(true);
+
+			}
+			else if (event.getCode().toString().equals("A")) {
+				gameController.setStart(true);
+				gameController.getMario().setSpeed(-2);
+				gameController.getMario().setLeft(true);
+			}
+			else if (event.getCode().toString().equals("W")) {
+				gameController.setStart(true);
+				gameController.getMario().setJump(true);
+			}
+		});
 
 		scene.setOnKeyReleased(event -> {
-        	if (gameController.getMario().getMarioAnimation() != null) {
-        		if (event.getCode().toString().equals("D")) {
-        			gameController.getMario().setRight(false);
-	        		gameController.getMario().setSpeed(0);
-	        		gameController.getMario().setRightRelease(1);
-        		}
-        		
-        		if (event.getCode().toString().equals("A")) {
-        			gameController.getMario().setLeft(false);
-	        		gameController.getMario().setSpeed(0);
-	        		gameController.getMario().setLeftRelease(1);
-        		}
-        	}
-        });
+			if (gameController.getMario().getMarioAnimation() != null) {
+				if (event.getCode().toString().equals("D")) {
+					gameController.getMario().setRight(false);
+					gameController.getMario().setSpeed(0);
+				}
+
+				if (event.getCode().toString().equals("A")) {
+					gameController.getMario().setLeft(false);
+					gameController.getMario().setSpeed(0);
+				}
+			}
+		});
 
 		initContent();
 	}

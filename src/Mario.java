@@ -5,13 +5,13 @@ import javafx.util.Duration;
 
 public class Mario {
 	private Image image;
-    private int col;
-    private int count;
-    private int offset_x;
-    private int offset_y;
-    private int width;
-    private int height;
-    private int x;
+	private int col;
+	private int count;
+	private int offset_x;
+	private int offset_y;
+	private int width;
+	private int height;
+	private int x;
 	private int y;
 	private int direction; //1 right 0 left
 	private double speed;
@@ -23,28 +23,71 @@ public class Mario {
 	private boolean left;
 	private int [] lv1_offset_x = {195, 195+40, 195+40*2, 195+40*3};//right
 	private int [] lv1_left_offset_x = {791, 791-40, 791-40*2, 791-40*3};//left
-	
+
+	private int lv1_offset_y = 80;
+	private int lv1_left_offset_y = 80;
+
+	private int lv2_offset_y = 0;
+	private int lv2_left_offset_y = 0;
+
+	private int lv1_rjump_offset_x = 395;
+	private int lv1_rjump_offset_y = 80;
+
+	private int lv1_ljump_offset_x = 591;
+	private int lv1_ljump_offset_y = 78;
+
+	private int lv2_rjump_offset_y = 0;
+
+	private int lv2_ljump_offset_y = 0;
+
+	private int level = 1;
+	private int life = 3;
+
 	private int leftF_x;
 	private int leftF_y;
-	
+
 	private int rightF_x;
 	private int rightF_y;
-	
+
 	private int leftH_x;
 	private int leftH_y;
-	
+
 	private int rightH_x;
 	private int rightH_y;
-	
+
 	private int head_x;
 	private int head_y;
-	
+
 	private int leftTopC_x;
 	private int leftTopC_y;
-	
+
 	private int rightTopC_x;
 	private int rightTopC_y;
-	
+
+	private int left_tou_x;
+	private int left_tou_y;
+
+	private int right_tou_x;
+	private int right_tou_y;
+
+	public int getInitialHeight() {
+		return initialHeight;
+	}
+
+	private final int initialHeight = 40;
+
+
+	public int getfCenter_y() {
+		return fCenter_y;
+	}
+
+	public void setfCenter_y(int fCenter_y) {
+		this.fCenter_y = fCenter_y;
+	}
+
+	private int fCenter_x ;
+	private int fCenter_y;
+
 	public int[] getLv1_left_offset_x() {
 		return lv1_left_offset_x;
 	}
@@ -64,55 +107,31 @@ public class Mario {
 		this.lv1_offset_x = lv1_offset_x;
 	}
 
-
-	private int rightRelease;
-	public int getRightRelease() {
-		return rightRelease;
-	}
-
-
-	public void setRightRelease(int rightRelease) {
-		this.rightRelease = rightRelease;
-	}
-
-
-	public int getLeftRelease() {
-		return leftRelease;
-	}
-
-
-	public void setLeftRelease(int leftRelease) {
-		this.leftRelease = leftRelease;
-	}
-
-
-	private int leftRelease;
-
 	public Mario(Image image, int col, int count, int offset_x, int offset_y, int width, int height, int x, int y, int direction, int jumpHeight, int jumpMax, boolean jump, GraphicsContext gc) {
-    	this.image = image;
-        this.col  =   col;
-        this.count    =  count;
-        this.offset_x =  offset_x;
-        this.offset_y =  offset_y;
-        this.width    = width;
-        this.height   = height;
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
-        this.jumpHeight = jumpHeight;
-        this.jumpMax = jumpMax;
-        this.jump = jump;
-        
-        marioAnimation = new SpriteAnimation(this.getImage(),
-                Duration.millis(500),
-                this.getCount(), this.getCol(),
-                this.getOffset_x(), this.getOffset_y(),
-                this.getWidth(), this.getHeight(), 
-                this.getX(), this.getY(), gc, 1, true);
-        marioAnimation.setCycleCount(Animation.INDEFINITE);
-        
-        resetCollisionCor();
-    }
+		this.image = image;
+		this.col  =   col;
+		this.count    =  count;
+		this.offset_x =  offset_x;
+		this.offset_y =  offset_y;
+		this.width    = width;
+		this.height   = height;
+		this.x = x;
+		this.y = y;
+		this.direction = direction;
+		this.jumpHeight = jumpHeight;
+		this.jumpMax = jumpMax;
+		this.jump = jump;
+
+		marioAnimation = new SpriteAnimation(this.getImage(),
+				Duration.millis(500),
+				this.getCount(), this.getCol(),
+				this.getOffset_x(), this.getOffset_y(),
+				this.getWidth(), this.getHeight(),
+				this.getX(), this.getY(), gc, 1, true);
+		marioAnimation.setCycleCount(Animation.INDEFINITE);
+
+		resetCollisionCor();
+	}
 
 
 	public Image getImage() {
@@ -121,6 +140,22 @@ public class Mario {
 
 	public void setImage(Image image) {
 		this.image = image;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getLife() {
+		return life;
+	}
+
+	public void setLife(int life) {
+		this.life = life;
 	}
 
 	public int getCol() {
@@ -170,30 +205,48 @@ public class Mario {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
-	private void resetCollisionCor() {
-		leftF_x = this.x;;
+
+	public int getfCenter_x() {
+		return fCenter_x;
+	}
+
+	public void setfCenter_x(int fCenter_x) {
+		this.fCenter_x = fCenter_x;
+	}
+
+	public void resetCollisionCor() {
+		leftF_x = this.x + width/10;
 		leftF_y = this.y + height;
-		
-		rightF_x = this.x + width;
+
+		rightF_x = this.x + width*9/10;
 		rightF_y = this.y + height;
-		
+
 		leftH_x = this.x;
 		leftH_y = this.y + height/2;
-		
+
 		rightH_x = this.x + width;
 		rightH_y = this.y + height/2;
-		
+
 		head_x = this.x + width/2;
 		head_y = this.y;
-		
+
 		leftTopC_x = this.x + width/4;
-		leftTopC_y = this.y + height/3;
-		
-		rightTopC_x = this.x + width*5/6;
-		rightTopC_y = this.y + height/3;
+		leftTopC_y = this.y + height/4;
+
+		rightTopC_x = this.x + width*3/4;
+		rightTopC_y = this.y + height/4;
+
+		left_tou_x = this.x + width/5;
+		left_tou_y = this.y;
+
+		right_tou_x = this.x + width*4/5;
+		right_tou_y = this.y;
+
+		fCenter_x = this.x + width/2;
+		fCenter_y = this.y;
+
 	}
-	
+
 	public int getX() {
 		return x;
 	}
@@ -214,7 +267,7 @@ public class Mario {
 		this.y = y;
 		resetCollisionCor();
 	}
-	
+
 	public int getDirection() {
 		return direction;
 	}
@@ -227,11 +280,11 @@ public class Mario {
 	public double getSpeed() {
 		return speed;
 	}
-	
+
 	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
-	
+
 	public double getJumpHeight() {
 		return jumpHeight;
 	}
@@ -240,7 +293,7 @@ public class Mario {
 	public void setJumpHeight(double jumpHeight) {
 		this.jumpHeight = jumpHeight;
 	}
-	
+
 	public double getJumpMax() {
 		return jumpMax;
 	}
@@ -249,7 +302,7 @@ public class Mario {
 	public void setJumpMax(double jumpMax) {
 		this.jumpMax = jumpMax;
 	}
-	
+
 	public boolean isJump() {
 		return jump;
 	}
@@ -287,7 +340,7 @@ public class Mario {
 	public void setLeft(boolean left) {
 		this.left = left;
 	}
-	
+
 	public int getLeftF_x() {
 		return leftF_x;
 	}
@@ -386,7 +439,7 @@ public class Mario {
 	public void setHead_y(int head_y) {
 		this.head_y = head_y;
 	}
-	
+
 	public int getLeftTopC_x() {
 		return leftTopC_x;
 	}
@@ -426,6 +479,122 @@ public class Mario {
 		this.rightTopC_y = rightTopC_y;
 	}
 
+	public int getLeft_tou_x() {
+		return left_tou_x;
+	}
 
-	
+
+	public void setLeft_tou_x(int left_tou_x) {
+		this.left_tou_x = left_tou_x;
+	}
+
+
+	public int getLeft_tou_y() {
+		return left_tou_y;
+	}
+
+
+	public void setLeft_tou_y(int left_tou_y) {
+		this.left_tou_y = left_tou_y;
+	}
+
+
+	public int getRight_tou_x() {
+		return right_tou_x;
+	}
+
+
+	public void setRight_tou_x(int right_tou_x) {
+		this.right_tou_x = right_tou_x;
+	}
+
+
+	public int getRight_tou_y() {
+		return right_tou_y;
+	}
+
+
+	public void setRight_tou_y(int right_tou_y) {
+		this.right_tou_y = right_tou_y;
+	}
+
+	public int getLv1_offset_y() {
+		return lv1_offset_y;
+	}
+
+	public void setLv1_offset_y(int lv1_offset_y) {
+		this.lv1_offset_y = lv1_offset_y;
+	}
+
+	public int getLv1_left_offset_y() {
+		return lv1_left_offset_y;
+	}
+
+	public void setLv1_left_offset_y(int lv1_left_offset_y) {
+		this.lv1_left_offset_y = lv1_left_offset_y;
+	}
+
+	public int getLv2_offset_y() {
+		return lv2_offset_y;
+	}
+
+	public void setLv2_offset_y(int lv2_offset_y) {
+		this.lv2_offset_y = lv2_offset_y;
+	}
+
+	public int getLv2_left_offset_y() {
+		return lv2_left_offset_y;
+	}
+
+	public void setLv2_left_offset_y(int lv2_left_offset_y) {
+		this.lv2_left_offset_y = lv2_left_offset_y;
+	}
+
+	public int getLv1_rjump_offset_x() {
+		return lv1_rjump_offset_x;
+	}
+
+	public void setLv1_rjump_offset_x(int lv1_rjump_offset_x) {
+		this.lv1_rjump_offset_x = lv1_rjump_offset_x;
+	}
+
+	public int getLv1_rjump_offset_y() {
+		return lv1_rjump_offset_y;
+	}
+
+	public void setLv1_rjump_offset_y(int lv1_rjump_offset_y) {
+		this.lv1_rjump_offset_y = lv1_rjump_offset_y;
+	}
+
+	public int getLv1_ljump_offset_x() {
+		return lv1_ljump_offset_x;
+	}
+
+	public void setLv1_ljump_offset_x(int lv1_ljump_offset_x) {
+		this.lv1_ljump_offset_x = lv1_ljump_offset_x;
+	}
+
+	public int getLv1_ljump_offset_y() {
+		return lv1_ljump_offset_y;
+	}
+
+	public void setLv1_ljump_offset_y(int lv1_ljump_offset_y) {
+		this.lv1_ljump_offset_y = lv1_ljump_offset_y;
+	}
+
+	public int getLv2_rjump_offset_y() {
+		return lv2_rjump_offset_y;
+	}
+
+	public void setLv2_rjump_offset_y(int lv2_rjump_offset_y) {
+		this.lv2_rjump_offset_y = lv2_rjump_offset_y;
+	}
+
+	public int getLv2_ljump_offset_y() {
+		return lv2_ljump_offset_y;
+	}
+
+	public void setLv2_ljump_offset_y(int lv2_ljump_offset_y) {
+		this.lv2_ljump_offset_y = lv2_ljump_offset_y;
+	}
 }
