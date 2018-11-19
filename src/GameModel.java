@@ -469,6 +469,9 @@ public class GameModel extends Observable{
  
     	//check if monster collide with brick
     	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
     		if(goomba.leftX == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
     			if (goomba.leftY >= bricks.get(i).getY() && goomba.leftY <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
     			return true;
@@ -485,6 +488,9 @@ public class GameModel extends Observable{
     
     private boolean isLeftCliff(Goomba goomba) {
     	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
     		if(goomba.downLeftX <= bricks.get(i).getX() + bricks.get(i).getWidth() && goomba.downLeftX >= bricks.get(i).getX()) {
     			if(goomba.downLeftY == bricks.get(i).getY()) {
     				return false;
@@ -503,6 +509,9 @@ public class GameModel extends Observable{
      */
     private boolean isRightCollison(Goomba goomba) {
     	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
     		if(goomba.rightX == bricks.get(i).getX()) {
     			if (goomba.rightY >= bricks.get(i).getY() && goomba.rightY <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
     			return true;
@@ -520,6 +529,9 @@ public class GameModel extends Observable{
      */
     private boolean isRightCliff(Goomba goomba) {
     	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
     		if(goomba.downRightX <= bricks.get(i).getX() + bricks.get(i).getWidth() && goomba.downRightX >= bricks.get(i).getX()) {
     			if(goomba.downLeftY == bricks.get(i).getY()) {
     				return false;
