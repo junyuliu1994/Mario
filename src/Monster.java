@@ -12,6 +12,29 @@ public abstract class Monster {
     private double y;
     private double speed;
     private int score;
+	public boolean isDead;
+	
+	private int initial_offset_x = 0;
+	
+	private double upLeftX;
+	private double upLeftY;
+	
+	private double upRightX;
+	private double upRightY;
+	
+	private double leftX;
+	private double leftY;
+	
+	private double rightX;
+	private double rightY;
+	
+	private double downLeftX;
+	private double downLeftY;
+	
+	private double downRightX;
+	private double downRightY;
+
+	
     
     
     public Monster(Image image,int offset_x, int offset_y,int width, int height, int x, int y) {
@@ -22,6 +45,7 @@ public abstract class Monster {
     	this.height = height;
     	this.x = x;
     	this.y = y;
+    	this.isDead = false;
     }
     
     public Image getImage() {
@@ -96,4 +120,81 @@ public abstract class Monster {
 	public double getSpeed() {
 		return speed;
 	}
+	
+	public double getUpLeftX() {
+		return upLeftX;
+	}
+	
+	public double getUpLeftY() {
+		return upLeftY;
+	}
+	
+	public double getRightLeftX() {
+		return upRightX;
+	}
+	
+	public double getUpRightY() {
+		return upRightY;
+	}
+	
+	public double getDownLeftX() {
+		return downLeftX;
+	}
+	
+	public double getDownLeftY() {
+		return downLeftY;
+	}
+	
+	public double getDownRightX() {
+		return downRightX;
+	}
+	
+	public double getDownRightY() {
+		return downRightY;
+	}
+	
+	public double getRightX() {
+		return rightX;
+	}
+	
+    public double getRightY() {
+		return rightY;
+	}
+    
+    public double getLeftX() {
+		return leftX;
+	}
+    
+    public double getLeftY() {
+		return leftY;
+	}
+	
+	public void setCollisionPoint() {
+		
+		 upLeftX = this.getX() +  this.getWidth()*0.25;
+		 upLeftY = this.getY() + this.getHeight()*0.25;
+		 
+		 upRightX = this.getX() + this.getWidth()*0.75;
+		 upRightY = this.getY() + this.getHeight()*0.25;
+		
+		 leftX = this.getX();
+		 leftY = this.getY() + this.getHeight()*0.5;
+		 
+		 rightX = this.getX() + this.getWidth();
+		 rightY = this.getY() + this.getHeight()*0.5;
+		
+		 downLeftX = this.getX();
+		 downLeftY = this.getY() + this.getHeight();
+		 
+		 downRightX = this.getX() + this.getWidth();
+		 downRightY = this.getX() + this.getHeight();
+		 
+	}
+
+	public int getIniOffsetX() {
+		// TODO Auto-generated method stub
+		return initial_offset_x;
+	}
+
+	
 }

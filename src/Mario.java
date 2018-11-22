@@ -23,7 +23,7 @@ public class Mario {
 	private boolean left;
 	private int [] lv1_offset_x = {195, 195+40, 195+40*2, 195+40*3};//right
 	private int [] lv1_left_offset_x = {791, 791-40, 791-40*2, 791-40*3};//left
-
+	
 	private int lv1_offset_y = 80;
 	private int lv1_left_offset_y = 80;
 
@@ -43,32 +43,35 @@ public class Mario {
 	private int level = 1;
 	private int life = 3;
 
-	private int leftF_x;
+	private int leftF_x;//leftfeet
 	private int leftF_y;
 
-	private int rightF_x;
+	private int rightF_x;//rightfeet
 	private int rightF_y;
-
-	private int leftH_x;
+    
+	
+	private int leftH_x;//lefthand
 	private int leftH_y;
 
-	private int rightH_x;
+	private int rightH_x;//right hand 
 	private int rightH_y;
 
 	private int head_x;
-	private int head_y;
+	private int head_y;//center head
 
-	private int leftTopC_x;
+	private int leftTopC_x;//left shoulder
 	private int leftTopC_y;
 
-	private int rightTopC_x;
+	private int rightTopC_x;//right shoulder
 	private int rightTopC_y;
 
-	private int left_tou_x;
+	private int left_tou_x;//left head
 	private int left_tou_y;
 
-	private int right_tou_x;
+	private int right_tou_x;//right head
 	private int right_tou_y;
+	
+	private boolean invincible = false;
 
 	public int getInitialHeight() {
 		return initialHeight;
@@ -597,4 +600,6 @@ public class Mario {
 	public void setLv2_ljump_offset_y(int lv2_ljump_offset_y) {
 		this.lv2_ljump_offset_y = lv2_ljump_offset_y;
 	}
+	
+	
 }

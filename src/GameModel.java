@@ -29,13 +29,14 @@ public class GameModel extends Observable{
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
-    private ArrayList<Goomba> goombas = new ArrayList<>();
+    private ArrayList<Monster> monsters = new ArrayList<>();
+    
+    
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
 	private int goombaMovePattern = 0;
-	private Brick standBrick;
 	
-
+	private Brick standBrick;
 	
 	private boolean start = false;
 	public boolean isStart() {
@@ -63,8 +64,13 @@ public class GameModel extends Observable{
 
 	private int flashCoinsCount = 0;
 	private void tick() {
+		
+		
+		
 		flashCoinsCount++;
-		monsterDead();
+		
+		monsterMarioCollision();
+		
 		if (flashCoinsCount == 8) {
 			flashCoins();
 			flashQuestionBrick();
@@ -74,13 +80,13 @@ public class GameModel extends Observable{
 		
 		monsterClockCount++;
 		if (monsterClockCount == monsterFrameRate) {
-			 goombaMove();
+			 monsterMove();
 	         monsterClockCount = 0;
 	    }
-
 		move();
 		stop();
 		
+		removeDeadMonster();
        
 
 
@@ -289,11 +295,8 @@ public class GameModel extends Observable{
                 }
             }
             
-            for(Goomba goomba: goombas) {
-            	goomba.setX(goomba.getX() - mario.getSpeed());
-     			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
-     					goomba.getWidth(), goomba.getHeight(),
-     					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
+            for(Monster monster: monsters) {
+            	monster.setX(monster.getX() - mario.getSpeed());
      		}
 		}
 	}
@@ -385,9 +388,6 @@ public class GameModel extends Observable{
 		mario.setDirection(1);
 
 		moveMarioOrOhters();
-
-		
-		
 	}
 
 	private void moveLeft() {
@@ -402,9 +402,6 @@ public class GameModel extends Observable{
 		}
 		mario.setDirection(0);
 		mario.setX((int) (mario.getX() + mario.getSpeed()));
-
-		
-		
 	}
 	
 	
@@ -419,42 +416,34 @@ public class GameModel extends Observable{
      * @return void
      * 
      */
-    private void goombaMove(){
-    	for(Goomba goomba: goombas) {
-    		if(goomba.isDead) {
-    			
-        			goomba.setCount(2);
-        			goomba.setOffset_x(goomba.getIniOffsetX() + (goomba.getWidth()*goomba.getCount()));
-        		
+    private void monsterMove(){
+    	for(Monster monster: monsters) {
+    		if(monster.isDead) {
+        			monster.setCount(2);
+        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
         			
-        		
+        		    
     		}else {
-    			
-    			//refresh Goombas' move Animation  	
-    			if (goomba.getCount() < 2) {
-        			goomba.setOffset_x(goomba.getIniOffsetX() + (goomba.getWidth()*goomba.getCount()));
-        			goomba.setCount(goomba.getCount() + 1);
+    			//refresh Monster' move Animation  	
+    			if (monster.getCount() < 2) {
+        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
+        			monster.setCount(monster.getCount() + 1);
                 } else {
-                	goomba.setCount(0);
+                	monster.setCount(0);
                 }
     			
     			
-        		//goomba's actual Movement
-        		if(isLeftCollsion(goomba) || isLeftCliff(goomba)){
-        			goomba.setSpeed(5);
+        		//Monster's actual Movement
+        		if(isLeftCollsion(monster) || isLeftCliff(monster)){
+        			monster.setSpeed(5);
         		}
         		
-        		if(isRightCollison(goomba) || isRightCliff(goomba)) {
-        			goomba.setSpeed(-5);
+        		if(isRightCollison(monster) || isRightCliff(monster)) {
+        			monster.setSpeed(-5);
         		}
-        		goomba.setX(goomba.getX() + goomba.getSpeed());
+        		monster.setX(monster.getX() + monster.getSpeed());
     			
     		}
-    		
-    	
-    		
-		
-	        
     	}
     }
  
@@ -465,15 +454,14 @@ public class GameModel extends Observable{
      * @param Monster Object
      * @return boolean value
      */
-    private boolean isLeftCollsion(Goomba goomba){
- 
+    private boolean isLeftCollsion(Monster monster){
     	//check if monster collide with brick
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(goomba.leftX == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
-    			if (goomba.leftY >= bricks.get(i).getY() && goomba.leftY <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    		if(monster.getLeftX() == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
+    			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
     			return true;
     		}
     	}
@@ -486,34 +474,33 @@ public class GameModel extends Observable{
      * @return boolean value
      */
     
-    private boolean isLeftCliff(Goomba goomba) {
+    private boolean isLeftCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(goomba.downLeftX <= bricks.get(i).getX() + bricks.get(i).getWidth() && goomba.downLeftX >= bricks.get(i).getX()) {
-    			if(goomba.downLeftY == bricks.get(i).getY()) {
+    		if(monster.getDownLeftX() <= bricks.get(i).getX() + bricks.get(i).getWidth() && monster.getDownLeftX() >= bricks.get(i).getX()) {
+    			if(monster.getDownLeftY() == bricks.get(i).getY()) {
     				return false;
     			}
     		}
-    		
     	}
 		return true;
     }
     
     /**
-     * This is helper method to determine if that <onster objects collides with brick
+     * This is helper method to determine if that monster objects collides with brick
      * Checking the right side collision
      * @param Monster Object
      * @return boolean value
      */
-    private boolean isRightCollison(Goomba goomba) {
+    private boolean isRightCollison(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(goomba.rightX == bricks.get(i).getX()) {
-    			if (goomba.rightY >= bricks.get(i).getY() && goomba.rightY <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    		if(monster.getRightX() == bricks.get(i).getX()) {
+    			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
     			return true;
     		}
 	    }
@@ -527,13 +514,13 @@ public class GameModel extends Observable{
      * @param Monster Object
      * @return boolean value
      */
-    private boolean isRightCliff(Goomba goomba) {
+    private boolean isRightCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(goomba.downRightX <= bricks.get(i).getX() + bricks.get(i).getWidth() && goomba.downRightX >= bricks.get(i).getX()) {
-    			if(goomba.downLeftY == bricks.get(i).getY()) {
+    		if(monster.getDownRightX() <= bricks.get(i).getX() + bricks.get(i).getWidth() && monster.getDownRightX() >= bricks.get(i).getX()) {
+    			if(monster.getDownLeftY() == bricks.get(i).getY()) {
     				return false;
     			}
     		}
@@ -546,22 +533,50 @@ public class GameModel extends Observable{
      * @param Monster - Monster objects need to be check
      * @return boolean value
      */
-    private boolean stepOnByMario(Goomba goomba) {
-    		if (mario.getLeftF_y() == goomba.getY()) {
-				 if (mario.getLeftF_x() >= goomba.getX() && mario.getLeftF_x() <=goomba.getX() + goomba.getWidth() && mario.isJump()) {
+    private boolean stepOnByMario(Monster monster) {
+    		if (mario.getLeftF_y() == monster.getY()) {
+				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
-				 if (mario.getRightF_x() >= goomba.getX() && mario.getRightF_x() <= goomba.getX() + goomba.getWidth() && mario.isJump()) {  
+				 if (mario.getRightF_x() >= monster.getX() && mario.getRightF_x() <= monster.getX() + monster.getWidth() && mario.isJump()) {  
 					 return true;
 				 }
 			 }
     	return false;
     }
     
+    /**
+     * This method check if monster is collide by Mario
+     */
+    private boolean isMarioCollideMonster(Monster monster) {
+    	//check all possible collision point
+    	if(mario.getRightH_x() == monster.getLeftX()) {
+    		if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
+    			System.out.println("collision");
+    			return true;
+    		}
+    	}
+    	
+    	if(mario.getLeftH_x() == monster.getRightX()) {
+    		if(mario.getLeftH_y() >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
+    			System.out.println("collision");
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    	
+    }
     
-    private void monsterDead() {
-    	 for(Iterator<Goomba> iterator = goombas.iterator(); iterator.hasNext();) {
-         	Goomba temp = iterator.next();
+  
+    
+    private void monsterMarioCollision() {
+    	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+         	Monster temp = iterator.next();
+         	if(isMarioCollideMonster(temp)) {
+         		
+         	}
+         	
          	if(stepOnByMario(temp)) {
          		temp.isDead = true;
          	}
@@ -569,8 +584,8 @@ public class GameModel extends Observable{
     }
     
     private void removeDeadMonster() {
-    	for(Iterator<Goomba> iterator = goombas.iterator(); iterator.hasNext();) {
-         	Goomba temp = iterator.next();
+    	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+    		Monster temp = iterator.next();
          	if(temp.isDead) {
          		iterator.remove();
          	
@@ -801,7 +816,7 @@ public class GameModel extends Observable{
         this.mushrooms = mushrooms;
     }
 
-	public ArrayList<Goomba> getGoombas() {
-		return goombas;
+	public ArrayList<Monster> getMonsters() {
+		return monsters;
 	}
 }

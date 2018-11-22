@@ -126,11 +126,11 @@ public class MarioGameView extends Application implements Observer{
                         );
                         break;
                     case '4':
-                    	Goomba goomba = new Goomba(0,40,j*40, i*40);
-                    	gameController.getGoombas().add(goomba);
+                    	Monster goomba = new Goomba(0,40,j*40, i*40);
+                    	gameController.getMonsters().add(goomba);
                         //System.out.println("file:goomba's location:"+ j*40+" ,"+i*40);
                     	
-                    	int index2 = gameController.getGoombas().size() -1;
+                    	int index2 = gameController.getMonsters().size() -1;
                     	
                     	/*
                     	System.out.print(gameController.getGoombas().get(index2).getOffset_x() + " " + 
@@ -138,15 +138,15 @@ public class MarioGameView extends Application implements Observer{
     							+ " " + gameController.getGoombas().get(index2).getHeight() );
                     	System.out.println(gameController.getGoombas().get(index2).getX() + " " +  gameController.getGoombas().get(index2).getX());
                     	*/
-                    	gcForMario.drawImage(gameController.getGoombas().get(index2).getImage(), // the image to be drawn or null.
-    							gameController.getGoombas().get(index2).getOffset_x(), // the source rectangle's X coordinate position.
-    							gameController.getGoombas().get(index2).getOffset_y(), // the source rectangle's Y coordinate position.
-    							gameController.getGoombas().get(index2).getWidth(), // the source rectangle's width.
-    							gameController.getGoombas().get(index2).getHeight(), // the source rectangle's height.
-    							gameController.getGoombas().get(index2).getX(), // the destination rectangle's X coordinate position.
-    							gameController.getGoombas().get(index2).getY(), // the destination rectangle's Y coordinate position.
-    							gameController.getGoombas().get(index2).getWidth(), // the destination rectangle's width.
-    							gameController.getGoombas().get(index2).getHeight());
+                    	gcForMario.drawImage(gameController.getMonsters().get(index2).getImage(), // the image to be drawn or null.
+    							gameController.getMonsters().get(index2).getOffset_x(), // the source rectangle's X coordinate position.
+    							gameController.getMonsters().get(index2).getOffset_y(), // the source rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index2).getWidth(), // the source rectangle's width.
+    							gameController.getMonsters().get(index2).getHeight(), // the source rectangle's height.
+    							gameController.getMonsters().get(index2).getX(), // the destination rectangle's X coordinate position.
+    							gameController.getMonsters().get(index2).getY(), // the destination rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index2).getWidth(), // the destination rectangle's width.
+    							gameController.getMonsters().get(index2).getHeight());
                     default:
 
                    
@@ -243,7 +243,7 @@ public class MarioGameView extends Application implements Observer{
 
         }
 		
-		for(Goomba goomba: gameController.getGoombas()) {
+		for(Monster goomba: gameController.getMonsters()) {
 			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
 					goomba.getWidth(), goomba.getHeight(),
 					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());

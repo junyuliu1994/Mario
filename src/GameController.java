@@ -61,8 +61,8 @@ public class GameController {
 		return gameModel.getCoins();
 	}
 	
-	public ArrayList<Goomba> getGoombas(){
-		return gameModel.getGoombas();
+	public ArrayList<Monster> getMonsters(){
+		return gameModel.getMonsters();
 	}
 
 	public ArrayList<Mushroom> getMushrooms() {
