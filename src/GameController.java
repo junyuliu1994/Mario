@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class GameController {
@@ -79,6 +81,11 @@ public class GameController {
 
 	public void setItemImage(Image itemImage) {
 		gameModel.setItemImage(itemImage);
+	}
+
+	public void restoreModel(GameModel model, GraphicsContext gc, Canvas canvas){
+		gameModel = model;
+		gameModel.restore(gc, canvas);
 	}
 
 

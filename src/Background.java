@@ -1,12 +1,15 @@
 import javafx.scene.image.Image;
 
-public class Background {
-	private Image image = new Image("resources/background_version3.png");
+import java.io.Serializable;
+
+public class Background implements Serializable {
+	private static Image image = new Image("resources/background_version3.png");
 	private int moveLength;
 	private int width = 2000;
 	private int height = 480;
 	private int offset_x = 0;
 	private int offset_y = 70;
+	static final long serialVersionUID = 1;
 	
 	private int x = 0;
 	private int y = 0;

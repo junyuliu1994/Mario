@@ -1,15 +1,18 @@
 import javafx.scene.image.Image;
 
-public class Coin {
+import java.io.Serializable;
+
+public class Coin implements Serializable {
 	private final static int SCORE = 100;
 
-	private Image image;
+	private static Image image;
 	private  int col = 3;
 	private  int count = 3;
 	final int initial_offset_x = 948;
 	private int offset_x = 948;
 	final int initial_offset_y = 41;
 	private int offset_y = 41;
+	static final long serialVersionUID = 1;
 
 	// to remove the side of coins, have set this values
 	//    private final int BLOCK_WIDTH = 38;        // the pixels of one block

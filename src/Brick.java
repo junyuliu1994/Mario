@@ -1,13 +1,16 @@
 import javafx.scene.image.Image;
 
-public class Brick {
-	private Image image;
+import java.io.Serializable;
+
+public class Brick implements Serializable {
+	private static Image image;
 	private int offset_x = 0;
 	private int offset_y = 0;
 	private int width;
 	private int height;
 	private double x;
 	private double y;
+	static final long serialVersionUID = 1;
 
 	public Brick(Image image, int width, int height, double x, double y) {
 		this.image = image;
