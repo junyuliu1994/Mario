@@ -59,7 +59,7 @@ public class GameModel extends Observable implements Serializable {
 				for (int i = 0; i < 1; i++) {
 					tick();
 				}
-				System.out.print(123);
+				//System.out.print(123);
 			}
 
 
