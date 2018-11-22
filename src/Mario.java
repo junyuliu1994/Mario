@@ -40,6 +40,12 @@ public class Mario {
 
 	private int lv2_ljump_offset_y = 0;
 
+	private int lv3_offset_x = 0;
+
+	private int lv3_offset_y = 0;
+
+	private int lv3_loffset_x = 43;
+
 	private int level = 1;
 	private int life = 3;
 
@@ -243,7 +249,7 @@ public class Mario {
 		right_tou_y = this.y;
 
 		fCenter_x = this.x + width/2;
-		fCenter_y = this.y;
+		fCenter_y = this.y + height;
 
 	}
 
@@ -597,4 +603,29 @@ public class Mario {
 	public void setLv2_ljump_offset_y(int lv2_ljump_offset_y) {
 		this.lv2_ljump_offset_y = lv2_ljump_offset_y;
 	}
+
+	public int getLv3_offset_x() {
+		return lv3_offset_x;
+	}
+
+	public void setLv3_offset_x(int lv3_offset_x) {
+		this.lv3_offset_x = lv3_offset_x;
+	}
+
+	public int getLv3_offset_y() {
+		return lv3_offset_y;
+	}
+
+	public void setLv3_offset_y(int lv3_offset_y) {
+		this.lv3_offset_y = lv3_offset_y;
+	}
+
+	public int getLv3_loffset_x() {
+		return lv3_loffset_x;
+	}
+
+	public void setLv3_loffset_x(int lv3_loffset_x) {
+		this.lv3_loffset_x = lv3_loffset_x;
+	}
+
 }
