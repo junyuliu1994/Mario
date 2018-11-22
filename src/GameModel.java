@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -6,24 +7,26 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-public class GameModel extends Observable{
+public class GameModel extends Observable implements Serializable {
 	// didn't use this info yet
 	private final int BLOCK_WIDTH = 40;
 	private final int BLOCK_HEIGHT = 40;
 
-	private final int WINDOW_WIDTH = 1000;
-	private final int WINDOW_HEIGHT = 480;
+	private static final int WINDOW_WIDTH = 1000;
+	private static final int WINDOW_HEIGHT = 480;
+	static final long serialVersionUID = 1;
 
 	private Background background = new Background();
-	private Image marioImage = new Image("resources/mario.png");
-	private Image blocks = new Image("resources/blocks.png");
-	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
+	private static Image marioImage = new Image("resources/mario.png");
+	private static Image blocks = new Image("resources/blocks.png");
+	private static Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
 
-    private Image itemImage = new Image("resources/items.png");
-	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
-	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
+    private static Image itemImage = new Image("resources/items.png");
+	private static Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+	private static GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 96, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
@@ -34,7 +37,7 @@ public class GameModel extends Observable{
 		return start;
 	}
 	private boolean paused = false;
-	private AnimationTimer at;
+	private static AnimationTimer at;
 
 	public void setStart(boolean start) {
 		this.start = start;
@@ -51,11 +54,19 @@ public class GameModel extends Observable{
 				for (int i = 0; i < 1; i++) {
 					tick();
 				}
+				System.out.print(123);
 			}
 
 
 		};
 		at.start();
+	}
+
+	public void restore(GraphicsContext gc, Canvas canvas){
+		canvasForMario = canvas;
+		gcForMario = gc;
+		mario.getMarioAnimation().restore(gc);
+
 	}
 
 	public boolean getPaused(){

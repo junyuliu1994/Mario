@@ -1,13 +1,16 @@
 import javafx.scene.image.Image;
 
-public class Mushroom {
-    private Image image;
+import java.io.Serializable;
+
+public class Mushroom implements Serializable {
+    private static Image image;
     private final int offset_x = 0;
     private final int offset_y = 0;
     private int width;
     private int height;
     private double x;
     private double y;
+    static final long serialVersionUID = 1;
 
     public Mushroom(Image image, int width, int height, double x, double y) {
         this.image = image;

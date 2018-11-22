@@ -1,18 +1,17 @@
+import java.io.*;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -28,6 +27,7 @@ public class MarioGameView extends Application implements Observer{
 	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
 	private Duration coinDuration = Duration.millis(1000);
 	Image background = new Image("resources/start_background.png");
+	Image pause = new Image("resources/pause.png");
 	Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
 	int curr = 1;
 
@@ -231,8 +231,61 @@ public class MarioGameView extends Application implements Observer{
 			}else if(event.getCode() == KeyCode.ESCAPE){
 				if(!gameModel.getPaused()) {
 					gameModel.pause();
+					gcForMario.drawImage(pause,0,0);
+					gcForMario.setFill(Color.WHITE);
+					gcForMario.fillText("Paused", 850,40);
+					curr = 1;
+					pauseMenu(scene);
 				}else {
 					gameModel.resume();
+				}
+			}else if(event.getCode()==KeyCode.UP){
+				if(curr > 1){
+					if(gameModel.getPaused()){
+						curr --;
+						pauseMenu(scene);
+					}
+				}
+			}else if(event.getCode() == KeyCode.DOWN) {
+				if (curr < 3) {
+					if(gameModel.getPaused()){
+						curr++;
+						pauseMenu(scene);
+					}
+				}
+			}else if(event.getCode() == KeyCode.ENTER){
+				if(gameModel.getPaused()){
+					if(curr == 1){
+						try {
+							FileOutputStream file = new FileOutputStream("save_game.dat");
+							ObjectOutputStream out = new ObjectOutputStream(file);
+							out.writeObject(gameModel);
+							out.close();
+							file.close();
+							System.out.println("Game Saved");
+						}catch (IOException e){
+							e.printStackTrace();
+						}
+					}else if(curr == 2){
+						try{
+							// try to load save_game.data
+							FileInputStream file = new FileInputStream("save_game.dat");
+							ObjectInputStream in = new ObjectInputStream(file);
+							gameModel = (GameModel) in.readObject();
+							in.close();
+							file.close();
+							gameController.restoreModel(gameModel, gcForMario, canvasForMario);
+							gameModel.start();
+							gameModel.addObserver(this);
+						}catch (IOException ioe){
+							ioe.printStackTrace();
+						}catch (ClassNotFoundException nfe){
+							nfe.printStackTrace();
+						}
+					}else{
+						System.exit(0);
+
+					}
 				}
 			}
 
@@ -253,6 +306,28 @@ public class MarioGameView extends Application implements Observer{
 		});
 
 		initContent();
+	}
+
+	private void pauseMenu(Scene scene){
+		double[] x = {0,0,240};
+		double[] y = {240, 480, 480};
+		gcForMario.setFill(Color.BLACK);
+		gcForMario.fillPolygon(x,y ,3);
+		gcForMario.fillRect(20, 280,100,40);
+		gcForMario.fillRect(80, 340,100,40);
+		gcForMario.fillRect(140, 400, 100,40);
+		gcForMario.setFill(Color.GRAY);
+		gcForMario.fillText("Save",30,310);
+		gcForMario.fillText("Load", 90, 370);
+		gcForMario.fillText("Exit", 150, 430);
+		gcForMario.setFill(Color.WHITE);
+		if(curr == 1){
+			gcForMario.fillText("Save",30,310);
+		}else if(curr == 2){
+			gcForMario.fillText("Load",90,370);
+		}else{
+			gcForMario.fillText("Exit", 150, 430);
+		}
 	}
 
 	private void MainGame(Scene scene,GraphicsContext gc){

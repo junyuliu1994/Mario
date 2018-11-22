@@ -3,8 +3,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
-public class Mario {
-	private Image image;
+import java.io.Serializable;
+
+public class Mario implements Serializable {
+	private static Image image;
 	private int col;
 	private int count;
 	private int offset_x;
@@ -23,6 +25,7 @@ public class Mario {
 	private boolean left;
 	private int [] lv1_offset_x = {195, 195+40, 195+40*2, 195+40*3};//right
 	private int [] lv1_left_offset_x = {791, 791-40, 791-40*2, 791-40*3};//left
+    static final long serialVersionUID = 1;
 
 	private int lv1_offset_y = 80;
 	private int lv1_left_offset_y = 80;
@@ -126,6 +129,8 @@ public class Mario {
 
 		resetCollisionCor();
 	}
+
+
 
 
 	public Image getImage() {
