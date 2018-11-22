@@ -81,5 +81,35 @@ public class GameController {
 		gameModel.setItemImage(itemImage);
 	}
 
+	public Image getWxzImage() {
+		return gameModel.getWxzImage();
+	}
 
+	public void setWxzImage(Image wxzImage) {
+		gameModel.setWxzImage(wxzImage);
+	}
+
+	public Image getWxzConvertImage() {
+		return gameModel.getWxzConvertImage();
+	}
+
+	public void setWxzConvertImage(Image wxzConvertImage) {
+		gameModel.setWxzConvertImage(wxzConvertImage);
+	}
+
+	public ArrayList<Bullet> getBullets() {
+		return gameModel.getBullets();
+	}
+
+	public void setBullets(ArrayList<Bullet> bullets) {
+		gameModel.setBullets(bullets);
+	}
+
+	public int getScore() {
+		return gameModel.getScore();
+	}
+
+	public void setScore(int score) {
+		gameModel.setScore(score);
+	}
 }
