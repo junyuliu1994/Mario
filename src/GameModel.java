@@ -35,14 +35,14 @@ public class GameModel extends Observable{
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
     private ArrayList<Monster> monsters = new ArrayList<>();
-    
+    private ArrayList<Bullet> bullets = new ArrayList<>();
     
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
-	private int goombaMovePattern = 0;
-	
+	private int flashCoinsCount = 0;
+	private int invincibleCount = 0;
 
-	private ArrayList<Bullet> bullets = new ArrayList<>();
+	
 	private Brick standBrick;
 	
 	private boolean start = false;
@@ -73,14 +73,23 @@ public class GameModel extends Observable{
 		at.start();
 	}
 
-	private int flashCoinsCount = 0;
+	
 	private void tick() {
 		
 		
 		
 		flashCoinsCount++;
+		monsterClockCount++;
+		invincibleCount++;
 		
-		monsterMarioCollision();
+		if(invincibleCount >= 128) {
+			invicibleEnd();
+			//System.out.println("invincible end");
+			invincibleCount = 0;
+		}else {
+			invincibleFrame();
+		}
+		
 		
 		if (flashCoinsCount == 8) {
 			flashCoins();
@@ -89,11 +98,13 @@ public class GameModel extends Observable{
 			flashCoinsCount = 0;
 		}
 		
-		monsterClockCount++;
+		
 		if (monsterClockCount == monsterFrameRate) {
 			 monsterMove();
 	         monsterClockCount = 0;
 	    }
+		
+		monsterMarioCollision();
 		move();
 		bulletMove();
 		resetBulletSpeed();
@@ -700,19 +711,43 @@ public class GameModel extends Observable{
      */
     private boolean isMarioCollideMonster(Monster monster) {
     	//check all possible collision point
-    	if(mario.getRightH_x() == monster.getLeftX()) {
-    		if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
-    			System.out.println("collision");
-    			return true;
-    		}
+    	if(mario.getInvincibleStatus() == false) {
+    		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
+        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+        			
+        			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
+            			
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+            	
+            	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
+            		if(mario.getLeftH_y()  >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+        	}
+        	
+        	if(mario.getLevel()==2) {
+        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+        			if(mario.getRightH_y() + 20 >  monster.getUpLeftY() && mario.getRightH_y() + 20 < monster.getUpLeftY() + monster.getWidth()) {
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+     
+            	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
+            		if(mario.getLeftH_y() + 20 >  monster.getUpRightY() && mario.getLeftH_y() + 20< monster.getUpRightY() + monster.getWidth()) {
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+        		
+        	}
     	}
     	
-    	if(mario.getLeftH_x() == monster.getRightX()) {
-    		if(mario.getLeftH_y() >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
-    			System.out.println("collision");
-    			return true;
-    		}
-    	}
     	
     	return false;
     	
@@ -724,6 +759,17 @@ public class GameModel extends Observable{
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
          	Monster temp = iterator.next();
          	if(isMarioCollideMonster(temp)) {
+         		if (mario.getLevel() == 1){
+         			mario.setLife(mario.getLife() - 1);
+                    
+         			
+				}else if(mario.getLevel() == 2) {
+					mario.setLife(mario.getLife() - 1);
+					
+					
+				}else {
+					mario.setLife(mario.getLife() - 1);
+				}
          		
          	}
          	
@@ -832,6 +878,15 @@ public class GameModel extends Observable{
 		}
 
 		return false;
+	}
+	
+	private void invicibleEnd() {
+		mario.setInvincible(false);
+	}
+	
+	private void invincibleFrame() {
+		
+		return;
 	}
 
 	private void jump() {

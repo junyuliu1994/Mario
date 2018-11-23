@@ -302,6 +302,13 @@ public class Mario {
 	public void setJumpHeight(double jumpHeight) {
 		this.jumpHeight = jumpHeight;
 	}
+	
+	public void setInvincible(boolean value) {
+		this.invincible = value;
+	}
+	public boolean getInvincibleStatus() {
+		return invincible;
+	}
 
 	public double getJumpMax() {
 		return jumpMax;
