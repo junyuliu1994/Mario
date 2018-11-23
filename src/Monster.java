@@ -1,7 +1,9 @@
 import javafx.scene.image.Image;
 
-public abstract class Monster {
-	private Image image;
+import java.io.Serializable;
+
+public abstract class Monster implements Serializable {
+	private static Image image;
 	private  int col;
 	private  int count;
 	private int offset_x;

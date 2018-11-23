@@ -6,9 +6,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-public class SpriteAnimation extends Transition {
+import java.io.Serializable;
 
-    private Image image;
+public class SpriteAnimation extends Transition implements Serializable {
+
+    private static Image image;
 	private int count;
 	private int columns;
     private int offsetX;
@@ -17,9 +19,10 @@ public class SpriteAnimation extends Transition {
     private int height;
     private double cor_x;
     private double cor_y;
-    private GraphicsContext gc;
+    private static GraphicsContext gc;
     private int direction; //1 right 0 left
     private boolean gcForM; //gc for mario or not
+	static final long serialVersionUID = 1;
 
     private int lastIndex;
 
@@ -44,6 +47,10 @@ public class SpriteAnimation extends Transition {
         setCycleDuration(duration);
         setInterpolator(Interpolator.LINEAR);
     }
+
+    public void restore(GraphicsContext gc){
+    	this.gc = gc;
+	}
 
 	protected void interpolate(double k) {		
 		if (count == 1 && count == columns) {
