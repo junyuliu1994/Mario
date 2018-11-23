@@ -60,6 +60,10 @@ public class GameController {
 	public ArrayList<Coin> getCoins() {
 		return gameModel.getCoins();
 	}
+	
+	public ArrayList<Monster> getMonsters(){
+		return gameModel.getMonsters();
+	}
 
 	public ArrayList<Mushroom> getMushrooms() {
 		return gameModel.getMushrooms();

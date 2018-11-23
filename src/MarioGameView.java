@@ -98,27 +98,20 @@ public class MarioGameView extends Application implements Observer{
 					case '2':
 						Wall wall = new Wall(gameModel.getBlocks(),40,40,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
+
+//                   
+
 //                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
 						gameController.getBricks().add(wall);
-//
+
+                   
 						gcForMario.drawImage(wall.getImage(),
 								wall.getOffset_x(), wall.getOffset_y(),
 								wall.getWidth(), wall.getHeight(),
 								wall.getX(),wall.getY(), wall.getWidth(), wall.getHeight()
 						);
-//                        int end = gameController.getCoins().size() -1;
-//                        SpriteAnimation coinAnimation2 = new SpriteAnimation(gameController.getCoins().get(end).getImage(),
-//                                Duration.millis(1000),
-//                                gameController.getCoins().get(end).getCount(), gameController.getCoins().get(end).getCol(),
-//                                gameController.getCoins().get(end).getOffset_x(), gameController.getCoins().get(end).getOffset_y(),
-//                                gameController.getCoins().get(end).getWidth(), gameController.getCoins().get(end).getHeight(),
-//                                gameController.getCoins().get(end).getX(), gameController.getCoins().get(end).getY(), gcForMario, 1, false);
-//                        coinAnimation2.setCycleCount(Animation.INDEFINITE);
-//                        coin.setAnimation(coinAnimation2);
-//                        System.out.println(gameController.getCoins().get(end).getX() +" and "+ gameController.getCoins().get(0).getY() );
-//                        coinAnimation2.play();
-
 						break;
+						
 
                     case '3':
                         QuestionBrick questionBrick = new QuestionBrick(gameModel.getBlocks(),40,40,j*40,i*40);
@@ -131,10 +124,46 @@ public class MarioGameView extends Application implements Observer{
 								questionBrick.getWidth(), questionBrick.getHeight(),
 								questionBrick.getX(),questionBrick.getY(), questionBrick.getWidth(), questionBrick.getHeight()
                         );
-				}
-			}
-		}
-	}
+                        break;
+                    case '4':
+                    	Monster goomba = new Goomba(0,40,j*40, i*40);
+                    	gameController.getMonsters().add(goomba);
+                        //System.out.println("file:goomba's location:"+ j*40+" ,"+i*40);
+                    	
+                    	int index2 = gameController.getMonsters().size() -1;
+                    	
+                    	/*
+                    	System.out.print(gameController.getGoombas().get(index2).getOffset_x() + " " + 
+    							gameController.getGoombas().get(index2).getOffset_y() + " " + 	gameController.getGoombas().get(index2).getWidth() 
+    							+ " " + gameController.getGoombas().get(index2).getHeight() );
+                    	System.out.println(gameController.getGoombas().get(index2).getX() + " " +  gameController.getGoombas().get(index2).getX());
+                    	*/
+                    	gcForMario.drawImage(gameController.getMonsters().get(index2).getImage(), // the image to be drawn or null.
+    							gameController.getMonsters().get(index2).getOffset_x(), // the source rectangle's X coordinate position.
+    							gameController.getMonsters().get(index2).getOffset_y(), // the source rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index2).getWidth(), // the source rectangle's width.
+    							gameController.getMonsters().get(index2).getHeight(), // the source rectangle's height.
+    							gameController.getMonsters().get(index2).getX(), // the destination rectangle's X coordinate position.
+    							gameController.getMonsters().get(index2).getY(), // the destination rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index2).getWidth(), // the destination rectangle's width.
+    							gameController.getMonsters().get(index2).getHeight());
+                    default:
+
+                   
+                  
+    			}
+    		}
+    	}  
+    }
+
+
+
+			
+
+                        
+                   
+                        
+   
 
 	@Override
 	public void update(Observable o, Object arg1) {
@@ -195,6 +224,7 @@ public class MarioGameView extends Application implements Observer{
 //		    coin.animation.play();
 //        }
 
+
 			gcForMario.drawImage(coin.getImage(),
 					coin.getOffset_x(), coin.getOffset_y(),
 					coin.getWidth(), coin.getHeight(),
@@ -210,6 +240,7 @@ public class MarioGameView extends Application implements Observer{
                         mushroom.getX(), mushroom.getY(), mushroom.getWidth(), mushroom.getHeight()
                 );
             }
+
         }
 
         for (Bullet bullet : gameController.getBullets()){
@@ -221,8 +252,16 @@ public class MarioGameView extends Application implements Observer{
                 );
             }
         }
+        
+        for(Monster goomba: gameController.getMonsters()) {
+			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
+					goomba.getWidth(), goomba.getHeight(),
+					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
 	}
+        }
 
+
+	
 	public void initGame(Scene scene){
 		gameModel.start();
 		gameModel.addObserver(this);

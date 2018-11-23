@@ -1,5 +1,6 @@
 import java.sql.BatchUpdateException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
 
 import javafx.animation.Animation;
@@ -33,8 +34,17 @@ public class GameModel extends Observable{
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
-	private ArrayList<Bullet> bullets = new ArrayList<>();
+    private ArrayList<Monster> monsters = new ArrayList<>();
+    private ArrayList<Bullet> bullets = new ArrayList<>();
+    
+	private final int monsterFrameRate = 4;
+	private int monsterClockCount = 0;
+	private int flashCoinsCount = 0;
+	private int invincibleCount = 0;
+
+	
 	private Brick standBrick;
+	
 	private boolean start = false;
 	private int score = 0;
 
@@ -63,19 +73,45 @@ public class GameModel extends Observable{
 		at.start();
 	}
 
-	private int flashCoinsCount = 0;
+	
 	private void tick() {
+		
+		
+		
 		flashCoinsCount++;
+		monsterClockCount++;
+		invincibleCount++;
+		
+		if(invincibleCount >= 128) {
+			invicibleEnd();
+			//System.out.println("invincible end");
+			invincibleCount = 0;
+		}else {
+			invincibleFrame();
+		}
+		
+		
 		if (flashCoinsCount == 8) {
 			flashCoins();
 			flashQuestionBrick();
+        	
 			flashCoinsCount = 0;
 		}
-
+		
+		
+		if (monsterClockCount == monsterFrameRate) {
+			 monsterMove();
+	         monsterClockCount = 0;
+	    }
+		
+		monsterMarioCollision();
 		move();
 		bulletMove();
 		resetBulletSpeed();
 		stop();
+		
+		removeDeadMonster();
+       
 
 		fall();
 
@@ -101,6 +137,7 @@ public class GameModel extends Observable{
 		setChanged();
 		notifyObservers();
 	}
+
 
 	private void resetBulletSpeed(){
 		if (mario.isRight() && moveBackground) {
@@ -153,7 +190,7 @@ public class GameModel extends Observable{
 			}
 		}
 	}
-
+ 
 	private boolean jumpToHoleDeath(){
 		if (mario.getY() > 440){
 			return true;
@@ -405,6 +442,10 @@ public class GameModel extends Observable{
 					}
                 }
             }
+            
+            for(Monster monster: monsters) {
+            	monster.setX(monster.getX() - mario.getSpeed());
+     		}
 		}
 	}
 
@@ -428,7 +469,6 @@ public class GameModel extends Observable{
 				mario.setCount(0);
 				mario.setOffset_x(195);
 				mario.setOffset_y(80);
-
 				
 				
 			}
@@ -438,11 +478,9 @@ public class GameModel extends Observable{
 				mario.setCount(0);
 				mario.setOffset_x(791);
 				mario.setOffset_y(80);
-
 				
 				
 			}
-
 		}*/
 
 /*<<<<<<< HEAD
@@ -452,7 +490,6 @@ public class GameModel extends Observable{
 >>>>>>> refs/heads/junyu
 	    	fall();
 	    }
-
 <<<<<<< HEAD
 	    if (mario.getJumpHeight() == 40 && mario.getJumpMax() == 0 && mario.isJump()) { //the finish jumping and stop status
 =======
@@ -461,14 +498,12 @@ public class GameModel extends Observable{
 	    	mario.setJumpHeight(0);
 	   		mario.setJumpMax(80);
 	    	mario.setJump(false);
-
 	    	if (mario.getDirection() == 1) {
 	   			mario.setImage(marioImage);
 	   			mario.setCol(1);
 	    		mario.setCount(0);
 	    		mario.setOffset_x(195);
 	    		mario.setOffset_y(80);
-
 	    		
 	        	
 	    	}
@@ -478,7 +513,6 @@ public class GameModel extends Observable{
 	    		mario.setCount(0);
 	    		mario.setOffset_x(791);
 		       	mario.setOffset_y(80);
-
 		       	
 		    	
 	    	}
@@ -527,11 +561,243 @@ public class GameModel extends Observable{
 			mario.setCount(0);
 		}
 		mario.setDirection(0);
+
+		mario.setX((int) (mario.getX() + mario.getSpeed()));
+	}
+	
+	
+	//====These are method of monsters' movement
+    /**
+     * goombaMove
+     * This is method controls goomba's movement
+     * Goomba will intinally move to left if it collides with brick or sees cliff
+     * It turns around.
+     * 
+     * @param void
+     * @return void
+     * 
+     */
+    private void monsterMove(){
+    	for(Monster monster: monsters) {
+    		if(monster.isDead) {
+        			monster.setCount(2);
+        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
+        			
+        		    
+    		}else {
+    			//refresh Monster' move Animation  	
+    			if (monster.getCount() < 2) {
+        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
+        			monster.setCount(monster.getCount() + 1);
+                } else {
+                	monster.setCount(0);
+                }
+    			
+    			
+        		//Monster's actual Movement
+        		if(isLeftCollsion(monster) || isLeftCliff(monster)){
+        			monster.setSpeed(5);
+        		}
+        		
+        		if(isRightCollison(monster) || isRightCliff(monster)) {
+        			monster.setSpeed(-5);
+        		}
+        		monster.setX(monster.getX() + monster.getSpeed());
+    			
+    		}
+    	}
+    }
+ 
+    
+	/**
+     * This is helper method to determine if that Enemy objects collides with brick
+     * Checking the left side collision
+     * @param Monster Object
+     * @return boolean value
+     */
+    private boolean isLeftCollsion(Monster monster){
+    	//check if monster collide with brick
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
+    		if(monster.getLeftX() == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
+    			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    			return true;
+    		}
+    	}
+		return false;
+    }
+    
+    /**
+     * This is helper method to determine if that Monster objects' left is cliff
+     * @param Monster Object
+     * @return boolean value
+     */
+    
+    private boolean isLeftCliff(Monster monster) {
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
+    		if(monster.getDownLeftX() <= bricks.get(i).getX() + bricks.get(i).getWidth() && monster.getDownLeftX() >= bricks.get(i).getX()) {
+    			if(monster.getDownLeftY() == bricks.get(i).getY()) {
+    				return false;
+    			}
+    		}
+    	}
+		return true;
+    }
+    
+    /**
+     * This is helper method to determine if that monster objects collides with brick
+     * Checking the right side collision
+     * @param Monster Object
+     * @return boolean value
+     */
+    private boolean isRightCollison(Monster monster) {
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
+    		if(monster.getRightX() == bricks.get(i).getX()) {
+    			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    			return true;
+    		}
+	    }
+    	
+		return false;
+    	
+    }
+    
+    /**
+     * This is helper method to determine if that Monster objects' right is cliff
+     * @param Monster Object
+     * @return boolean value
+     */
+    private boolean isRightCliff(Monster monster) {
+    	for (int i = 0; i < bricks.size(); i++) {
+    		if(bricks.get(i) == null) {
+    			continue;
+    		}
+    		if(monster.getDownRightX() <= bricks.get(i).getX() + bricks.get(i).getWidth() && monster.getDownRightX() >= bricks.get(i).getX()) {
+    			if(monster.getDownLeftY() == bricks.get(i).getY()) {
+    				return false;
+    			}
+    		}
+    	}
+		return true;
+    }
+    
+    /**
+     * check if this monster is step on by mario
+     * @param Monster - Monster objects need to be check
+     * @return boolean value
+     */
+    private boolean stepOnByMario(Monster monster) {
+    		if (mario.getLeftF_y() == monster.getY()) {
+				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
+					 return true;
+				 }
+				 if (mario.getRightF_x() >= monster.getX() && mario.getRightF_x() <= monster.getX() + monster.getWidth() && mario.isJump()) {  
+					 return true;
+				 }
+			 }
+    	return false;
+    }
+    
+    /**
+     * This method check if monster is collide by Mario
+     */
+    private boolean isMarioCollideMonster(Monster monster) {
+    	//check all possible collision point
+    	if(mario.getInvincibleStatus() == false) {
+    		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
+        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+        			
+        			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
+            			
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+            	
+            	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
+            		if(mario.getLeftH_y()  >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+        	}
+        	
+        	if(mario.getLevel()==2) {
+        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+        			if(mario.getRightH_y() + 20 >  monster.getUpLeftY() && mario.getRightH_y() + 20 < monster.getUpLeftY() + monster.getWidth()) {
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+     
+            	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
+            		if(mario.getLeftH_y() + 20 >  monster.getUpRightY() && mario.getLeftH_y() + 20< monster.getUpRightY() + monster.getWidth()) {
+            			mario.setInvincible(true);
+            			return true;
+            		}
+            	}
+        		
+        	}
+    	}
+    	
+    	
+    	return false;
+    	
+    }
+    
+  
+    
+    private void monsterMarioCollision() {
+    	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+         	Monster temp = iterator.next();
+         	if(isMarioCollideMonster(temp)) {
+         		if (mario.getLevel() == 1){
+         			mario.setLife(mario.getLife() - 1);
+                    //mario is dead 
+         			System.out.println("mario dead");
+				}else if(mario.getLevel() == 2) {
+					
+					//back to level 1
+					System.out.println("mario become lv1");
+				}else {
+					//back to level 2
+					System.out.println("mario become lv2");
+					mario.setCol(1);
+					mario.setCount(0);
+					
+				}
+         		
+         	}
+         	
+         	if(stepOnByMario(temp)) {
+         		temp.isDead = true;
+         	}
+         }
+    }
+    
+    private void removeDeadMonster() {
+    	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+    		Monster temp = iterator.next();
+         	if(temp.isDead) {
+         		iterator.remove();
+         	
+         	}
+         }	
+
 		for (int i = 0; i > mario.getSpeed(); i--) {
 			if (!moveLeftStockByBlocks()) {
 				mario.setX((int) (mario.getX() - 1));
 			}
 		}
+
 	}
 	private void flashCoins(){
 		for (Coin coin : coins) {
@@ -616,6 +882,15 @@ public class GameModel extends Observable{
 		}
 
 		return false;
+	}
+	
+	private void invicibleEnd() {
+		mario.setInvincible(false);
+	}
+	
+	private void invincibleFrame() {
+		
+		return;
 	}
 
 	private void jump() {
@@ -759,6 +1034,10 @@ public class GameModel extends Observable{
         this.mushrooms = mushrooms;
     }
 
+
+	public ArrayList<Monster> getMonsters() {
+		return monsters;
+	}
 	public Image getWxzImage() {
 		return wxzImage;
 	}
