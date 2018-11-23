@@ -75,10 +75,7 @@ public class GameModel extends Observable{
 
 	
 	private void tick() {
-		
-		
-		
-		flashCoinsCount++;
+        flashCoinsCount++;
 		monsterClockCount++;
 		invincibleCount++;
 		
@@ -111,7 +108,6 @@ public class GameModel extends Observable{
 		stop();
 		
 		removeDeadMonster();
-       
 
 		fall();
 
@@ -167,10 +163,15 @@ public class GameModel extends Observable{
 			if (bullets.get(i) != null){
 				if (bullets.get(i).getSpeed() > 0) {
 					for (int j = 0; j < bullets.get(i).getSpeed(); j++) {
-						if (!bulletCollision(bullets.get(i))) {
+						if (bulletCollision(bullets.get(i)) == 0) {
 							bullets.get(i).setX(bullets.get(i).getX() + 1);
 						}
-						else{
+						else if (bulletCollision(bullets.get(i)) == 1){
+							bullets.set(i, null);
+							break;
+						}
+						else if (bulletCollision(bullets.get(i)) == 2){
+							score+=100;
 							bullets.set(i, null);
 							break;
 						}
@@ -178,10 +179,15 @@ public class GameModel extends Observable{
 				}
 				else{
 					for (int j = 0; j > bullets.get(i).getSpeed(); j--) {
-						if (!bulletCollision(bullets.get(i))) {
+						if (bulletCollision(bullets.get(i)) == 0) {
 							bullets.get(i).setX(bullets.get(i).getX() - 1);
 						}
-						else{
+						else if (bulletCollision(bullets.get(i)) == 1){
+							bullets.set(i, null);
+							break;
+						}
+						else if (bulletCollision(bullets.get(i)) ==2){
+						    score+=100;
 							bullets.set(i, null);
 							break;
 						}
@@ -202,7 +208,6 @@ public class GameModel extends Observable{
 		if (mario.isRight() ||  mario.isLeft() || mario.isJump()) {
 			return;
 		}
-
 
 		if (mario.getDirection() == 1) {
 			mario.setCol(1);
@@ -238,13 +243,10 @@ public class GameModel extends Observable{
 				mario.setOffset_x(mario.getLv3_loffset_x());
 				mario.setOffset_y(mario.getLv3_offset_y());
 			}
-
-			
-			
 		}
 	}
 
-	private boolean bulletCollision(Bullet bullet){
+	private int bulletCollision(Bullet bullet){
 		for (Brick brick : bricks){
 			if (brick == null){
 				continue;
@@ -252,17 +254,36 @@ public class GameModel extends Observable{
 
 			if (bullet.getX() + bullet.getWidth() == brick.getX()){
 				if (bullet.getY() + bullet.getHeight()/2 >= brick.getY() && bullet.getY() + bullet.getHeight()/2 <= brick.getY() + brick.getHeight()){
-					return true;
+					return 1;
 				}
 			}
 
 			if (bullet.getX() == brick.getX() + brick.getWidth()){
 				if (bullet.getY() + bullet.getHeight()/2 >= brick.getY() && bullet.getY() + bullet.getHeight()/2 <= brick.getY() + brick.getHeight()){
-					return true;
+					return 1;
 				}
 			}
 		}
-		return false;
+
+		for (Monster monster : monsters){
+			if (monster == null){
+				continue;
+			}
+			if (bullet.getX() + bullet.getWidth() == monster.getX()){
+				if (bullet.getY() + bullet.getHeight()/2 >= monster.getY() && bullet.getY() + bullet.getHeight()/2 <= monster.getY() + monster.getHeight()){
+					monsters.remove(monster);
+					return 2;
+				}
+			}
+
+			if (bullet.getX() == monster.getX() + monster.getWidth()){
+				if (bullet.getY() + bullet.getHeight()/2 >= monster.getY() && bullet.getY() + bullet.getHeight()/2 <= monster.getY() + monster.getHeight()){
+					monsters.remove(monster);
+					return 2;
+				}
+			}
+		}
+		return 0;
 	}
 
 	private boolean standOnBlocks() {
@@ -562,7 +583,11 @@ public class GameModel extends Observable{
 		}
 		mario.setDirection(0);
 
-		mario.setX((int) (mario.getX() + mario.getSpeed()));
+		for (int i = 0; i > mario.getSpeed(); i--) {
+			if (!moveLeftStockByBlocks()) {
+				mario.setX((int) (mario.getX() - 1));
+			}
+		}
 	}
 	
 	
@@ -764,14 +789,69 @@ public class GameModel extends Observable{
                     //mario is dead 
          			System.out.println("mario dead");
 				}else if(mario.getLevel() == 2) {
+         		    mario.setLevel(1);
+                    if (mario.getDirection() == 1) {
+                        mario.setCol(1);
+                        mario.setCount(0);
+                        mario.setOffset_x(mario.getLv1_offset_x()[0]);
+                        mario.setOffset_y(mario.getLv1_offset_y());
+                        mario.setHeight(mario.getInitialHeight());
+                        mario.resetCollisionCor();
+                        for (int i = 0; i < mario.getInitialHeight(); i++) {
+                            System.out.println(mario.getY() + ", " + mario.getHeight());
+                            if (!standOnBlocks()) {
+                                mario.setY(mario.getY() + 1);
+                            }
+                        }
+                    }
+                    else{
+                        mario.setCol(1);
+                        mario.setCount(0);
+                        mario.setOffset_x(mario.getLv1_left_offset_x()[0]);
+                        mario.setOffset_y(mario.getLv1_offset_y());
+                        mario.setHeight(mario.getInitialHeight());
+                        mario.resetCollisionCor();
+                        for (int i = 0; i < mario.getInitialHeight(); i++) {
+                            if (!standOnBlocks()) {
+                                mario.setY(mario.getY() + 1);
+                            }
+                        }
+                    }
 					
 					//back to level 1
 					System.out.println("mario become lv1");
 				}else {
-					//back to level 2
+                    mario.setLevel(2);
+                    if (mario.getDirection() == 1){
+                        mario.setImage(marioImage);
+                        mario.setCol(1);
+                        mario.setCount(0);
+                        mario.setOffset_x(mario.getLv1_offset_x()[0]);
+                        mario.setOffset_y(mario.getLv2_offset_y());
+                        mario.setHeight(mario.getInitialHeight() * 2);
+                        mario.resetCollisionCor();
+                        for (int i = 0; i < mario.getInitialHeight(); i++) {
+                            if (!standOnBlocks()) {
+                                mario.setY(mario.getY() - 1);
+                            }
+                        }
+                    }
+                    else{
+                        mario.setImage(marioConvertImage);
+                        mario.setCol(1);
+                        mario.setCount(0);
+                        mario.setOffset_x(mario.getLv1_left_offset_x()[0]);
+                        mario.setOffset_y(mario.getLv2_offset_y());
+                        mario.setHeight(mario.getInitialHeight() * 2);
+                        mario.resetCollisionCor();
+                        for (int i = 0; i < mario.getInitialHeight(); i++) {
+                            if (!standOnBlocks()) {
+                                mario.setY(mario.getY() - 1);
+                            }
+                        }
+                    }
+                    //back to level 2
 					System.out.println("mario become lv2");
-					mario.setCol(1);
-					mario.setCount(0);
 					
 				}
          		

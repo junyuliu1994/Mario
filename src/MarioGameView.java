@@ -284,7 +284,7 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().setJump(true);
 			}
 			else if (event.getCode().toString().equals("K")){
-				if (gameController.getMario().getLevel() == 3) {
+				if (gameController.getMario().getLevel() < 3) {
 					if (gameController.getMario().getDirection() == 1) {
 						Bullet bullet = new Bullet(gameController.getWxzImage(), 40, 40,
 								Bullet.getRoffset_x(), Bullet.getRoffset_y(), gameController.getMario().getLeftTopC_x()+4, gameController.getMario().getRightTopC_y() - 8);
