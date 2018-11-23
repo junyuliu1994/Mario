@@ -762,14 +762,14 @@ public class GameModel extends Observable{
          		if (mario.getLevel() == 1){
          			mario.setLife(mario.getLife() - 1);
                     //mario is dead 
-         			
+         			System.out.println("mario dead");
 				}else if(mario.getLevel() == 2) {
 					
 					//back to level 1
-					
+					System.out.println("mario become lv1");
 				}else {
 					//back to level 2
-					
+					System.out.println("mario become lv2");
 					mario.setCol(1);
 					mario.setCount(0);
 					
