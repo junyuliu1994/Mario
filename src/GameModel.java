@@ -163,34 +163,22 @@ public class GameModel extends Observable{
 			if (bullets.get(i) != null){
 				if (bullets.get(i).getSpeed() > 0) {
 					for (int j = 0; j < bullets.get(i).getSpeed(); j++) {
-						if (bulletCollision(bullets.get(i)) == 0) {
-							bullets.get(i).setX(bullets.get(i).getX() + 1);
-						}
-						else if (bulletCollision(bullets.get(i)) == 1){
-							bullets.set(i, null);
-							break;
-						}
-						else if (bulletCollision(bullets.get(i)) == 2){
-							score+=100;
-							bullets.set(i, null);
-							break;
-						}
+                        if (!bulletCollision(bullets.get(i))) {
+                            bullets.get(i).setX(bullets.get(i).getX() + 1);
+                        }
+                        else{
+                            break;
+                        }
 					}
 				}
 				else{
 					for (int j = 0; j > bullets.get(i).getSpeed(); j--) {
-						if (bulletCollision(bullets.get(i)) == 0) {
+						if (!bulletCollision(bullets.get(i))) {
 							bullets.get(i).setX(bullets.get(i).getX() - 1);
 						}
-						else if (bulletCollision(bullets.get(i)) == 1){
-							bullets.set(i, null);
-							break;
-						}
-						else if (bulletCollision(bullets.get(i)) ==2){
-						    score+=100;
-							bullets.set(i, null);
-							break;
-						}
+						else {
+						    break;
+                        }
 					}
 				}
 			}
@@ -246,7 +234,7 @@ public class GameModel extends Observable{
 		}
 	}
 
-	private int bulletCollision(Bullet bullet){
+	private boolean bulletCollision(Bullet bullet){
 		for (Brick brick : bricks){
 			if (brick == null){
 				continue;
@@ -254,36 +242,42 @@ public class GameModel extends Observable{
 
 			if (bullet.getX() + bullet.getWidth() == brick.getX()){
 				if (bullet.getY() + bullet.getHeight()/2 >= brick.getY() && bullet.getY() + bullet.getHeight()/2 <= brick.getY() + brick.getHeight()){
-					return 1;
+                    bullets.remove(bullet);
+                    return true;
 				}
 			}
 
 			if (bullet.getX() == brick.getX() + brick.getWidth()){
 				if (bullet.getY() + bullet.getHeight()/2 >= brick.getY() && bullet.getY() + bullet.getHeight()/2 <= brick.getY() + brick.getHeight()){
-					return 1;
+                    bullets.remove(bullet);
+                    return true;
 				}
 			}
 		}
 
-		for (Monster monster : monsters){
-			if (monster == null){
+		for (int i = 0; i < monsters.size(); i++){
+			if (monsters.get(i) == null){
 				continue;
 			}
-			if (bullet.getX() + bullet.getWidth() == monster.getX()){
-				if (bullet.getY() + bullet.getHeight()/2 >= monster.getY() && bullet.getY() + bullet.getHeight()/2 <= monster.getY() + monster.getHeight()){
-					monsters.remove(monster);
-					return 2;
+			if (bullet.getX() + bullet.getWidth() == monsters.get(i).getX()){
+				if (bullet.getY() + bullet.getHeight()/2 >= monsters.get(i).getY() && bullet.getY() + bullet.getHeight()/2 <= monsters.get(i).getY() + monsters.get(i).getHeight()){
+				    monsters.set(i, null);
+				    bullets.remove(bullet);
+				    score+=100;
+					return true;
 				}
 			}
 
-			if (bullet.getX() == monster.getX() + monster.getWidth()){
-				if (bullet.getY() + bullet.getHeight()/2 >= monster.getY() && bullet.getY() + bullet.getHeight()/2 <= monster.getY() + monster.getHeight()){
-					monsters.remove(monster);
-					return 2;
+			if (bullet.getX() == monsters.get(i).getX() + monsters.get(i).getWidth()){
+				if (bullet.getY() + bullet.getHeight()/2 >= monsters.get(i).getY() && bullet.getY() + bullet.getHeight()/2 <= monsters.get(i).getY() + monsters.get(i).getHeight()){
+                    monsters.set(i, null);
+                    bullets.remove(bullet);
+                    score+=100;
+                    return true;
 				}
 			}
 		}
-		return 0;
+		return false;
 	}
 
 	private boolean standOnBlocks() {
@@ -465,7 +459,9 @@ public class GameModel extends Observable{
             }
             
             for(Monster monster: monsters) {
-            	monster.setX(monster.getX() - mario.getSpeed());
+                if (monster != null) {
+                    monster.setX(monster.getX() - mario.getSpeed());
+                }
      		}
 		}
 	}
@@ -604,33 +600,35 @@ public class GameModel extends Observable{
      */
     private void monsterMove(){
     	for(Monster monster: monsters) {
-    		if(monster.isDead) {
-        			monster.setCount(2);
-        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
-        			
-        		    
-    		}else {
-    			//refresh Monster' move Animation  	
-    			if (monster.getCount() < 2) {
-        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
-        			monster.setCount(monster.getCount() + 1);
+            if (monster != null) {
+                if (monster.isDead) {
+                    monster.setCount(2);
+                    monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth() * monster.getCount()));
+
+
                 } else {
-                	monster.setCount(0);
+                    //refresh Monster' move Animation
+                    if (monster.getCount() < 2) {
+                        monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth() * monster.getCount()));
+                        monster.setCount(monster.getCount() + 1);
+                    } else {
+                        monster.setCount(0);
+                    }
+
+
+                    //Monster's actual Movement
+                    if (isLeftCollsion(monster) || isLeftCliff(monster)) {
+                        monster.setSpeed(5);
+                    }
+
+                    if (isRightCollison(monster) || isRightCliff(monster)) {
+                        monster.setSpeed(-5);
+                    }
+                    monster.setX(monster.getX() + monster.getSpeed());
+
                 }
-    			
-    			
-        		//Monster's actual Movement
-        		if(isLeftCollsion(monster) || isLeftCliff(monster)){
-        			monster.setSpeed(5);
-        		}
-        		
-        		if(isRightCollison(monster) || isRightCliff(monster)) {
-        			monster.setSpeed(-5);
-        		}
-        		monster.setX(monster.getX() + monster.getSpeed());
-    			
-    		}
-    	}
+            }
+        }
     }
  
     
@@ -720,7 +718,7 @@ public class GameModel extends Observable{
      * @return boolean value
      */
     private boolean stepOnByMario(Monster monster) {
-    		if (mario.getLeftF_y() == monster.getY()) {
+    		if (monster != null && mario.getLeftF_y() == monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
@@ -736,7 +734,7 @@ public class GameModel extends Observable{
      */
     private boolean isMarioCollideMonster(Monster monster) {
     	//check all possible collision point
-    	if(mario.getInvincibleStatus() == false) {
+    	if(mario.getInvincibleStatus() == false && monster!=null) {
     		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
         		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
         			
@@ -866,7 +864,7 @@ public class GameModel extends Observable{
     private void removeDeadMonster() {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
     		Monster temp = iterator.next();
-         	if(temp.isDead) {
+         	if(temp != null && temp.isDead) {
          		iterator.remove();
          	
          	}

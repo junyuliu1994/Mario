@@ -254,9 +254,11 @@ public class MarioGameView extends Application implements Observer{
         }
         
         for(Monster goomba: gameController.getMonsters()) {
-			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
-					goomba.getWidth(), goomba.getHeight(),
-					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
+        	if (goomba != null) {
+				gcForMario.drawImage(goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
+						goomba.getWidth(), goomba.getHeight(),
+						goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
+			}
 	}
         }
 
