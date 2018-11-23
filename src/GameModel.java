@@ -761,14 +761,18 @@ public class GameModel extends Observable{
          	if(isMarioCollideMonster(temp)) {
          		if (mario.getLevel() == 1){
          			mario.setLife(mario.getLife() - 1);
-                    
+                    //mario is dead 
          			
 				}else if(mario.getLevel() == 2) {
-					mario.setLife(mario.getLife() - 1);
 					
+					//back to level 1
 					
 				}else {
-					mario.setLife(mario.getLife() - 1);
+					//back to level 2
+					
+					mario.setCol(1);
+					mario.setCount(0);
+					
 				}
          		
          	}
