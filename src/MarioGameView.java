@@ -147,9 +147,25 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getMonsters().get(index2).getY(), // the destination rectangle's Y coordinate position.
     							gameController.getMonsters().get(index2).getWidth(), // the destination rectangle's width.
     							gameController.getMonsters().get(index2).getHeight());
+                    	break;
+                    case '5':
+                    	
+                    	Monster koopa = new Koopa(240,0,j*40, i*36);
+                    	gameController.getMonsters().add(koopa);
+                    	int index3 = gameController.getMonsters().size() -1;
+                    	gcForMario.drawImage(gameController.getMonsters().get(index3).getImage(), 
+    							gameController.getMonsters().get(index3).getOffset_x(),
+    							gameController.getMonsters().get(index3).getOffset_y(), // the source rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index3).getWidth(), // the source rectangle's width.
+    							gameController.getMonsters().get(index3).getHeight(), // the source rectangle's height.
+    							gameController.getMonsters().get(index3).getX(), // the destination rectangle's X coordinate position.
+    							gameController.getMonsters().get(index3).getY(), // the destination rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index3).getWidth(), // the destination rectangle's width.
+    							gameController.getMonsters().get(index3).getHeight());
+                    	break;
+                    
                     default:
-
-                   
+                    	
                   
     			}
     		}
@@ -253,11 +269,11 @@ public class MarioGameView extends Application implements Observer{
             }
         }
         
-        for(Monster goomba: gameController.getMonsters()) {
-        	if (goomba != null) {
-				gcForMario.drawImage(goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
-						goomba.getWidth(), goomba.getHeight(),
-						goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
+        for(Monster monster: gameController.getMonsters()) {
+        	if (monster != null) {
+				gcForMario.drawImage(monster.getImage(), monster.getOffset_x(), monster.getOffset_y(),
+						monster.getWidth(), monster.getHeight(),
+						monster.getX(), monster.getY(), monster.getWidth(), monster.getHeight());
 			}
 	}
         }

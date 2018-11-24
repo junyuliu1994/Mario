@@ -16,7 +16,7 @@ public abstract class Monster implements Serializable {
     private int score;
 	public boolean isDead;
 	
-	private int initial_offset_x = 0;
+	private int initial_offset_x;
 	
 	private double upLeftX;
 	private double upLeftY;
@@ -58,6 +58,10 @@ public abstract class Monster implements Serializable {
 	}
 	public int getOffset_x() {
 		return offset_x;
+	}
+	
+	public void setInitiall_offsetX(int initial_offset_x) {
+		this.initial_offset_x = initial_offset_x;
 	}
 	
 	void setOffset_x(int offset_x) {

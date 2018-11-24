@@ -1,18 +1,19 @@
 import javafx.scene.image.Image;
 
-public class Goomba extends Monster {
-
+public class Koopa extends Monster{
 	
-	public Goomba(int offset_x, int offest_y,int x,int y) {
-		super(new Image("resources/enemies2.png"),offset_x, offest_y, 40, 40, x,y);
-		setInitiall_offsetX(0);
-		setCount(3);
-		setCol(3);
-		setSpeed(-5);
-		setScore(100);
-		setCollisionPoint();
-	}
+	
 
+	public Koopa(int offset_x, int offset_y,int x, int y) {
+		super(new Image("resources/enemies2.png"),offset_x,offset_y, 40, 80, x,y);
+		setInitiall_offsetX(240);
+		setCount(2);
+		setCol(2);
+		setSpeed(-5);
+		setScore(500);
+		setCollisionPoint();
+		
+	}
 	
 	
 	@Override
@@ -26,5 +27,5 @@ public class Goomba extends Monster {
 		super.setX(y);
 		setCollisionPoint();
 	}
-		
+
 }
