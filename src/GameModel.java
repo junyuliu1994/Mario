@@ -604,8 +604,6 @@ public class GameModel extends Observable{
                 if (monster.isDead) {
                     monster.setCount(2);
                     monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth() * monster.getCount()));
-
-
                 } else {
                     //refresh Monster' move Animation
                     if (monster.getCount() < 2) {
