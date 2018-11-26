@@ -1,7 +1,7 @@
 import javafx.scene.image.Image;
 
 public class Bullet {
-    private static Image image;
+    private Image image;
     private int offset_x;
     private int offset_y;
     private int width;

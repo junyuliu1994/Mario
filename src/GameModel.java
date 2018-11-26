@@ -26,7 +26,6 @@ public class GameModel extends Observable implements Serializable {
 	private static Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
 
 	private static Image wxzImage = new Image("resources/wxz.png");
-
 	private static Image wxzConvertImage = new Image("resources/wxz-convert.png");
 
     private static Image itemImage = new Image("resources/items.png");
@@ -38,7 +37,7 @@ public class GameModel extends Observable implements Serializable {
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
     private ArrayList<Monster> monsters = new ArrayList<>();
     private ArrayList<Bullet> bullets = new ArrayList<>();
-    
+
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
 	private int flashCoinsCount = 0;
@@ -48,7 +47,7 @@ public class GameModel extends Observable implements Serializable {
 
 
 	private Brick standBrick;
-	
+
 	private boolean start = false;
 	private boolean paused = false;
 	private int score = 0;
@@ -104,7 +103,7 @@ public class GameModel extends Observable implements Serializable {
         flashCoinsCount++;
 		monsterClockCount++;
 		invincibleCount++;
-		
+
 		if(invincibleCount >= 128) {
 			invicibleEnd();
 			//System.out.println("invincible end");
@@ -112,27 +111,27 @@ public class GameModel extends Observable implements Serializable {
 		}else {
 			invincibleFrame();
 		}
-		
-		
+
+
 		if (flashCoinsCount == 8) {
 			flashCoins();
 			flashQuestionBrick();
-        	
+
 			flashCoinsCount = 0;
 		}
-		
-		
+
+
 		if (monsterClockCount == monsterFrameRate) {
 			 monsterMove();
 	         monsterClockCount = 0;
 	    }
-		
+
 		monsterMarioCollision();
 		move();
 		bulletMove();
 		resetBulletSpeed();
 		stop();
-		
+
 		removeDeadMonster();
 
 		fall();
@@ -210,7 +209,7 @@ public class GameModel extends Observable implements Serializable {
 			}
 		}
 	}
- 
+
 	private boolean jumpToHoleDeath(){
 		if (mario.getY() > 440){
 			return true;
@@ -239,8 +238,8 @@ public class GameModel extends Observable implements Serializable {
             	mario.setOffset_y(mario.getLv3_offset_y());
 			}
 
-			
-			
+
+
 		}
 		else{
 			mario.setCol(1);
@@ -287,8 +286,10 @@ public class GameModel extends Observable implements Serializable {
 			}
 			if (bullet.getX() + bullet.getWidth() == monsters.get(i).getX()){
 				if (bullet.getY() + bullet.getHeight()/2 >= monsters.get(i).getY() && bullet.getY() + bullet.getHeight()/2 <= monsters.get(i).getY() + monsters.get(i).getHeight()){
+				    System.out.println(monsters.size());
 				    monsters.set(i, null);
-				    bullets.remove(bullet);
+                    System.out.println(monsters.size());
+                    bullets.remove(bullet);
 				    score+=100;
 					return true;
 				}
@@ -483,7 +484,7 @@ public class GameModel extends Observable implements Serializable {
 					}
                 }
             }
-            
+
             for(Monster monster: monsters) {
                 if (monster != null) {
                     monster.setX(monster.getX() - mario.getSpeed());
@@ -512,8 +513,8 @@ public class GameModel extends Observable implements Serializable {
 				mario.setCount(0);
 				mario.setOffset_x(195);
 				mario.setOffset_y(80);
-				
-				
+
+
 			}
 			else {
 				mario.setImage(marioConvertImage);
@@ -521,8 +522,8 @@ public class GameModel extends Observable implements Serializable {
 				mario.setCount(0);
 				mario.setOffset_x(791);
 				mario.setOffset_y(80);
-				
-				
+
+
 			}
 		}*/
 
@@ -547,8 +548,8 @@ public class GameModel extends Observable implements Serializable {
 	    		mario.setCount(0);
 	    		mario.setOffset_x(195);
 	    		mario.setOffset_y(80);
-	    		
-	        	
+
+
 	    	}
 	    	else {
 	    		mario.setImage(marioConvertImage);
@@ -556,8 +557,8 @@ public class GameModel extends Observable implements Serializable {
 	    		mario.setCount(0);
 	    		mario.setOffset_x(791);
 		       	mario.setOffset_y(80);
-		       	
-		    	
+
+
 	    	}
 	    }*/
 	}
@@ -611,17 +612,17 @@ public class GameModel extends Observable implements Serializable {
 			}
 		}
 	}
-	
-	
+
+
 	//====These are method of monsters' movement
     /**
      * goombaMove
      * This is method controls goomba's movement
      * Goomba will intinally move to left if it collides with brick or sees cliff
      * It turns around.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     private void monsterMove(){
     	for(Monster monster: monsters) {
@@ -655,8 +656,8 @@ public class GameModel extends Observable implements Serializable {
             }
         }
     }
- 
-    
+
+
 	/**
      * This is helper method to determine if that Enemy objects collides with brick
      * Checking the left side collision
@@ -670,19 +671,19 @@ public class GameModel extends Observable implements Serializable {
     			continue;
     		}
     		if(monster.getLeftX() == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
-    			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight())
     			return true;
     		}
     	}
 		return false;
     }
-    
+
     /**
      * This is helper method to determine if that Monster objects' left is cliff
      * @param monster Object
      * @return boolean value
      */
-    
+
     private boolean isLeftCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
@@ -696,7 +697,7 @@ public class GameModel extends Observable implements Serializable {
     	}
 		return true;
     }
-    
+
     /**
      * This is helper method to determine if that monster objects collides with brick
      * Checking the right side collision
@@ -709,15 +710,15 @@ public class GameModel extends Observable implements Serializable {
     			continue;
     		}
     		if(monster.getRightX() == bricks.get(i).getX()) {
-    			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+    			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight())
     			return true;
     		}
 	    }
-    	
+
 		return false;
-    	
+
     }
-    
+
     /**
      * This is helper method to determine if that Monster objects' right is cliff
      * @param monster Object
@@ -736,7 +737,7 @@ public class GameModel extends Observable implements Serializable {
     	}
 		return true;
     }
-    
+
     /**
      * check if this monster is step on by mario
      * @param monster - Monster objects need to be check
@@ -747,13 +748,13 @@ public class GameModel extends Observable implements Serializable {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
-				 if (mario.getRightF_x() >= monster.getX() && mario.getRightF_x() <= monster.getX() + monster.getWidth() && mario.isJump()) {  
+				 if (mario.getRightF_x() >= monster.getX() && mario.getRightF_x() <= monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
 			 }
     	return false;
     }
-    
+
     /**
      * This method check if monster is collide by Mario
      */
@@ -762,14 +763,14 @@ public class GameModel extends Observable implements Serializable {
     	if(mario.getInvincibleStatus() == false && monster!=null) {
     		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
         		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
-        			
+
         			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
-            			
+
             			mario.setInvincible(true);
             			return true;
             		}
             	}
-            	
+
             	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
             		if(mario.getLeftH_y()  >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
             			mario.setInvincible(true);
@@ -777,7 +778,7 @@ public class GameModel extends Observable implements Serializable {
             		}
             	}
         	}
-        	
+
         	if(mario.getLevel()==2) {
         		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
         			if(mario.getRightH_y() + 20 >  monster.getUpLeftY() && mario.getRightH_y() + 20 < monster.getUpLeftY() + monster.getWidth()) {
@@ -785,31 +786,29 @@ public class GameModel extends Observable implements Serializable {
             			return true;
             		}
             	}
-     
+
             	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
             		if(mario.getLeftH_y() + 20 >  monster.getUpRightY() && mario.getLeftH_y() + 20< monster.getUpRightY() + monster.getWidth()) {
             			mario.setInvincible(true);
             			return true;
             		}
             	}
-        		
+
         	}
     	}
-    	
-    	
+
+
     	return false;
-    	
+
     }
-    
-  
-    
+
     private void monsterMarioCollision() {
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
          	Monster temp = iterator.next();
          	if(isMarioCollideMonster(temp)) {
          		if (mario.getLevel() == 1){
          			mario.setLife(mario.getLife() - 1);
-                    //mario is dead 
+                    //mario is dead
          			System.out.println("mario dead");
 				}else if(mario.getLevel() == 2) {
          		    mario.setLevel(1);
@@ -840,7 +839,7 @@ public class GameModel extends Observable implements Serializable {
                             }
                         }
                     }
-					
+
 					//back to level 1
 					System.out.println("mario become lv1");
 				}else {
@@ -875,25 +874,25 @@ public class GameModel extends Observable implements Serializable {
                     }
                     //back to level 2
 					System.out.println("mario become lv2");
-					
+
 				}
-         		
+
          	}
-         	
+
          	if(stepOnByMario(temp)) {
          		temp.isDead = true;
          	}
          }
     }
-    
+
     private void removeDeadMonster() {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
     		Monster temp = iterator.next();
          	if(temp != null && temp.isDead) {
          		iterator.remove();
-         	
+
          	}
-         }	
+         }
 
 		for (int i = 0; i > mario.getSpeed(); i--) {
 			if (!moveLeftStockByBlocks()) {
@@ -911,8 +910,8 @@ public class GameModel extends Observable implements Serializable {
 				coin.setCount(0);
 			}
 		}
-		
-		
+
+
 	}
 
 	private void flashQuestionBrick(){
@@ -986,13 +985,13 @@ public class GameModel extends Observable implements Serializable {
 
 		return false;
 	}
-	
+
 	private void invicibleEnd() {
 		mario.setInvincible(false);
 	}
-	
+
 	private void invincibleFrame() {
-		
+
 		return;
 	}
 

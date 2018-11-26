@@ -366,8 +366,6 @@ public class MarioGameView extends Application implements Observer{
 				}
 			}
 		});
-
-		initContent();
 	}
 
 	private void loadGame(){
