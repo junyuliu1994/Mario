@@ -26,6 +26,7 @@ public class GameModel extends Observable{
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 128, false, gcForMario);
+	private Flagstaff flagstaff = new Flagstaff();
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
@@ -34,6 +35,7 @@ public class GameModel extends Observable{
 	private int monsterClockCount = 0;
 	private int goombaMovePattern = 0;
 	private Brick standBrick;
+	public boolean OUT_OF_CONTROL = false;
 	
 
 	
@@ -62,7 +64,11 @@ public class GameModel extends Observable{
 	}
 
 	private int flashCoinsCount = 0;
+	private int stopMarioCountChangeColor = 0;
+	private int dispaearMarioCount = 0;
 	private void tick() {
+
+	    // flash coins and question brick
 		flashCoinsCount++;
 		monsterDead();
 		if (flashCoinsCount == 8) {
@@ -71,46 +77,110 @@ public class GameModel extends Observable{
         	
 			flashCoinsCount = 0;
 		}
-		
+
+		// move monster
 		monsterClockCount++;
 		if (monsterClockCount == monsterFrameRate) {
 			 goombaMove();
 	         monsterClockCount = 0;
 	    }
 
-		move();
-		stop();
-		
-       
+	    if (!OUT_OF_CONTROL) {
+	        // move mario
+            move();
+            stop();
+        } else {
+	        // 700 is the position of gate
+	        if(mario.getX() <= 690) {
+	            mario.setX(mario.getX()+(int)mario.getSpeed());
+	            moveRight();
+            } else {
+                dispaearMarioCount++;
+//                stopMarioCountChangeColor++;
+	            stop();
+//	            if (stopMarioCountChangeColor == 12) {
+//	                stopMarioCountChangeColor = 0;
+//	                dispaearMarioCount++;
+//
+//	                mario.setOffset_y(mario.getOffset_y()+120);
+//                }
+                if (dispaearMarioCount==10) {
+                    // disapre mario
+                    stopMarioCountChangeColor++;
+                    mario.setOffset_y(mario.getOffset_y()+2130);
+                    dispaearMarioCount=0;
+                }
+                if (stopMarioCountChangeColor == 1 && dispaearMarioCount==5) {
+//                    System.out.println("set 0 ");
+                    mario.setOffset_y(0);
+                    mario.setOffset_x(0);
+                }
 
 
-		if (!standOnBlocks()) {
-			fall();
-		}
+            }
+        }
+        // after touching the flag, no more interaction
+		if (touchFlag()) {
+            OUT_OF_CONTROL = true;
+            if (!standOnBlocks()) {
+                // set image of holding flagstaff
+                mario.setOffset_x(mario.getFlagstaff_offset_x_small());
+                if (mario.getLevel() == 1) {
+                    mario.setOffset_y(mario.getFlagstaff_offset_y_small());
+                } else {
+                    mario.setOffset_y(mario.getFlagstaff_offset_y_small() - mario.getHeight());
+                }
 
-        eatMushroom();
+                int fallingSpeed = 4;
+                mario.setY(mario.getY() + fallingSpeed);
+                // set location of image
+                mario.setX(flagstaff.getX() - mario.getWidth());
+//                if (mario.isRight()) {
+//
+//                } else {
+////                    mario.setX(flagstaff.getX() + mario.getWidth());
+//                }
+            } else {
+                // stand on ground
 
-		if (mario.getLife() > 0){
-			if (jumpToHoleDeath()) {
-				mario.setLevel(1);
-				mario.setDirection(1);
-				mario.setImage(marioImage);
-				mario.setOffset_x(mario.getLv1_offset_x()[0]);
-				mario.setOffset_y(mario.getLv1_offset_y());
-				mario.setHeight(mario.getInitialHeight());
+                // set 710 is the gate's location
+            }
+        }
+            if (!standOnBlocks()) {
+                fall();
+            }
 
-				mario.setLife(mario.getLife() - 1);
-				mario.setX((int)standBrick.getX());
-				mario.setY((int)standBrick.getY()-mario.getHeight());
+            eatMushroom();
+            if (touchCoin()) {
+                // play the score animation
 
-				System.out.println(mario.getX() + ", " + mario.getY());
-				
-				
-			}
-		}
-		else{
-			//gameover
-		}
+            }
+
+//            if (touchFlag()) {
+//
+//            }
+
+            if (mario.getLife() > 0) {
+                if (jumpToHoleDeath()) {
+                    mario.setLevel(1);
+                    mario.setDirection(1);
+                    mario.setImage(marioImage);
+                    mario.setOffset_x(mario.getLv1_offset_x()[0]);
+                    mario.setOffset_y(mario.getLv1_offset_y());
+                    mario.setHeight(mario.getInitialHeight());
+
+                    mario.setLife(mario.getLife() - 1);
+                    mario.setX((int) standBrick.getX());
+                    mario.setY((int) standBrick.getY() - mario.getHeight());
+
+                    System.out.println(mario.getX() + ", " + mario.getY());
+
+
+                }
+            } else {
+                //gameover
+            }
+
 		setChanged();
 		notifyObservers();
 	}
@@ -265,10 +335,12 @@ public class GameModel extends Observable{
 
 	//when mario cor_x > 1/2 of 1000, then move other stuff contains background
 	private void moveMarioOrOhters() {
+	    // don't need to move stuffs
 		if ((mario.getX() < 100 && background.getMoveLength() < 1000) || (background.getMoveLength() == 1000)) {
 			mario.setX((int) (mario.getX() + mario.getSpeed()));
 		}
 		else {
+		    // move all stuffs except mario
 			background.setOffset_x((int) (background.getOffset_x() + mario.getSpeed()));
 			background.setMoveLength((int) (background.getMoveLength() + mario.getSpeed()));
 
@@ -280,6 +352,7 @@ public class GameModel extends Observable{
 			}
 //             System.out.println("reset coins");
 			for (Coin coin : coins) {
+				if (coin == null) continue;
 				coin.setX(coin.getX() - mario.getSpeed());
 			}
 
@@ -295,6 +368,7 @@ public class GameModel extends Observable{
      					goomba.getWidth(), goomba.getHeight(),
      					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
      		}
+     		flagstaff.moveFlag(mario.getSpeed());
 		}
 	}
 
@@ -462,7 +536,7 @@ public class GameModel extends Observable{
 	/**
      * This is helper method to determine if that Enemy objects collides with brick
      * Checking the left side collision
-     * @param Monster Object
+     * @param
      * @return boolean value
      */
     private boolean isLeftCollsion(Goomba goomba){
@@ -482,7 +556,7 @@ public class GameModel extends Observable{
     
     /**
      * This is helper method to determine if that Monster objects' left is cliff
-     * @param Monster Object
+     * @param
      * @return boolean value
      */
     
@@ -504,7 +578,7 @@ public class GameModel extends Observable{
     /**
      * This is helper method to determine if that <onster objects collides with brick
      * Checking the right side collision
-     * @param Monster Object
+     * @param
      * @return boolean value
      */
     private boolean isRightCollison(Goomba goomba) {
@@ -524,7 +598,7 @@ public class GameModel extends Observable{
     
     /**
      * This is helper method to determine if that Monster objects' right is cliff
-     * @param Monster Object
+     * @param
      * @return boolean value
      */
     private boolean isRightCliff(Goomba goomba) {
@@ -543,7 +617,7 @@ public class GameModel extends Observable{
     
     /**
      * check if this monster is step on by mario
-     * @param Monster - Monster objects need to be check
+     * @param goomba - Monster objects need to be check
      * @return boolean value
      */
     private boolean stepOnByMario(Goomba goomba) {
@@ -577,8 +651,10 @@ public class GameModel extends Observable{
          	}
          }	
 	}
+
 	private void flashCoins(){
 		for (Coin coin : coins) {
+		    if (coin == null) continue;
 			if (coin.getCount() < coin.getCol()) {
 				coin.setOffset_x(coin.initial_offset_x + (coin.getWidth()*coin.getCount()));
 				coin.setCount(coin.getCount() + 1);
@@ -661,6 +737,67 @@ public class GameModel extends Observable{
 
 		return false;
 	}
+
+	private boolean touchCoin() {
+//        System.out.println("getting check the coin");
+        for (int i = 0; i < coins.size(); i++) {
+            if (coins.get(i) == null) continue;
+            // when jump
+            if (mario.getHead_y() == coins.get(i).getY()+coins.get(i).getHeight()) {
+                if (mario.getHead_x() >= coins.get(i).getX() && mario.getHead_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+//                    jumpCollisionWithBrick(coin, i);
+                    mario.setCount(mario.getCount() + coins.get(i).getScore());
+                    coins.set(i, null);
+                    return true;
+                }
+
+                if (mario.getLeft_tou_x() >= coins.get(i).getX() && mario.getLeft_tou_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+//                    jumpCollisionWithBrick(bricks.get(i), i);
+                    mario.setCount(mario.getCount() + coins.get(i).getScore());
+                    coins.set(i, null);
+                    return true;
+                }
+
+                if (mario.getRight_tou_x() >= coins.get(i).getX() && mario.getRight_tou_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+//                    jumpCollisionWithBrick(bricks.get(i), i);
+                    mario.setCount(mario.getCount() + coins.get(i).getScore());
+                    coins.set(i, null);
+                    return true;
+                }
+            }
+            if (mario.getRightTopC_y() == coins.get(i).getY()  + coins.get(i).getHeight()) {
+                if (mario.getRightTopC_x() >= coins.get(i).getX() && mario.getRightTopC_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+                    mario.setCount(mario.getCount() + coins.get(i).getScore());
+                    coins.set(i, null);
+                    return true;
+                }
+
+                if (mario.getLeftTopC_x() >= coins.get(i).getX() && mario.getLeftTopC_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+                    mario.setCount(mario.getCount() + coins.get(i).getScore());
+                    coins.set(i, null);
+                    return true;
+                }
+            }
+            // while moving
+            if ((mario.getY() <= coins.get(i).getHeight()+coins.get(i).getY() && mario.getY() >= coins.get(i).getY()) ||
+                    (mario.getY()+mario.getHeight() >= coins.get(i).getY() && mario.getY()+mario.getHeight() <= coins.get(i).getY()+BLOCK_HEIGHT)) {
+                if ((mario.getX() <= coins.get(i).getX()+coins.get(i).getWidth() && mario.getX() >= coins.get(i).getX()) ||
+                        (mario.getX()+mario.getWidth() >= coins.get(i).getX() && mario.getX()+mario.getWidth() <= coins.get(i).getX()+coins.get(i).getWidth())) {
+                    mario.setCount(mario.getCount() + coins.get(i).getScore());
+                    coins.set(i, null);
+                    return true;
+                }
+            }
+
+
+        }
+
+        return false;
+    }
+
+    private boolean touchFlag() {
+        return (mario.getX()+mario.getWidth() >= flagstaff.getX());
+    }
 
 	private void jump() {
 		if (!jumpStockByBrick()) {

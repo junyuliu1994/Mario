@@ -8,7 +8,9 @@ public class Mario {
 	private int col;
 	private int count;
 	private int offset_x;
+	private final int flagstaff_offset_x_small = 515;
 	private int offset_y;
+    private final int flagstaff_offset_y_small = 81;
 	private int width;
 	private int height;
 	private int x;
@@ -597,4 +599,12 @@ public class Mario {
 	public void setLv2_ljump_offset_y(int lv2_ljump_offset_y) {
 		this.lv2_ljump_offset_y = lv2_ljump_offset_y;
 	}
+
+	public int getFlagstaff_offset_x_small() {
+	    return flagstaff_offset_x_small;
+    }
+
+    public int getFlagstaff_offset_y_small() {
+	    return flagstaff_offset_y_small;
+    }
 }

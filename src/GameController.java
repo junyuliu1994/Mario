@@ -44,6 +44,9 @@ public class GameController {
 		return gameModel.getBackground();
 	}
 
+	public boolean isOutOfControl() {
+	    return gameModel.OUT_OF_CONTROL;
+    }
 
 	public Mario getMario() {
 		return gameModel.getMario();

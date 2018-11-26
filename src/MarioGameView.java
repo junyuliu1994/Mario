@@ -24,11 +24,8 @@ import javax.swing.plaf.synth.SynthTextAreaUI;
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
 	private GameController gameController = new GameController(gameModel);
-	//	SpriteAnimation coinAnimation = null;
 	Canvas canvasForMario = gameModel.getCanvasForMario();
 	GraphicsContext gcForMario = gameModel.getGcForMario();
-	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
-	private Duration coinDuration = Duration.millis(1000);
 	Image background = new Image("resources/start_background.png");
 	Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
 	int curr = 1;
@@ -45,6 +42,7 @@ public class MarioGameView extends Application implements Observer{
 		Scene scene = new Scene(root);
 		StartMenu(scene, gcForMario);
 		primaryStage.getIcons().add(new Image("resources/icon.png"));
+		primaryStage.setResizable(false);
 		//initGame(scene);
 		primaryStage.setTitle("Mario Game");
 		primaryStage.setScene(scene);
@@ -111,8 +109,6 @@ public class MarioGameView extends Application implements Observer{
 								wall.getX(),wall.getY(), wall.getWidth(), wall.getHeight()
 						);
 						break;
-						
-
                     case '3':
                         QuestionBrick questionBrick = new QuestionBrick(gameModel.getBlocks(),40,40,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
@@ -147,6 +143,12 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getGoombas().get(index2).getY(), // the destination rectangle's Y coordinate position.
     							gameController.getGoombas().get(index2).getWidth(), // the destination rectangle's width.
     							gameController.getGoombas().get(index2).getHeight());
+                    case '5':
+                        Coin coin = new Coin(gameModel.getBlocks(), j * 40, i * 40);
+                        gameModel.getCoins().add(coin);
+                        gcForMario.drawImage(coin.getImage(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(),
+                                coin.getHeight(), coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight());
+                        break;
                     default:
 
                    
@@ -156,14 +158,6 @@ public class MarioGameView extends Application implements Observer{
     	}  
     }
 
-
-
-			
-
-                        
-                   
-                        
-   
 
 	@Override
 	public void update(Observable o, Object arg1) {
@@ -183,6 +177,7 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
 				gameController.getMario().getWidth(), // the destination rectangle's width.
 				gameController.getMario().getHeight()); // the destination rectangle's height.
+
 	}
 
 	private void reDrawExceptionMario() {
@@ -196,7 +191,7 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getBackground().getWidth(), // the destination rectangle's width.
 				gameController.getBackground().getHeight()); // the destination rectangle's height.
 
-
+        // draw bricks
 		for (int i = 0; i < gameController.getBricks().size(); i++) {
 		    if (gameController.getBricks().get(i) == null){
 		        continue;
@@ -212,19 +207,9 @@ public class MarioGameView extends Application implements Observer{
 					gameController.getBricks().get(i).getHeight()); // the destination rectangle's height.
 		}
 
-//		System.out.println("redraw coins");
+        // draw coins
 		for (Coin coin : gameController.getCoins()) {
-////		    coin.animation.setOffsetX((int)coin.getX());
-////            coin.animation.
-//		    coin.animation.stop();
-//		    coin.animation = new SpriteAnimation(coin.getImage(), coinDuration, coin.getCount(),
-//                    coin.getCol(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(), coin.getHeight(),
-//                    coin.getX(), coin.getY(),gcForMario, 1, false);
-//		    coin.animation.setCycleCount(Animation.INDEFINITE);
-//		    coin.animation.play();
-//        }
-
-
+		    if (coin == null) continue;
 			gcForMario.drawImage(coin.getImage(),
 					coin.getOffset_x(), coin.getOffset_y(),
 					coin.getWidth(), coin.getHeight(),
@@ -232,6 +217,7 @@ public class MarioGameView extends Application implements Observer{
 			);
 		}
 
+        // draw mushrooms
         for (Mushroom mushroom : gameController.getMushrooms()) {
             if (mushroom != null) {
                 gcForMario.drawImage(mushroom.getImage(),
@@ -242,12 +228,15 @@ public class MarioGameView extends Application implements Observer{
             }
 
         }
-		
+
+        // draw goombas
 		for(Goomba goomba: gameController.getGoombas()) {
 			gcForMario.drawImage( goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
 					goomba.getWidth(), goomba.getHeight(),
 					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
 		}
+		// draw scores
+
 	}
 	
 	public void initGame(Scene scene){
@@ -256,35 +245,37 @@ public class MarioGameView extends Application implements Observer{
 
 
 		scene.setOnKeyPressed(event -> {
-			if (event.getCode().toString().equals("D")) {
-				gameController.setStart(true);
-				gameController.getMario().setSpeed(2);
-				gameController.getMario().setRight(true);
+		    if (!gameController.isOutOfControl()) {
+                if (event.getCode().toString().equals("D")) {
+                    gameController.setStart(true);
+                    gameController.getMario().setSpeed(2);
+                    gameController.getMario().setRight(true);
 
-			}
-			else if (event.getCode().toString().equals("A")) {
-				gameController.setStart(true);
-				gameController.getMario().setSpeed(-2);
-				gameController.getMario().setLeft(true);
-			}
-			else if (event.getCode().toString().equals("W")) {
-				gameController.setStart(true);
-				gameController.getMario().setJump(true);
-			}
+                } else if (event.getCode().toString().equals("A")) {
+                    gameController.setStart(true);
+                    gameController.getMario().setSpeed(-2);
+                    gameController.getMario().setLeft(true);
+                } else if (event.getCode().toString().equals("W")) {
+                    gameController.setStart(true);
+                    gameController.getMario().setJump(true);
+                }
+            }
 		});
 
 		scene.setOnKeyReleased(event -> {
-			if (gameController.getMario().getMarioAnimation() != null) {
-				if (event.getCode().toString().equals("D")) {
-					gameController.getMario().setRight(false);
-					gameController.getMario().setSpeed(0);
-				}
+            if (!gameController.isOutOfControl()) {
+                if (gameController.getMario().getMarioAnimation() != null) {
+                    if (event.getCode().toString().equals("D")) {
+                        gameController.getMario().setRight(false);
+                        gameController.getMario().setSpeed(0);
+                    }
 
-				if (event.getCode().toString().equals("A")) {
-					gameController.getMario().setLeft(false);
-					gameController.getMario().setSpeed(0);
-				}
-			}
+                    if (event.getCode().toString().equals("A")) {
+                        gameController.getMario().setLeft(false);
+                        gameController.getMario().setSpeed(0);
+                    }
+                }
+            }
 		});
 
 		initContent();
