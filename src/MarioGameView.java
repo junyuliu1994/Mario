@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -11,6 +12,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -30,7 +32,8 @@ public class MarioGameView extends Application implements Observer{
 	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
 	private Duration coinDuration = Duration.millis(1000);
 	Image background = new Image("resources/start_background.png");
-	Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
+    Image pause = new Image("resources/pause.png");
+    Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
 	int curr = 1;
 
 	public static void main(String[] args) {
@@ -99,19 +102,19 @@ public class MarioGameView extends Application implements Observer{
 						Wall wall = new Wall(gameModel.getBlocks(),40,40,j*40,i*40);
 //                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
 
-//                   
+//
 
 //                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
 						gameController.getBricks().add(wall);
 
-                   
+
 						gcForMario.drawImage(wall.getImage(),
 								wall.getOffset_x(), wall.getOffset_y(),
 								wall.getWidth(), wall.getHeight(),
 								wall.getX(),wall.getY(), wall.getWidth(), wall.getHeight()
 						);
 						break;
-						
+
 
                     case '3':
                         QuestionBrick questionBrick = new QuestionBrick(gameModel.getBlocks(),40,40,j*40,i*40);
@@ -129,12 +132,12 @@ public class MarioGameView extends Application implements Observer{
                     	Monster goomba = new Goomba(0,40,j*40, i*40);
                     	gameController.getMonsters().add(goomba);
                         //System.out.println("file:goomba's location:"+ j*40+" ,"+i*40);
-                    	
+
                     	int index2 = gameController.getMonsters().size() -1;
-                    	
+
                     	/*
-                    	System.out.print(gameController.getGoombas().get(index2).getOffset_x() + " " + 
-    							gameController.getGoombas().get(index2).getOffset_y() + " " + 	gameController.getGoombas().get(index2).getWidth() 
+                    	System.out.print(gameController.getGoombas().get(index2).getOffset_x() + " " +
+    							gameController.getGoombas().get(index2).getOffset_y() + " " + 	gameController.getGoombas().get(index2).getWidth()
     							+ " " + gameController.getGoombas().get(index2).getHeight() );
                     	System.out.println(gameController.getGoombas().get(index2).getX() + " " +  gameController.getGoombas().get(index2).getX());
                     	*/
@@ -149,21 +152,21 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getMonsters().get(index2).getHeight());
                     default:
 
-                   
-                  
+
+
     			}
     		}
-    	}  
+    	}
     }
 
 
 
-			
 
-                        
-                   
-                        
-   
+
+
+
+
+
 
 	@Override
 	public void update(Observable o, Object arg1) {
@@ -252,7 +255,7 @@ public class MarioGameView extends Application implements Observer{
                 );
             }
         }
-        
+
         for(Monster goomba: gameController.getMonsters()) {
         	if (goomba != null) {
 				gcForMario.drawImage(goomba.getImage(), goomba.getOffset_x(), goomba.getOffset_y(),
@@ -263,12 +266,15 @@ public class MarioGameView extends Application implements Observer{
         }
 
 
-	
 	public void initGame(Scene scene){
 		gameModel.start();
 		gameModel.addObserver(this);
+		setControl(scene);
 
+		initContent();
+	}
 
+	public void setControl(Scene scene){
 		scene.setOnKeyPressed(event -> {
 			if (event.getCode().toString().equals("D")) {
 				gameController.setStart(true);
@@ -299,9 +305,54 @@ public class MarioGameView extends Application implements Observer{
 						bullet.setSpeed(-6);
 					}
 				}
-			}
-		});
+			}else if(event.getCode() == KeyCode.ESCAPE){
+				if(!gameModel.getPaused()) {
+					gameModel.pause();
+					gcForMario.drawImage(pause,0,0);
+					gcForMario.setFill(Color.WHITE);
+					gcForMario.fillText("Paused", 850,40);
+					curr = 1;
+					pauseMenu();
+				}else {
+					gameModel.resume();
+				}
+			}else if(event.getCode()==KeyCode.UP){
+				if(curr > 1){
+					if(gameModel.getPaused()){
+						curr --;
+						pauseMenu();
+					}
+				}
+			}else if(event.getCode() == KeyCode.DOWN) {
+				if (curr < 3) {
+					if(gameModel.getPaused()){
+						curr++;
+						pauseMenu();
+					}
+				}
+			}else if(event.getCode() == KeyCode.ENTER){
+				if(gameModel.getPaused()){
+					if(curr == 1){
+						try {
+							FileOutputStream file = new FileOutputStream("save_game.dat");
+							ObjectOutputStream out = new ObjectOutputStream(file);
+							out.writeObject(gameModel);
+							out.close();
+							file.close();
+							System.out.println("Game Saved");
+						}catch (IOException e){
+							e.printStackTrace();
+						}
+					}else if(curr == 2){
+						loadGame();
+					}else{
+						System.exit(0);
 
+					}
+				}
+			}
+
+		});
 		scene.setOnKeyReleased(event -> {
 			if (gameController.getMario().getMarioAnimation() != null) {
 				if (event.getCode().toString().equals("D")) {
@@ -319,17 +370,77 @@ public class MarioGameView extends Application implements Observer{
 		initContent();
 	}
 
+	private void loadGame(){
+		try{
+			// try to load save_game.data
+			FileInputStream file = new FileInputStream("save_game.dat");
+			ObjectInputStream in = new ObjectInputStream(file);
+			gameModel = (GameModel) in.readObject();
+			in.close();
+			file.close();
+			gameController.restoreModel(gameModel, gcForMario, canvasForMario);
+			gameModel.start();
+			gameModel.addObserver(this);
+		}catch (IOException ioe ){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data does not exist\n"+ioe.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+		}catch (ClassNotFoundException nfe){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data has been corrupted\n"+nfe.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+		}
+	}
+
+	private void pauseMenu(){
+		double[] x = {0,0,240};
+		double[] y = {240, 480, 480};
+		gcForMario.setFill(Color.BLACK);
+		gcForMario.fillPolygon(x,y ,3);
+		gcForMario.fillRect(20, 280,100,40);
+		gcForMario.fillRect(80, 340,100,40);
+		gcForMario.fillRect(140, 400, 100,40);
+		gcForMario.setFill(Color.GRAY);
+		gcForMario.fillText("Save",30,310);
+		gcForMario.fillText("Load", 90, 370);
+		gcForMario.fillText("Exit", 150, 430);
+		gcForMario.setFill(Color.WHITE);
+		if(curr == 1){
+			gcForMario.fillText("Save",30,310);
+		}else if(curr == 2){
+			gcForMario.fillText("Load",90,370);
+		}else{
+			gcForMario.fillText("Exit", 150, 430);
+		}
+	}
+
 	private void MainGame(Scene scene,GraphicsContext gc){
 		gc.clearRect(0,0,856,550);
 		initGame(scene);
-		//goBackToMainMenu(scene,gc);
 	}
 
-	private void LoadGame(Scene scene, GraphicsContext gc){
-		gc.clearRect(0,0,856,550);
-		gc.fillText("WORKING ON IT", 300,250);
-		// TODO: do something
-		goBackToMainMenu(scene,gc);
+	private void LoadGame(Scene scene){
+		try {
+			(new ObjectInputStream(new FileInputStream("save_game.dat"))).readObject();
+		}catch (IOException e){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data does not exist\n"+e.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+			return;
+		}catch (ClassNotFoundException nfe){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data has been corrupted\n"+nfe.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+		}
+		initGame(scene);
+		gameModel.pause();
+		loadGame();
+		gameModel.resume();
+		setControl(scene);
 	}
 
 	private void aboutThisGame(Scene scene, GraphicsContext gc){
@@ -392,12 +503,11 @@ public class MarioGameView extends Application implements Observer{
 				if(curr == 1){
 					MainGame(scene, gc);
 				}else if(curr == 2){
-					LoadGame(scene, gc);
+					LoadGame(scene);
 				}else{
 					aboutThisGame(scene, gc);
 				}
 			}
 		});
 	}
-
 }

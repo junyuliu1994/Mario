@@ -1,4 +1,7 @@
- class LevelData {
+import java.io.Serializable;
+
+public class LevelData implements Serializable {
+    static final long serialVersionUID = 1;
 
 	public static final String[] LEVEL1 = new String[] {
 			"00000000000000000000000000000000000000000000000000",

@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,26 +11,27 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
-public class GameModel extends Observable{
+public class GameModel extends Observable implements Serializable {
 	// didn't use this info yet
 	private final int BLOCK_WIDTH = 40;
 	private final int BLOCK_HEIGHT = 40;
 
-	private final int WINDOW_WIDTH = 1000;
-	private final int WINDOW_HEIGHT = 480;
+	private static final int WINDOW_WIDTH = 1000;
+	private static final int WINDOW_HEIGHT = 480;
+    static final long serialVersionUID = 1;
 
-	private Background background = new Background();
-	private Image marioImage = new Image("resources/mario.png");
-	private Image blocks = new Image("resources/blocks.png");
-	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
+    private Background background = new Background();
+	private static Image marioImage = new Image("resources/mario.png");
+	private static Image blocks = new Image("resources/blocks.png");
+	private static Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
 
-	private Image wxzImage = new Image("resources/wxz.png");
+	private static Image wxzImage = new Image("resources/wxz.png");
 
-	private Image wxzConvertImage = new Image("resources/wxz-convert.png");
+	private static Image wxzConvertImage = new Image("resources/wxz-convert.png");
 
-    private Image itemImage = new Image("resources/items.png");
-	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
-	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
+    private static Image itemImage = new Image("resources/items.png");
+	private static Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+	private static GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 192, false, gcForMario);
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
@@ -41,11 +43,14 @@ public class GameModel extends Observable{
 	private int monsterClockCount = 0;
 	private int flashCoinsCount = 0;
 	private int invincibleCount = 0;
+	private static AnimationTimer at;
 
-	
+
+
 	private Brick standBrick;
 	
 	private boolean start = false;
+	private boolean paused = false;
 	private int score = 0;
 
 	private boolean moveBackground = false;
@@ -59,13 +64,14 @@ public class GameModel extends Observable{
 	}
 
 	public void start() {
-		AnimationTimer at = new AnimationTimer() {
+		at = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				// perform ticksPerFrame ticks
 				for (int i = 0; i < 1; i++) {
 					tick();
 				}
+				//System.out.print(123);
 			}
 
 
@@ -73,7 +79,27 @@ public class GameModel extends Observable{
 		at.start();
 	}
 
-	
+	public void restore(GraphicsContext gc, Canvas canvas){
+		canvasForMario = canvas;
+		gcForMario = gc;
+		mario.getMarioAnimation().restore(gc);
+
+	}
+
+	public boolean getPaused(){
+		return paused;
+	}
+
+	public void pause(){
+		at.stop();
+		paused = true;
+	}
+
+	public void resume(){
+		at.start();
+		paused = false;
+	}
+
 	private void tick() {
         flashCoinsCount++;
 		monsterClockCount++;
@@ -594,7 +620,6 @@ public class GameModel extends Observable{
      * Goomba will intinally move to left if it collides with brick or sees cliff
      * It turns around.
      * 
-     * @param void
      * @return void
      * 
      */
@@ -635,7 +660,7 @@ public class GameModel extends Observable{
 	/**
      * This is helper method to determine if that Enemy objects collides with brick
      * Checking the left side collision
-     * @param Monster Object
+     * @param monster Object
      * @return boolean value
      */
     private boolean isLeftCollsion(Monster monster){
@@ -654,7 +679,7 @@ public class GameModel extends Observable{
     
     /**
      * This is helper method to determine if that Monster objects' left is cliff
-     * @param Monster Object
+     * @param monster Object
      * @return boolean value
      */
     
@@ -675,7 +700,7 @@ public class GameModel extends Observable{
     /**
      * This is helper method to determine if that monster objects collides with brick
      * Checking the right side collision
-     * @param Monster Object
+     * @param monster Object
      * @return boolean value
      */
     private boolean isRightCollison(Monster monster) {
@@ -695,7 +720,7 @@ public class GameModel extends Observable{
     
     /**
      * This is helper method to determine if that Monster objects' right is cliff
-     * @param Monster Object
+     * @param monster Object
      * @return boolean value
      */
     private boolean isRightCliff(Monster monster) {
@@ -714,7 +739,7 @@ public class GameModel extends Observable{
     
     /**
      * check if this monster is step on by mario
-     * @param Monster - Monster objects need to be check
+     * @param monster - Monster objects need to be check
      * @return boolean value
      */
     private boolean stepOnByMario(Monster monster) {
