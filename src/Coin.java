@@ -13,7 +13,7 @@ public class Coin {
 	// to remove the side of coins, have set this values
 	private final int BLOCK_WIDTH = 38;        // the pixels of one block
 	private final int BLOCK_HEIGHT = 37;
-	public SpriteAnimation animation;
+
 	private int width;
 	private int height;
 	private double x;
@@ -27,8 +27,6 @@ public class Coin {
 		this.y = y;
 	}
 
-	void setAnimation(SpriteAnimation newAnimation) { this.animation = newAnimation;}
-	//	SpriteAnimation getAnimation() {return this.animation;}
 	public Image getImage() {
 		return image;
 	}
