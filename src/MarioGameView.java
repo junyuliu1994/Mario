@@ -248,6 +248,7 @@ public class MarioGameView extends Application implements Observer{
         // draw black circles
         for (BlackCircle blackCircle: gameController.getBlackCircles()) {
             gcForMario.setLineWidth(21);
+            gcForMario.setFill(Color.BLACK);
             if (!blackCircle.isFill()) {
                 gcForMario.strokeOval(blackCircle.getX(), blackCircle.getY(),
                         blackCircle.getWidth(), blackCircle.getHeight());
@@ -255,6 +256,13 @@ public class MarioGameView extends Application implements Observer{
                 gcForMario.fillOval(blackCircle.getX(), blackCircle.getY(),
                         blackCircle.getWidth(), blackCircle.getHeight());
             }
+        }
+
+        // draw information
+        for (Information information: gameController.getInformations()) {
+            gcForMario.setFill(information.getColor());
+            gcForMario.setFont(information.getFont());
+            gcForMario.fillText(information.getText(), information.getX(), information.getY());
         }
 
 	}

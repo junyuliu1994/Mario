@@ -7,6 +7,8 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class GameModel extends Observable{
@@ -33,6 +35,7 @@ public class GameModel extends Observable{
     private ArrayList<Goomba> goombas = new ArrayList<>();
     private ArrayList<Firework> fireworks = new ArrayList<>();
     private ArrayList<BlackCircle> blackCircles = new ArrayList<>();
+    private ArrayList<Information> informations = new ArrayList<>();
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
 	private int goombaMovePattern = 0;
@@ -98,12 +101,13 @@ public class GameModel extends Observable{
 	            mario.setX(mario.getX()+(int)mario.getSpeed());
 	            moveRight();
             } else {
-	            if (stopMarioCountChangeColor != 3) {
-                    dispaearMarioCount++;
-                } else {
+
+	            if (stopMarioCountChangeColor == 3) {
 	                dispaearMarioCount--;
+                } else {
+	                dispaearMarioCount++;
                 }
-//                stopMarioCountChangeColor++;
+
 	            stop();
 
                 if (stopMarioCountChangeColor == 0 && dispaearMarioCount==10) {
@@ -133,9 +137,6 @@ public class GameModel extends Observable{
                     int x = -dispaearMarioCount*20+590;
                     int y = -dispaearMarioCount*20+230;
                     int diameter = 250+(dispaearMarioCount*40);
-//                    int x = 590;
-//                    int y = 230;
-//                    int diameter = 250;
                     blackCircles.add(new BlackCircle(x,y,diameter,false));
                 }
                 if (stopMarioCountChangeColor == 3 && dispaearMarioCount == -1) {
@@ -148,10 +149,14 @@ public class GameModel extends Observable{
                     int y = -dispaearMarioCount*20+230;
                     int diameter = 250+(dispaearMarioCount*40);
                     blackCircles.add(new BlackCircle(x,y,diameter,true));
+                    stopMarioCountChangeColor++;
                 }
 
-                if (stopMarioCountChangeColor == 4 && dispaearMarioCount == 15) {
-                    gcForMario.fillText("You won!", 480, 230);
+                if (stopMarioCountChangeColor == 5) {
+//                    System.out.println("filling text");
+                    informations.add(new Information("You won!", Color.WHITE, 410, 380,
+                            Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),20)));
+                    stopMarioCountChangeColor++;
                 }
 
 
@@ -933,5 +938,7 @@ public class GameModel extends Observable{
 	public ArrayList<BlackCircle> getBlackCircles() { return this.blackCircles; }
 
 	public ArrayList<Firework> getFireworks() { return this.fireworks; }
+
+	public ArrayList<Information> getInformations() { return this.informations; }
 
 }

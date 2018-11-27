@@ -77,6 +77,8 @@ public class GameController {
 
 	public ArrayList<Firework> getFireworks() { return gameModel.getFireworks(); }
 
+	public ArrayList<Information> getInformations() { return gameModel.getInformations(); }
+
 	public void setMushrooms(ArrayList<Mushroom> mushrooms) {
 		gameModel.setMushrooms(mushrooms);
 	}
@@ -88,7 +90,6 @@ public class GameController {
 	public void setItemImage(Image itemImage) {
 		gameModel.setItemImage(itemImage);
 	}
-
 
 
 
