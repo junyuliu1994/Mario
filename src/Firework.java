@@ -3,7 +3,7 @@ import javafx.scene.image.Image;
 /**
  * @author Shawn Jin
  */
-public class Fireworks {
+public class Firework {
     Image image;
     private int initial_offsetX = 0;
     private int offsetX = 0;
@@ -15,7 +15,7 @@ public class Fireworks {
     private int count;
     private final int col = 4;
 
-    public Fireworks(Image image , int x, int y, int count) {
+    public Firework(Image image , int x, int y, int count) {
 //        image = new Image("resources/blocks.png");
         this.image = image;
         this.x = x;

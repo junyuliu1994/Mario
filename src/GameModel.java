@@ -21,7 +21,7 @@ public class GameModel extends Observable{
 	private Image marioImage = new Image("resources/mario.png");
 	private Image blocks = new Image("resources/blocks.png");
 	private Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
-
+    private Image fireWorkImage = new Image("resources/effects.png");
     private Image itemImage = new Image("resources/items.png");
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
@@ -31,6 +31,8 @@ public class GameModel extends Observable{
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
     private ArrayList<Goomba> goombas = new ArrayList<>();
+    private ArrayList<Firework> fireworks = new ArrayList<>();
+    private ArrayList<BlackCircle> blackCircles = new ArrayList<>();
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
 	private int goombaMovePattern = 0;
@@ -66,6 +68,7 @@ public class GameModel extends Observable{
 	private int flashCoinsCount = 0;
 	private int stopMarioCountChangeColor = 0;
 	private int dispaearMarioCount = 0;
+
 	private void tick() {
 
 	    // flash coins and question brick
@@ -74,7 +77,7 @@ public class GameModel extends Observable{
 		if (flashCoinsCount == 8) {
 			flashCoins();
 			flashQuestionBrick();
-        	
+			flashFireworks();
 			flashCoinsCount = 0;
 		}
 
@@ -95,26 +98,62 @@ public class GameModel extends Observable{
 	            mario.setX(mario.getX()+(int)mario.getSpeed());
 	            moveRight();
             } else {
-                dispaearMarioCount++;
+	            if (stopMarioCountChangeColor != 3) {
+                    dispaearMarioCount++;
+                } else {
+	                dispaearMarioCount--;
+                }
 //                stopMarioCountChangeColor++;
 	            stop();
-//	            if (stopMarioCountChangeColor == 12) {
-//	                stopMarioCountChangeColor = 0;
-//	                dispaearMarioCount++;
-//
-//	                mario.setOffset_y(mario.getOffset_y()+120);
-//                }
-                if (dispaearMarioCount==10) {
-                    // disapre mario
+
+                if (stopMarioCountChangeColor == 0 && dispaearMarioCount==10) {
+                    // hide mario
                     stopMarioCountChangeColor++;
                     mario.setOffset_y(mario.getOffset_y()+2130);
                     dispaearMarioCount=0;
                 }
                 if (stopMarioCountChangeColor == 1 && dispaearMarioCount==5) {
-//                    System.out.println("set 0 ");
+                    // disappear mario
                     mario.setOffset_y(0);
                     mario.setOffset_x(0);
+                    stopMarioCountChangeColor++;
+                    dispaearMarioCount = 0;
                 }
+                if (stopMarioCountChangeColor == 2 && dispaearMarioCount == 10) {
+                    // add fireworks
+                    fireworks.add(new Firework(fireWorkImage, 660, 200, 0));
+                    fireworks.add(new Firework(fireWorkImage, 680, 230, 3));
+                    fireworks.add(new Firework(fireWorkImage, 720, 220, 4));
+                    fireworks.add(new Firework(fireWorkImage, 740, 200, 0));
+                    dispaearMarioCount=40;
+                    stopMarioCountChangeColor++;
+                }
+                // add circles
+                if (stopMarioCountChangeColor == 3) {
+                    int x = -dispaearMarioCount*20+590;
+                    int y = -dispaearMarioCount*20+230;
+                    int diameter = 250+(dispaearMarioCount*40);
+//                    int x = 590;
+//                    int y = 230;
+//                    int diameter = 250;
+                    blackCircles.add(new BlackCircle(x,y,diameter,false));
+                }
+                if (stopMarioCountChangeColor == 3 && dispaearMarioCount == -1) {
+                    // to stop draw circle
+                    stopMarioCountChangeColor++;
+                    dispaearMarioCount = 0;
+                }
+                if (stopMarioCountChangeColor == 4 && dispaearMarioCount == 10) {
+                    int x = -dispaearMarioCount*20+590;
+                    int y = -dispaearMarioCount*20+230;
+                    int diameter = 250+(dispaearMarioCount*40);
+                    blackCircles.add(new BlackCircle(x,y,diameter,true));
+                }
+
+                if (stopMarioCountChangeColor == 4 && dispaearMarioCount == 15) {
+                    gcForMario.fillText("You won!", 480, 230);
+                }
+
 
 
             }
@@ -135,11 +174,7 @@ public class GameModel extends Observable{
                 mario.setY(mario.getY() + fallingSpeed);
                 // set location of image
                 mario.setX(flagstaff.getX() - mario.getWidth());
-//                if (mario.isRight()) {
-//
-//                } else {
-////                    mario.setX(flagstaff.getX() + mario.getWidth());
-//                }
+
             } else {
                 // stand on ground
 
@@ -151,14 +186,11 @@ public class GameModel extends Observable{
             }
 
             eatMushroom();
+
             if (touchCoin()) {
-                // play the score animation
+                // TODO: play the score animation
 
             }
-
-//            if (touchFlag()) {
-//
-//            }
 
             if (mario.getLife() > 0) {
                 if (jumpToHoleDeath()) {
@@ -269,8 +301,6 @@ public class GameModel extends Observable{
                             mario.resetCollisionCor();
 
                             mushrooms.set(i, null);
-                            
-                            
                         }
                     }
                 }
@@ -389,61 +419,6 @@ public class GameModel extends Observable{
 			jump();
 		}
 
-		/*if (mario.getJumpHeight() >= mario.getJumpMax()) {
-			if (mario.getDirection() == 1) {
-				mario.setImage(marioImage);
-				mario.setCol(1);
-				mario.setCount(0);
-				mario.setOffset_x(195);
-				mario.setOffset_y(80);
-				
-				
-			}
-			else {
-				mario.setImage(marioConvertImage);
-				mario.setCol(1);
-				mario.setCount(0);
-				mario.setOffset_x(791);
-				mario.setOffset_y(80);
-				
-				
-			}
-		}*/
-
-/*<<<<<<< HEAD
-	    if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 40 && mario.isJump()){
-=======
-	    if (mario.getJumpMax() > -1 && mario.getJumpHeight() == 80 && mario.isJump() == true){
->>>>>>> refs/heads/junyu
-	    	fall();
-	    }
-<<<<<<< HEAD
-	    if (mario.getJumpHeight() == 40 && mario.getJumpMax() == 0 && mario.isJump()) { //the finish jumping and stop status
-=======
-	    if (mario.getJumpHeight() == 80 && mario.getJumpMax() == 0 && mario.isJump() == true) { //the finish jumping and stop status
->>>>>>> refs/heads/junyu
-	    	mario.setJumpHeight(0);
-	   		mario.setJumpMax(80);
-	    	mario.setJump(false);
-	    	if (mario.getDirection() == 1) {
-	   			mario.setImage(marioImage);
-	   			mario.setCol(1);
-	    		mario.setCount(0);
-	    		mario.setOffset_x(195);
-	    		mario.setOffset_y(80);
-	    		
-	        	
-	    	}
-	    	else {
-	    		mario.setImage(marioConvertImage);
-	    		mario.setCol(1);
-	    		mario.setCount(0);
-	    		mario.setOffset_x(791);
-		       	mario.setOffset_y(80);
-		       	
-		    	
-	    	}
-	    }*/
 	}
 
 	private void moveRight() {
@@ -679,6 +654,19 @@ public class GameModel extends Observable{
 			}
 		}
 	}
+
+	private void flashFireworks() {
+        for (Firework firework: fireworks) {
+            if (firework == null) continue;
+            if (firework.getCount() < firework.getCol()) {
+                firework.setOffsetX(firework.getInitial_offsetX() + (firework.getWidth()*firework.getCount()));
+                firework.setCount(firework.getCount() + 1);
+            } else {
+                firework.setCount(0);
+            }
+
+        }
+    }
 
 	private void jumpCollisionWithBrick(Brick brick, int i){
 	    if (brick instanceof Wall){
@@ -941,4 +929,9 @@ public class GameModel extends Observable{
 	public ArrayList<Goomba> getGoombas() {
 		return goombas;
 	}
+
+	public ArrayList<BlackCircle> getBlackCircles() { return this.blackCircles; }
+
+	public ArrayList<Firework> getFireworks() { return this.fireworks; }
+
 }

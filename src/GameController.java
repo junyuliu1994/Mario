@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javafx.scene.image.Image;
@@ -72,6 +73,10 @@ public class GameController {
 		return gameModel.getMushrooms();
 	}
 
+	public ArrayList<BlackCircle> getBlackCircles() { return gameModel.getBlackCircles(); }
+
+	public ArrayList<Firework> getFireworks() { return gameModel.getFireworks(); }
+
 	public void setMushrooms(ArrayList<Mushroom> mushrooms) {
 		gameModel.setMushrooms(mushrooms);
 	}
@@ -83,6 +88,9 @@ public class GameController {
 	public void setItemImage(Image itemImage) {
 		gameModel.setItemImage(itemImage);
 	}
+
+
+
 
 
 }

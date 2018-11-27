@@ -235,7 +235,27 @@ public class MarioGameView extends Application implements Observer{
 					goomba.getWidth(), goomba.getHeight(),
 					goomba.getX(), goomba.getY(), goomba.getWidth(), goomba.getHeight());
 		}
+
+		// draw fireworks
+        for (Firework firework: gameController.getFireworks()) {
+            gcForMario.drawImage( firework.getImage(), firework.getOffsetX(), firework.getOffsetY(),
+                    firework.getWidth(), firework.getHeight(),
+                    firework.getX(), firework.getY(), 40, 40);
+        }
+
 		// draw scores
+
+        // draw black circles
+        for (BlackCircle blackCircle: gameController.getBlackCircles()) {
+            gcForMario.setLineWidth(21);
+            if (!blackCircle.isFill()) {
+                gcForMario.strokeOval(blackCircle.getX(), blackCircle.getY(),
+                        blackCircle.getWidth(), blackCircle.getHeight());
+            } else {
+                gcForMario.fillOval(blackCircle.getX(), blackCircle.getY(),
+                        blackCircle.getWidth(), blackCircle.getHeight());
+            }
+        }
 
 	}
 	
