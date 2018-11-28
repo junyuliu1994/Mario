@@ -1,25 +1,18 @@
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
-import javafx.animation.TranslateTransition;
+
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
