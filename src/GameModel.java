@@ -1,15 +1,12 @@
 import java.io.Serializable;
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.util.Duration;
 
 public class GameModel extends Observable implements Serializable {
 	// didn't use this info yet
@@ -62,6 +59,10 @@ public class GameModel extends Observable implements Serializable {
 		this.start = start;
 	}
 
+	/**
+	 * call animation timer to start draw image on window,
+	 * 60 frame pre second
+	 */
 	public void start() {
 		at = new AnimationTimer() {
 			@Override
@@ -78,6 +79,11 @@ public class GameModel extends Observable implements Serializable {
 		at.start();
 	}
 
+	/**
+	 * restore gc and canvas to class
+	 * @param gc GraphicsContext
+	 * @param canvas Canvas
+	 */
 	public void restore(GraphicsContext gc, Canvas canvas){
 		canvasForMario = canvas;
 		gcForMario = gc;
@@ -85,15 +91,25 @@ public class GameModel extends Observable implements Serializable {
 
 	}
 
+	/**
+	 * get the pause status
+	 * @return whether the game has been pasused or not
+	 */
 	public boolean getPaused(){
 		return paused;
 	}
 
+	/**
+	 * pause the game
+	 */
 	public void pause(){
 		at.stop();
 		paused = true;
 	}
 
+	/**
+	 * resume the game
+	 */
 	public void resume(){
 		at.start();
 		paused = false;

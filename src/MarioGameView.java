@@ -2,26 +2,19 @@ import java.io.*;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
@@ -42,13 +35,11 @@ public class MarioGameView extends Application implements Observer{
 
 
 	public void start(Stage primaryStage) {
-
 		Group root = new Group();
 		root.getChildren().add(canvasForMario);
 		Scene scene = new Scene(root);
 		StartMenu(scene, gcForMario);
 		primaryStage.getIcons().add(new Image("resources/icon.png"));
-		//initGame(scene);
 		primaryStage.setTitle("Mario Game");
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -265,7 +256,10 @@ public class MarioGameView extends Application implements Observer{
 	}
         }
 
-
+	/**
+	 * init the game
+	 * @param scene Scene
+	 */
 	public void initGame(Scene scene){
 		gameModel.start();
 		gameModel.addObserver(this);
@@ -305,8 +299,10 @@ public class MarioGameView extends Application implements Observer{
 						bullet.setSpeed(-6);
 					}
 				}
+			// when ESC has been hit, open or close the pause menu
 			}else if(event.getCode() == KeyCode.ESCAPE){
 				if(!gameModel.getPaused()) {
+				    // set the model to paused, draw the pause menu image on gc
 					gameModel.pause();
 					gcForMario.drawImage(pause,0,0);
 					gcForMario.setFill(Color.WHITE);
@@ -316,6 +312,7 @@ public class MarioGameView extends Application implements Observer{
 				}else {
 					gameModel.resume();
 				}
+			// update the highlighted pauseMenu item when the game has been paused
 			}else if(event.getCode()==KeyCode.UP){
 				if(curr > 1){
 					if(gameModel.getPaused()){
@@ -330,10 +327,12 @@ public class MarioGameView extends Application implements Observer{
 						pauseMenu();
 					}
 				}
+			// execute the option when enter has been hit and game has been paused
 			}else if(event.getCode() == KeyCode.ENTER){
 				if(gameModel.getPaused()){
 					if(curr == 1){
 						try {
+						    // save data for the first option
 							FileOutputStream file = new FileOutputStream("save_game.dat");
 							ObjectOutputStream out = new ObjectOutputStream(file);
 							out.writeObject(gameModel);
@@ -346,8 +345,8 @@ public class MarioGameView extends Application implements Observer{
 					}else if(curr == 2){
 						loadGame();
 					}else{
+					    // exit for the last option
 						System.exit(0);
-
 					}
 				}
 			}
@@ -368,6 +367,9 @@ public class MarioGameView extends Application implements Observer{
 		});
 	}
 
+    /**
+     * load previous game data from disk
+     */
 	private void loadGame(){
 		try{
 			// try to load save_game.data
@@ -379,11 +381,13 @@ public class MarioGameView extends Application implements Observer{
 			gameController.restoreModel(gameModel, gcForMario, canvasForMario);
 			gameModel.start();
 			gameModel.addObserver(this);
+		// handel the situation when saved file does not exist
 		}catch (IOException ioe ){
 			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data does not exist\n"+ioe.getMessage());
 			information.setTitle("Load Failed");
 			information.setHeaderText("Unable to load game");
 			information.showAndWait();
+        // handel the situation when save file does not contains game data
 		}catch (ClassNotFoundException nfe){
 			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data has been corrupted\n"+nfe.getMessage());
 			information.setTitle("Load Failed");
@@ -392,6 +396,9 @@ public class MarioGameView extends Application implements Observer{
 		}
 	}
 
+    /**
+     * draw the pause menu
+     */
 	private void pauseMenu(){
 		double[] x = {0,0,240};
 		double[] y = {240, 480, 480};
@@ -405,6 +412,7 @@ public class MarioGameView extends Application implements Observer{
 		gcForMario.fillText("Load", 90, 370);
 		gcForMario.fillText("Exit", 150, 430);
 		gcForMario.setFill(Color.WHITE);
+		// draw the highlighted option
 		if(curr == 1){
 			gcForMario.fillText("Save",30,310);
 		}else if(curr == 2){
@@ -414,12 +422,22 @@ public class MarioGameView extends Application implements Observer{
 		}
 	}
 
+    /**
+     * init the game from beginning
+     * @param scene Scene
+     * @param gc GraphicsContest
+     */
 	private void MainGame(Scene scene,GraphicsContext gc){
 		gc.clearRect(0,0,856,550);
 		initGame(scene);
 	}
 
+    /**
+     * Load previous game data from disk at main menu
+     * @param scene
+     */
 	private void LoadGame(Scene scene){
+	    // check if previous game data exist
 		try {
 			(new ObjectInputStream(new FileInputStream("save_game.dat"))).readObject();
 		}catch (IOException e){
@@ -433,7 +451,9 @@ public class MarioGameView extends Application implements Observer{
 			information.setTitle("Load Failed");
 			information.setHeaderText("Unable to load game");
 			information.showAndWait();
+			return;
 		}
+		// load when every thing is normal
 		initGame(scene);
 		gameModel.pause();
 		loadGame();
@@ -441,21 +461,22 @@ public class MarioGameView extends Application implements Observer{
 		setControl(scene);
 	}
 
+
 	private void aboutThisGame(Scene scene, GraphicsContext gc){
 		gc.clearRect(0,0,856,550);
 		gc.fillText("WORKING ON IT", 300,250);
 		// TODO: do something
-		goBackToMainMenu(scene,gc);
+        scene.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ESCAPE){
+                StartMenu(scene,gc);
+            }
+        });
 	}
 
-	private void goBackToMainMenu(Scene scene,GraphicsContext gc){
-		scene.setOnKeyPressed(event -> {
-			if(event.getCode() == KeyCode.ESCAPE){
-				StartMenu(scene,gc);
-			}
-		});
-	}
-
+    /**
+     * update highlighted item on main menu
+     * @param gc GraphicsContext
+     */
 	public void reDrawStart(GraphicsContext gc){
 		gc.clearRect(0,0,1000,480);
 		gc.drawImage(background, 0,0);
@@ -474,6 +495,7 @@ public class MarioGameView extends Application implements Observer{
 		gc.fillText("Load Game",408, 360);
 		gc.fillText("About",410, 390);
 		gc.setFill(Color.BLACK);
+		// update highlighted item
 		if(curr == 1){
 			gc.fillText("New Game",410, 330);
 		}else if(curr == 2){
@@ -483,6 +505,11 @@ public class MarioGameView extends Application implements Observer{
 		}
 	}
 
+    /**
+     * draw main menu on the window, keep truck curr highlighted item.
+     * @param scene Scene
+     * @param gc GraphicsContext
+     */
 	private void StartMenu(Scene scene, GraphicsContext gc){
 		reDrawStart(gc);
 		scene.setOnKeyPressed(event -> {
