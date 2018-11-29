@@ -1,9 +1,11 @@
 import javafx.scene.image.Image;
 
-public class Coin {
+import java.io.Serializable;
+
+public class Coin implements Serializable {
 	private final int SCORE = 100;
 
-	private Image image;
+	private static Image image;
 	private  int col = 3;
 	private  int count = 3;
 	final int initial_offset_x = 948;

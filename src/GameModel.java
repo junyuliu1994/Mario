@@ -49,6 +49,7 @@ public class GameModel extends Observable implements Serializable {
 	private int invincibleCount = 0;
 	private static AnimationTimer at;
 	private boolean OUT_OF_CONTROL = false;
+	private int level = 0;
 
 
 
@@ -63,6 +64,30 @@ public class GameModel extends Observable implements Serializable {
 	public boolean isStart() {
 		return start;
 	}
+
+	public boolean won(){
+			return stopMarioCountChangeColor == 6;
+	}
+
+	public int getMarioLevel(){
+		return mario.getLevel();
+	}
+
+	public void setMarioLevel(int level){
+		mario.setLevel(level);
+	}
+	public void setLevel(int level){
+		this.level = level;
+	}
+
+	public int getLevel(){
+		return level;
+	}
+
+	public void setLevel(){
+		this.level++;
+	}
+
 
 	public void setStart(boolean start) {
 		this.start = start;
@@ -216,6 +241,8 @@ public class GameModel extends Observable implements Serializable {
 					informations.add(new Information("You won!", Color.WHITE, 410, 380,
 							Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),20)));
 					stopMarioCountChangeColor++;
+					setChanged();
+					notifyObservers();
 				}
 			}
 		}

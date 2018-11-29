@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 /**
  * @author Shawn Jin
  */
-public class BlackCircle {
+public class BlackCircle implements Serializable {
 
     // black
     private int width =300;

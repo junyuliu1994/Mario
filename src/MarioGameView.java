@@ -11,6 +11,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -28,7 +30,9 @@ public class MarioGameView extends Application implements Observer{
 	Image background = new Image("resources/start_background.png");
     Image pause = new Image("resources/pause.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
-	int curr = 1;
+    MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
+
+    int curr = 1;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -36,6 +40,7 @@ public class MarioGameView extends Application implements Observer{
 
 
 	public void start(Stage primaryStage) {
+	    BGM.setAutoPlay(true);
 		Group root = new Group();
 		root.getChildren().add(canvasForMario);
 		Scene scene = new Scene(root);
@@ -70,8 +75,8 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getWidth(), // the destination rectangle's width.
 				gameController.getMario().getWidth()); // the destination rectangle's height.
 
-		for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-			String line = LevelData.LEVEL1[i];
+		for (int i = 0; i < LevelData.getMap(gameModel.getLevel()).length; i++) {
+			String line = LevelData.getMap(gameModel.getLevel())[i];
 			for (int j = 0; j < line.length(); j++) {
 				switch (line.charAt(j)) {
 					case '0':
@@ -158,6 +163,21 @@ public class MarioGameView extends Application implements Observer{
 		gcForMario.clearRect(0, 0, 1000, 480);
 		reDrawExceptionMario();
 		reDrawMario();
+		if(model.won()){
+		    if(this.gameModel.getLevel() != 2) {
+                int currLevel = gameModel.getLevel()+1;
+                System.out.println("游戏结束");
+                model.deleteObserver(this);
+                int level = model.getMarioLevel();
+                this.gameModel = new GameModel();
+                this.gameModel.setLevel(currLevel);
+                this.gameModel.setMarioLevel(level);
+                this.gameModel.addObserver(this);
+                gameController.restoreModel(this.gameModel, gcForMario, canvasForMario);
+                initContent();
+                gameModel.start();
+            }
+        }
 	}
 
 	private void reDrawMario() {
@@ -320,6 +340,7 @@ public class MarioGameView extends Application implements Observer{
 			// when ESC has been hit, open or close the pause menu
 			if(event.getCode() == KeyCode.ESCAPE){
 				if(!gameModel.getPaused()) {
+				    BGM.pause();
 				    // set the model to paused, draw the pause menu image on gc
 					gameModel.pause();
 					gcForMario.drawImage(pause,0,0);
@@ -328,6 +349,7 @@ public class MarioGameView extends Application implements Observer{
 					curr = 1;
 					pauseMenu();
 				}else {
+				    BGM.play();
 					gameModel.resume();
 				}
 			// update the highlighted pauseMenu item when the game has been paused
@@ -361,6 +383,7 @@ public class MarioGameView extends Application implements Observer{
 							e.printStackTrace();
 						}
 					}else if(curr == 2){
+					    BGM.play();
 						loadGame();
 					}else{
 					    // exit for the last option
@@ -399,6 +422,7 @@ public class MarioGameView extends Application implements Observer{
 			gameController.restoreModel(gameModel, gcForMario, canvasForMario);
 			gameModel.start();
 			gameModel.addObserver(this);
+			gameModel.pause();
 		// handel the situation when saved file does not exist
 		}catch (IOException ioe ){
 			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data does not exist\n"+ioe.getMessage());

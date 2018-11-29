@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 /**
  * @author Shawn Jin
  */
-public class Flagstaff {
+public class Flagstaff implements Serializable {
     // the flagstaff x location is 1476
     private int initial_x = 1476;
     private int x;
