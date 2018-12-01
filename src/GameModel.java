@@ -49,7 +49,7 @@ public class GameModel extends Observable implements Serializable {
 	private boolean paused = false;
 	private int score = 0;
 
-	private boolean moveBackground = false;
+    private boolean moveBackground = false;
 
 	public boolean isStart() {
 		return start;
@@ -176,7 +176,7 @@ public class GameModel extends Observable implements Serializable {
 	}
 
 
-	private void resetBulletSpeed(){
+	public void resetBulletSpeed(){
 		if (mario.isRight() && moveBackground) {
 			for (Bullet bullet : bullets) {
 				if (bullet == null) {
@@ -226,16 +226,16 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
-	private boolean jumpToHoleDeath(){
+	public boolean jumpToHoleDeath(){
 		if (mario.getY() > 440){
 			return true;
 		}
 		return false;
 	}
 
-	private void stop() {
+	public boolean stop() {
 		if (mario.isRight() ||  mario.isLeft() || mario.isJump()) {
-			return;
+			return false;
 		}
 
 		if (mario.getDirection() == 1) {
@@ -254,7 +254,7 @@ public class GameModel extends Observable implements Serializable {
             	mario.setOffset_y(mario.getLv3_offset_y());
 			}
 
-
+			return true;
 
 		}
 		else{
@@ -272,10 +272,12 @@ public class GameModel extends Observable implements Serializable {
 				mario.setOffset_x(mario.getLv3_loffset_x());
 				mario.setOffset_y(mario.getLv3_offset_y());
 			}
+
+			return true;
 		}
 	}
 
-	private boolean bulletCollision(Bullet bullet){
+	public boolean bulletCollision(Bullet bullet){
 		for (Brick brick : bricks){
 			if (brick == null){
 				continue;
@@ -323,7 +325,7 @@ public class GameModel extends Observable implements Serializable {
 		return false;
 	}
 
-	private boolean standOnBlocks() {
+	public boolean standOnBlocks() {
 		for (int i = 0; i < bricks.size(); i++) {
 		    if (bricks.get(i) == null){
 		        continue;
@@ -348,7 +350,7 @@ public class GameModel extends Observable implements Serializable {
 		return false;
 	}
 
-	private void eatMushroom(){
+	public boolean eatMushroom(){
         for (int i = 0; i < mushrooms.size(); i++){
             if (mushrooms.get(i) != null){
                 if (mario.getfCenter_x() >= mushrooms.get(i).getX() && mario.getfCenter_x() <= mushrooms.get(i).getX() + mushrooms.get(i).getWidth()){
@@ -362,6 +364,7 @@ public class GameModel extends Observable implements Serializable {
                             mario.resetCollisionCor();
 
                             mushrooms.set(i, null);
+                            return true;
                         }
                         else if (mario.getLevel() == 2){
 
@@ -375,6 +378,7 @@ public class GameModel extends Observable implements Serializable {
                         		mario.resetCollisionCor();
 
 								mushrooms.set(i, null);
+								return true;
 							}
 							else{
 								mario.setImage(wxzConvertImage);
@@ -386,16 +390,18 @@ public class GameModel extends Observable implements Serializable {
 								mario.resetCollisionCor();
 
 								mushrooms.set(i, null);
+								return true;
 							}
 						}
                     }
                 }
             }
         }
+        return false;
 	}
 
 	//���ƶ�����
-	private boolean moveRightStockByBlocks() {
+	public boolean moveRightStockByBlocks() {
 		for (int i = 0; i < bricks.size(); i++) {
 		    if (bricks.get(i) == null){
 		        continue;
@@ -422,7 +428,7 @@ public class GameModel extends Observable implements Serializable {
 	}
 
 	//���ƶ�����
-	private boolean moveLeftStockByBlocks() {
+	public boolean moveLeftStockByBlocks() {
 		for (int i = 0; i < bricks.size(); i++) {
             if (bricks.get(i) == null){
                 continue;
@@ -640,7 +646,7 @@ public class GameModel extends Observable implements Serializable {
      * @return void
      *
      */
-    private void monsterMove(){
+    public void monsterMove(){
     	for(Monster monster: monsters) {
             if (monster != null) {
                 if (monster.isDead) {
@@ -680,7 +686,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster Object
      * @return boolean value
      */
-    private boolean isLeftCollsion(Monster monster){
+    public boolean isLeftCollsion(Monster monster){
     	//check if monster collide with brick
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
@@ -700,7 +706,7 @@ public class GameModel extends Observable implements Serializable {
      * @return boolean value
      */
 
-    private boolean isLeftCliff(Monster monster) {
+    public boolean isLeftCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
@@ -720,7 +726,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster Object
      * @return boolean value
      */
-    private boolean isRightCollison(Monster monster) {
+    public boolean isRightCollison(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
@@ -740,7 +746,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster Object
      * @return boolean value
      */
-    private boolean isRightCliff(Monster monster) {
+    public boolean isRightCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
@@ -759,7 +765,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster - Monster objects need to be check
      * @return boolean value
      */
-    private boolean stepOnByMario(Monster monster) {
+    public boolean stepOnByMario(Monster monster) {
     		if (monster != null && mario.getLeftF_y() == monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
@@ -774,14 +780,13 @@ public class GameModel extends Observable implements Serializable {
     /**
      * This method check if monster is collide by Mario
      */
-    private boolean isMarioCollideMonster(Monster monster) {
+    public boolean isMarioCollideMonster(Monster monster) {
     	//check all possible collision point
     	if(mario.getInvincibleStatus() == false && monster!=null) {
     		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
         		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
 
         			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
-
             			mario.setInvincible(true);
             			return true;
             		}
@@ -944,7 +949,7 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
-	private void jumpCollisionWithBrick(Brick brick, int i){
+	public void jumpCollisionWithBrick(Brick brick, int i){
 	    if (brick instanceof Wall){
 	        if (mario.getLevel() > 1) {
 	            bricks.set(i, null);
@@ -961,7 +966,7 @@ public class GameModel extends Observable implements Serializable {
         }
     }
 
-	private boolean jumpStockByBrick() {
+	public boolean jumpStockByBrick() {
 		for (int i = 0; i < bricks.size(); i++) {
 		    if (bricks.get(i) == null){
 		        continue;
@@ -1187,4 +1192,13 @@ public class GameModel extends Observable implements Serializable {
 	public void setScore(int score) {
 		this.score = score;
 	}
+
+    public boolean isMoveBackground() {
+        return moveBackground;
+    }
+
+    public void setMoveBackground(boolean moveBackground) {
+        this.moveBackground = moveBackground;
+    }
+
 }

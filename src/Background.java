@@ -13,7 +13,7 @@ public class Background implements Serializable {
 	
 	private int x = 0;
 	private int y = 0;
-	
+
 	public int getWidth() {
 		return width;
 	}
