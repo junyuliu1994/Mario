@@ -105,6 +105,8 @@ public class GameModel extends Observable{
 	         monsterClockCount = 0;
 	    }
 		
+	
+		
 		monsterMarioCollision();
 		move();
 		bulletMove();
@@ -580,12 +582,8 @@ public class GameModel extends Observable{
      */
     private void monsterMove(){
     	for(Monster monster: monsters) {
-    		if(monster.isDead) {
-        			monster.setCount(2);
-        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
-        			
-        		    
-    		}else {
+    		if(monster != null) {
+    			
     			//refresh Monster' move Animation  	
     			if (monster.getCount() < 2) {
         			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
@@ -594,18 +592,44 @@ public class GameModel extends Observable{
                 	monster.setCount(0);
                 }
     			
-    			
         		//Monster's actual Movement
         		if(isLeftCollsion(monster) || isLeftCliff(monster)){
+        			//if(monster instanceof Koopa) {
+        			//	((Koopa) monster).koopaMoveRight();
+        			//}
+        		
         			monster.setSpeed(5);
         		}
         		
         		if(isRightCollison(monster) || isRightCliff(monster)) {
+        			if(monster instanceof Koopa) {
+        				((Koopa) monster).koopaMoveLeft();
+        				if(((Koopa) monster).getShell()) {
+        					monster.isDead = true;
+        				}
+        			}
+        			
         			monster.setSpeed(-5);
         		}
+        		
+        		if(monster instanceof Koopa) {
+        			if(((Koopa) monster).getShell()) {
+        				monster.setOffset_x(400);
+             			monster.setInitiall_offsetX(400);
+        				monster.setSpeed(0);
+        			}
+        			
+        			if(((Koopa) monster).isRolling()) {
+        				monster.setSpeed(25);
+        			}
+        			
+        		}
+        		
+        		//move monsters
         		monster.setX(monster.getX() + monster.getSpeed());
-    			
+
     		}
+    		
     	}
     }
  
@@ -696,6 +720,7 @@ public class GameModel extends Observable{
      * @return boolean value
      */
     private boolean stepOnByMario(Monster monster) {
+    	if(mario.isFall()) {
     		if (mario.getLeftF_y() == monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
@@ -704,6 +729,7 @@ public class GameModel extends Observable{
 					 return true;
 				 }
 			 }
+    	}
     	return false;
     }
     
@@ -711,13 +737,13 @@ public class GameModel extends Observable{
      * This method check if monster is collide by Mario
      */
     private boolean isMarioCollideMonster(Monster monster) {
+    	
+    	
     	//check all possible collision point
     	if(mario.getInvincibleStatus() == false) {
     		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
         		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
-        			
         			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
-            			
             			mario.setInvincible(true);
             			return true;
             		}
@@ -760,6 +786,14 @@ public class GameModel extends Observable{
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
          	Monster temp = iterator.next();
          	if(isMarioCollideMonster(temp)) {
+         		//check if monster is koopaShell
+            	if(temp instanceof Koopa) {
+            		if(((Koopa) temp).getShell()) {
+            			return;
+            		}
+            	}
+            	
+            	//Mario will level down or dead.
          		if (mario.getLevel() == 1){
          			mario.setLife(mario.getLife() - 1);
                     //mario is dead 
@@ -779,7 +813,20 @@ public class GameModel extends Observable{
          	}
          	
          	if(stepOnByMario(temp)) {
-         		temp.isDead = true;
+         		if(temp instanceof Koopa) {
+         			if(!((Koopa) temp).getShell()) {
+         				((Koopa) temp).setShell();
+             			
+         			}else {
+         				((Koopa) temp).setRolling();
+         			}
+         			
+      
+         		}
+         		if(temp instanceof Goomba) {
+         			temp.isDead = true;
+         		}
+         		
          	}
          }
     }
@@ -942,6 +989,8 @@ public class GameModel extends Observable{
 	}
 
 	private void fall() {
+		mario.setFall(true);
+		
 		if (mario.isRight()) {
 			if (!moveRightStockByBlocks()) {
 				moveMarioOrOhters();

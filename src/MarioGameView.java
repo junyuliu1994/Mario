@@ -73,7 +73,7 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getX(), // the destination rectangle's X coordinate position.
 				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
 				gameController.getMario().getWidth(), // the destination rectangle's width.
-				gameController.getMario().getWidth()); // the destination rectangle's height.
+				gameController.getMario().getHeight()); // the destination rectangle's height.
 
 		for (int i = 0; i < LevelData.LEVEL1.length; i++) {
 			String line = LevelData.LEVEL1[i];
