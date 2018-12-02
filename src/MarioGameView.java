@@ -1,25 +1,23 @@
+
+import java.io.*;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
@@ -30,7 +28,12 @@ public class MarioGameView extends Application implements Observer{
 	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
 	private Duration coinDuration = Duration.millis(1000);
 	Image background = new Image("resources/start_background.png");
-	Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
+    Image pause = new Image("resources/pause.png");
+    Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
+    MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
+	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
+
+
 	int curr = 1;
 
 	public static void main(String[] args) {
@@ -39,19 +42,16 @@ public class MarioGameView extends Application implements Observer{
 
 
 	public void start(Stage primaryStage) {
-
+	    BGM.setAutoPlay(true);
 		Group root = new Group();
 		root.getChildren().add(canvasForMario);
 		Scene scene = new Scene(root);
 		StartMenu(scene, gcForMario);
 		primaryStage.getIcons().add(new Image("resources/icon.png"));
-		//initGame(scene);
 		primaryStage.setTitle("Mario Game");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-
-
 
 	private void initContent() {
 		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
@@ -75,8 +75,8 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getWidth(), // the destination rectangle's width.
 				gameController.getMario().getWidth()); // the destination rectangle's height.
 
-		for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-			String line = LevelData.LEVEL1[i];
+		for (int i = 0; i < LevelData.getMap(gameModel.getLevel()).length; i++) {
+			String line = LevelData.getMap(gameModel.getLevel())[i];
 			for (int j = 0; j < line.length(); j++) {
 				switch (line.charAt(j)) {
 					case '0':
@@ -97,21 +97,13 @@ public class MarioGameView extends Application implements Observer{
 						break;
 					case '2':
 						Wall wall = new Wall(gameModel.getBlocks(),40,40,j*40,i*40);
-//                        Coin coin = new Coin( 3, 3, 946, 40, 40,40,j*40,i*40);
-
-//                   
-
-//                        System.out.println("file:coin's location:"+j*40+" ,"+i*40);
 						gameController.getBricks().add(wall);
-
-                   
 						gcForMario.drawImage(wall.getImage(),
 								wall.getOffset_x(), wall.getOffset_y(),
 								wall.getWidth(), wall.getHeight(),
 								wall.getX(),wall.getY(), wall.getWidth(), wall.getHeight()
 						);
 						break;
-						
 
                     case '3':
                         QuestionBrick questionBrick = new QuestionBrick(gameModel.getBlocks(),40,40,j*40,i*40);
@@ -125,19 +117,12 @@ public class MarioGameView extends Application implements Observer{
 								questionBrick.getX(),questionBrick.getY(), questionBrick.getWidth(), questionBrick.getHeight()
                         );
                         break;
-                    case '4':
+                    case 'g':
                     	Monster goomba = new Goomba(0,40,j*40, i*40);
                     	gameController.getMonsters().add(goomba);
                         //System.out.println("file:goomba's location:"+ j*40+" ,"+i*40);
-                    	
+
                     	int index2 = gameController.getMonsters().size() -1;
-                    	
-                    	/*
-                    	System.out.print(gameController.getGoombas().get(index2).getOffset_x() + " " + 
-    							gameController.getGoombas().get(index2).getOffset_y() + " " + 	gameController.getGoombas().get(index2).getWidth() 
-    							+ " " + gameController.getGoombas().get(index2).getHeight() );
-                    	System.out.println(gameController.getGoombas().get(index2).getX() + " " +  gameController.getGoombas().get(index2).getX());
-                    	*/
                     	gcForMario.drawImage(gameController.getMonsters().get(index2).getImage(), // the image to be drawn or null.
     							gameController.getMonsters().get(index2).getOffset_x(), // the source rectangle's X coordinate position.
     							gameController.getMonsters().get(index2).getOffset_y(), // the source rectangle's Y coordinate position.
@@ -148,7 +133,8 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getMonsters().get(index2).getWidth(), // the destination rectangle's width.
     							gameController.getMonsters().get(index2).getHeight());
                     	break;
-                    case '5':
+                    	
+                    case 'k':
                     	
                     	Monster koopa = new Koopa(240,0,j*40, i*36);
                     	gameController.getMonsters().add(koopa);
@@ -164,22 +150,20 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getMonsters().get(index3).getHeight());
                     	break;
                     
-                    default:
-                    	
-                  
+
+					case '5':
+						Coin coin = new Coin(gameModel.getBlocks(), j * 40, i * 40);
+						gameModel.getCoins().add(coin);
+						gcForMario.drawImage(coin.getImage(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(),
+								coin.getHeight(), coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight());
+						break;
+					default:
+						
+
     			}
     		}
-    	}  
+    	}
     }
-
-
-
-			
-
-                        
-                   
-                        
-   
 
 	@Override
 	public void update(Observable o, Object arg1) {
@@ -187,6 +171,43 @@ public class MarioGameView extends Application implements Observer{
 		gcForMario.clearRect(0, 0, 1000, 480);
 		reDrawExceptionMario();
 		reDrawMario();
+		if(model.won()){
+			gameModel.pause();
+		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
+                int currLevel = gameModel.getLevel()+1;
+                System.out.println("游戏结束");
+                model.deleteObserver(this);
+                int level = model.getMarioLevel();
+                this.gameModel = new GameModel();
+                this.gameModel.setLevel(currLevel);
+                this.gameModel.setMarioLevel(level);
+                this.gameModel.addObserver(this);
+                this.gameModel.getMario().setSize(model.getMario().getSize());
+                gameController.restoreModel(this.gameModel, gcForMario, canvasForMario);
+                initContent();
+                gameModel.start();
+            }
+        }else if(model.getMario().getY()<0){
+			int currLevel = -1;
+			model.deleteObserver(this);
+			BGM.stop();
+			BGM2.play();
+			int level = model.getMarioLevel();
+			this.gameModel.setBackground(new Image("resources/background_h.png"));
+
+			this.gameModel = new GameModel();
+			this.gameModel.setLevel(currLevel);
+			this.gameModel.setMarioLevel(level);
+			this.gameModel.addObserver(this);
+			this.gameModel.getMario().setSize(model.getMario().getSize());
+			gameController.restoreModel(this.gameModel, gcForMario, canvasForMario);
+			initContent();
+			gameModel.start();
+		}else if(model.getLevel() == -1){
+			gameController.setStart(true);
+			gameController.getMario().setSpeed(1);
+			gameController.getMario().setRight(true);
+		}
 	}
 
 	private void reDrawMario() {
@@ -228,7 +249,6 @@ public class MarioGameView extends Application implements Observer{
 					gameController.getBricks().get(i).getHeight()); // the destination rectangle's height.
 		}
 
-//		System.out.println("redraw coins");
 		for (Coin coin : gameController.getCoins()) {
 ////		    coin.animation.setOffsetX((int)coin.getX());
 ////            coin.animation.
@@ -240,7 +260,7 @@ public class MarioGameView extends Application implements Observer{
 //		    coin.animation.play();
 //        }
 
-
+			if (coin == null) continue;
 			gcForMario.drawImage(coin.getImage(),
 					coin.getOffset_x(), coin.getOffset_y(),
 					coin.getWidth(), coin.getHeight(),
@@ -268,56 +288,154 @@ public class MarioGameView extends Application implements Observer{
                 );
             }
         }
+
         
         for(Monster monster: gameController.getMonsters()) {
         	if (monster != null) {
 				gcForMario.drawImage(monster.getImage(), monster.getOffset_x(), monster.getOffset_y(),
 						monster.getWidth(), monster.getHeight(),
 						monster.getX(), monster.getY(), monster.getWidth(), monster.getHeight());
-			}
-	}
+
+        	}
         }
 
+        //draw fireworks
+		for (Firework firework: gameController.getFireworks()) {
+			gcForMario.drawImage( firework.getImage(), firework.getOffsetX(), firework.getOffsetY(),
+					firework.getWidth(), firework.getHeight(),
+					firework.getX(), firework.getY(), 40, 40);
+		}
 
-	
+		// draw black circles
+		for (BlackCircle blackCircle: gameController.getBlackCircles()) {
+			gcForMario.setLineWidth(21);
+			gcForMario.setFill(Color.BLACK);
+			if (!blackCircle.isFill()) {
+				gcForMario.strokeOval(blackCircle.getX(), blackCircle.getY(),
+						blackCircle.getWidth(), blackCircle.getHeight());
+			} else {
+				gcForMario.fillOval(blackCircle.getX(), blackCircle.getY(),
+						blackCircle.getWidth(), blackCircle.getHeight());
+			}
+		}
+		// draw information
+		for (Information information: gameController.getInformations()) {
+			gcForMario.setFill(information.getColor());
+			gcForMario.setFont(information.getFont());
+			gcForMario.fillText(information.getText(), information.getX(), information.getY());
+		}
+	}
+        	
+        	
+        
+
+	/**
+	 * init the game
+	 * @param scene Scene
+	 */
 	public void initGame(Scene scene){
 		gameModel.start();
 		gameModel.addObserver(this);
+		setControl(scene);
 
+		initContent();
+	}
 
+	public void setControl(Scene scene){
 		scene.setOnKeyPressed(event -> {
-			if (event.getCode().toString().equals("D")) {
-				gameController.setStart(true);
-				gameController.getMario().setSpeed(2);
-				gameController.getMario().setRight(true);
+			if (!gameModel.isOUT_OF_CONTROL()) {
+				if (event.getCode().toString().equals("D")) {
+					gameController.setStart(true);
+					gameController.getMario().setSpeed(2);
+					gameController.getMario().setRight(true);
 
-			}
-			else if (event.getCode().toString().equals("A")) {
-				gameController.setStart(true);
-				gameController.getMario().setSpeed(-2);
-				gameController.getMario().setLeft(true);
-			}
-			else if (event.getCode().toString().equals("W")) {
-				gameController.setStart(true);
-				gameController.getMario().setJump(true);
-			}
-			else if (event.getCode().toString().equals("K")){
-				if (gameController.getMario().getLevel() < 3) {
-					if (gameController.getMario().getDirection() == 1) {
-						Bullet bullet = new Bullet(gameController.getWxzImage(), 40, 40,
-								Bullet.getRoffset_x(), Bullet.getRoffset_y(), gameController.getMario().getLeftTopC_x()+4, gameController.getMario().getRightTopC_y() - 8);
-						gameController.getBullets().add(bullet);
-						bullet.setSpeed(6);
-					} else {
-						Bullet bullet = new Bullet(gameController.getWxzConvertImage(), 40, 40,
-								Bullet.getLoffset_x(), Bullet.getLoffset_y(), gameController.getMario().getLeftTopC_x() + 4, gameController.getMario().getLeftTopC_y() - 8);
-						gameController.getBullets().add(bullet);
-						bullet.setSpeed(-6);
+				} else if (event.getCode().toString().equals("A")) {
+					gameController.setStart(true);
+					gameController.getMario().setSpeed(-2);
+					gameController.getMario().setLeft(true);
+				} else if (event.getCode().toString().equals("W")) {
+					gameController.setStart(true);
+					gameController.getMario().setJump(true);
+				} else if (event.getCode().toString().equals("K")) {
+					if (gameController.getMario().getLevel() < 3) {
+						if (gameController.getMario().getDirection() == 1) {
+							Bullet bullet = new Bullet(gameController.getWxzImage(), 40, 40,
+									Bullet.getRoffset_x(), Bullet.getRoffset_y(), gameController.getMario().getLeftTopC_x() + 4, gameController.getMario().getRightTopC_y() - 8);
+							gameController.getBullets().add(bullet);
+							bullet.setSpeed(6);
+						} else {
+							Bullet bullet = new Bullet(gameController.getWxzConvertImage(), 40, 40,
+									Bullet.getLoffset_x(), Bullet.getLoffset_y(), gameController.getMario().getLeftTopC_x() + 4, gameController.getMario().getLeftTopC_y() - 8);
+							gameController.getBullets().add(bullet);
+							bullet.setSpeed(-6);
+						}
 					}
 				}
 			}
-		});
+			// when ESC has been hit, open or close the pause menu
+			if(event.getCode() == KeyCode.ESCAPE){
+				if(gameModel.getLevel() == -1){
+					gameModel.resume();
+				}
+				if(!gameModel.getPaused()) {
+				    BGM.pause();
+				    // set the model to paused, draw the pause menu image on gc
+					gameModel.pause();
+					gcForMario.drawImage(pause,0,0);
+					gcForMario.setFill(Color.WHITE);
+					gcForMario.fillText("Paused", 850,40);
+					curr = 1;
+					pauseMenu();
+				}else {
+					if(gameModel.getLevel()!= -1) {
+						BGM.play();
+					}
+					gameModel.resume();
+				}
+			// update the highlighted pauseMenu item when the game has been paused
+			}else if(event.getCode()==KeyCode.UP){
+				if(curr > 1){
+					if(gameModel.getPaused()){
+						curr --;
+						pauseMenu();
+					}
+				}
+			}else if(event.getCode() == KeyCode.DOWN) {
+				if (curr < 3) {
+					if(gameModel.getPaused()){
+						curr++;
+						pauseMenu();
+					}
+				}
+			// execute the option when enter has been hit and game has been paused
+			}else if(event.getCode() == KeyCode.ENTER){
+				if(gameModel.getPaused()){
+					if(curr == 1){
+						if(gameModel.getLevel() == -1 ){
+							return;
+						}
+						try {
+						    // save data for the first option
+							FileOutputStream file = new FileOutputStream("save_game.dat");
+							ObjectOutputStream out = new ObjectOutputStream(file);
+							out.writeObject(gameModel);
+							out.close();
+							file.close();
+							System.out.println("Game Saved");
+						}catch (IOException e){
+							e.printStackTrace();
+						}
+					}else if(curr == 2){
+					    BGM.play();
+						loadGame();
+					}else{
+					    // exit for the last option
+						System.exit(0);
+					}
+				}
+			}
 
+		});
 		scene.setOnKeyReleased(event -> {
 			if (gameController.getMario().getMarioAnimation() != null) {
 				if (event.getCode().toString().equals("D")) {
@@ -331,38 +449,120 @@ public class MarioGameView extends Application implements Observer{
 				}
 			}
 		});
-
-		initContent();
 	}
 
+    /**
+     * load previous game data from disk
+     */
+	private void loadGame(){
+		try{
+			// try to load save_game.data
+			FileInputStream file = new FileInputStream("save_game.dat");
+			ObjectInputStream in = new ObjectInputStream(file);
+			gameModel = (GameModel) in.readObject();
+			in.close();
+			file.close();
+			gameController.restoreModel(gameModel, gcForMario, canvasForMario);
+			gameModel.start();
+			gameModel.addObserver(this);
+			gameModel.pause();
+		// handel the situation when saved file does not exist
+		}catch (IOException ioe ){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data does not exist\n"+ioe.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+        // handel the situation when save file does not contains game data
+		}catch (ClassNotFoundException nfe){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data has been corrupted\n"+nfe.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+		}
+	}
+
+    /**
+     * draw the pause menu
+     */
+	private void pauseMenu(){
+		double[] x = {0,0,240};
+		double[] y = {240, 480, 480};
+		gcForMario.setFill(Color.BLACK);
+		gcForMario.fillPolygon(x,y ,3);
+		gcForMario.fillRect(20, 280,100,40);
+		gcForMario.fillRect(80, 340,100,40);
+		gcForMario.fillRect(140, 400, 100,40);
+		gcForMario.setFill(Color.GRAY);
+		gcForMario.fillText("Save",30,310);
+		gcForMario.fillText("Load", 90, 370);
+		gcForMario.fillText("Exit", 150, 430);
+		gcForMario.setFill(Color.WHITE);
+		// draw the highlighted option
+		if(curr == 1){
+			gcForMario.fillText("Save",30,310);
+		}else if(curr == 2){
+			gcForMario.fillText("Load",90,370);
+		}else{
+			gcForMario.fillText("Exit", 150, 430);
+		}
+	}
+
+    /**
+     * init the game from beginning
+     * @param scene Scene
+     * @param gc GraphicsContest
+     */
 	private void MainGame(Scene scene,GraphicsContext gc){
 		gc.clearRect(0,0,856,550);
 		initGame(scene);
-		//goBackToMainMenu(scene,gc);
 	}
 
-	private void LoadGame(Scene scene, GraphicsContext gc){
-		gc.clearRect(0,0,856,550);
-		gc.fillText("WORKING ON IT", 300,250);
-		// TODO: do something
-		goBackToMainMenu(scene,gc);
+    /**
+     * Load previous game data from disk at main menu
+     * @param scene
+     */
+	private void LoadGame(Scene scene){
+	    // check if previous game data exist
+		try {
+			(new ObjectInputStream(new FileInputStream("save_game.dat"))).readObject();
+		}catch (IOException e){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data does not exist\n"+e.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+			return;
+		}catch (ClassNotFoundException nfe){
+			Alert information = new Alert(Alert.AlertType.ERROR,"Previous game data has been corrupted\n"+nfe.getMessage());
+			information.setTitle("Load Failed");
+			information.setHeaderText("Unable to load game");
+			information.showAndWait();
+			return;
+		}
+		// load when every thing is normal
+		initGame(scene);
+		gameModel.pause();
+		loadGame();
+		gameModel.resume();
+		setControl(scene);
 	}
+
 
 	private void aboutThisGame(Scene scene, GraphicsContext gc){
+		System.exit(0);
 		gc.clearRect(0,0,856,550);
 		gc.fillText("WORKING ON IT", 300,250);
 		// TODO: do something
-		goBackToMainMenu(scene,gc);
+        scene.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ESCAPE){
+                StartMenu(scene,gc);
+            }
+        });
 	}
 
-	private void goBackToMainMenu(Scene scene,GraphicsContext gc){
-		scene.setOnKeyPressed(event -> {
-			if(event.getCode() == KeyCode.ESCAPE){
-				StartMenu(scene,gc);
-			}
-		});
-	}
-
+    /**
+     * update highlighted item on main menu
+     * @param gc GraphicsContext
+     */
 	public void reDrawStart(GraphicsContext gc){
 		gc.clearRect(0,0,1000,480);
 		gc.drawImage(background, 0,0);
@@ -379,17 +579,23 @@ public class MarioGameView extends Application implements Observer{
 		gc.setFont(newfont);
 		gc.fillText("New Game",410, 330);
 		gc.fillText("Load Game",408, 360);
-		gc.fillText("About",410, 390);
+		gc.fillText("Exit",410, 390);
 		gc.setFill(Color.BLACK);
+		// update highlighted item
 		if(curr == 1){
 			gc.fillText("New Game",410, 330);
 		}else if(curr == 2){
 			gc.fillText("Load Game",408, 360);
 		}else{
-			gc.fillText("About" ,410, 390);
+			gc.fillText("Exit" ,410, 390);
 		}
 	}
 
+    /**
+     * draw main menu on the window, keep truck curr highlighted item.
+     * @param scene Scene
+     * @param gc GraphicsContext
+     */
 	private void StartMenu(Scene scene, GraphicsContext gc){
 		reDrawStart(gc);
 		scene.setOnKeyPressed(event -> {
@@ -408,12 +614,12 @@ public class MarioGameView extends Application implements Observer{
 				if(curr == 1){
 					MainGame(scene, gc);
 				}else if(curr == 2){
-					LoadGame(scene, gc);
+					LoadGame(scene);
 				}else{
 					aboutThisGame(scene, gc);
 				}
 			}
 		});
 	}
-
 }
+

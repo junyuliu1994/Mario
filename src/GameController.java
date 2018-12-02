@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class GameController {
@@ -16,41 +18,16 @@ public class GameController {
 		this.gameModel = gameModel;
 	}
 
-	public Image getMarioImage() {
-		return gameModel.getMarioImage();
-	}
-
-	public void setMarioImage(Image marioImage) {
-		gameModel.setMarioImage(marioImage);;
-	}
-
-	public Image getMarioConvertImage() {
-		return gameModel.getMarioConvertImage();
-	}
-
-	public void setMarioConvertImage(Image marioConvertImage) {
-		gameModel.setMarioConvertImage(marioConvertImage);
-	}
-
 	public Image getBlocks() {
 		return gameModel.getBlocks();
-	}
-
-	public void setBlocks(Image blocks) {
-		gameModel.setBlocks(blocks);;
 	}
 
 	public Background getBackground() {
 		return gameModel.getBackground();
 	}
 
-
 	public Mario getMario() {
 		return gameModel.getMario();
-	}
-
-	public void setMario(Mario mario) {
-		gameModel.setMario(mario);
 	}
 
 	public ArrayList<Brick> getBricks() {
@@ -69,47 +46,26 @@ public class GameController {
 		return gameModel.getMushrooms();
 	}
 
-	public void setMushrooms(ArrayList<Mushroom> mushrooms) {
-		gameModel.setMushrooms(mushrooms);
-	}
-
-	public Image getItemImage() {
-		return gameModel.getItemImage();
-	}
-
-	public void setItemImage(Image itemImage) {
-		gameModel.setItemImage(itemImage);
-	}
-
 	public Image getWxzImage() {
 		return gameModel.getWxzImage();
-	}
-
-	public void setWxzImage(Image wxzImage) {
-		gameModel.setWxzImage(wxzImage);
 	}
 
 	public Image getWxzConvertImage() {
 		return gameModel.getWxzConvertImage();
 	}
 
-	public void setWxzConvertImage(Image wxzConvertImage) {
-		gameModel.setWxzConvertImage(wxzConvertImage);
-	}
-
 	public ArrayList<Bullet> getBullets() {
 		return gameModel.getBullets();
 	}
 
-	public void setBullets(ArrayList<Bullet> bullets) {
-		gameModel.setBullets(bullets);
-	}
+	public ArrayList<BlackCircle> getBlackCircles() { return gameModel.getBlackCircles(); }
 
-	public int getScore() {
-		return gameModel.getScore();
-	}
+	public ArrayList<Firework> getFireworks() { return gameModel.getFireworks(); }
 
-	public void setScore(int score) {
-		gameModel.setScore(score);
+	public ArrayList<Information> getInformations() { return gameModel.getInformations(); }
+
+	public void restoreModel(GameModel model, GraphicsContext gc, Canvas canvas){
+		gameModel = model;
+		gameModel.restore(gc, canvas);
 	}
 }

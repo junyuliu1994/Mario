@@ -3,8 +3,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
-public class Mario {
-	private Image image;
+import java.io.Serializable;
+
+public class Mario implements Serializable {
+	private static Image image;
 	private int col;
 	private int count;
 	private int offset_x;
@@ -14,6 +16,8 @@ public class Mario {
 	private int x;
 	private int y;
 	private int direction; //1 right 0 left
+	private final int flagstaff_offset_x_small = 515;
+	private final int flagstaff_offset_y_small = 81;
 	private double speed;
 	private double jumpHeight;
 	private double jumpMax;
@@ -23,6 +27,7 @@ public class Mario {
 	private boolean left;
 	private int [] lv1_offset_x = {195, 195+40, 195+40*2, 195+40*3};//right
 	private int [] lv1_left_offset_x = {791, 791-40, 791-40*2, 791-40*3};//left
+	static final long serialVersionUID = 1;
 	
 	private int lv1_offset_y = 80;
 	private int lv1_left_offset_y = 80;
@@ -79,11 +84,27 @@ public class Mario {
 	
 	private boolean invincible = false;
 
+
 	public int getInitialHeight() {
 		return initialHeight;
 	}
 
 	private final int initialHeight = 40;
+
+	public int[] getSize(){
+		int[] array = new int[2];
+		array[0] = width;
+		array[1] = height;
+		return array;
+	}
+
+	public void setSize(int[] array){
+		width = array[0];
+		height = array[1];
+		if(level == 2) {
+			y = 360;
+		}
+	}
 
 
 	public int getfCenter_y() {
@@ -636,6 +657,14 @@ public class Mario {
 
 	public void setLv3_loffset_x(int lv3_loffset_x) {
 		this.lv3_loffset_x = lv3_loffset_x;
+	}
+
+	public int getFlagstaff_offset_x_small() {
+		return flagstaff_offset_x_small;
+	}
+
+	public int getFlagstaff_offset_y_small() {
+		return flagstaff_offset_y_small;
 	}
 
 

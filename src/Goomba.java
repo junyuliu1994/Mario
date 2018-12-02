@@ -23,7 +23,7 @@ public class Goomba extends Monster {
 	
 	@Override
 	public void setY(double y) {
-		super.setX(y);
+		super.setY(y);
 		setCollisionPoint();
 	}
 		
