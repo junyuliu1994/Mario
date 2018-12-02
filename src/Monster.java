@@ -64,8 +64,12 @@ public abstract class Monster implements Serializable {
 		this.initial_offset_x = initial_offset_x;
 	}
 	
-	void setOffset_x(int offset_x) {
+	public void setOffset_x(int offset_x) {
 		this.offset_x = offset_x;
+	}
+	
+	public void setOffset_y(int offset_y) {
+		this.offset_y = offset_y;
 	}
 	
 	public void setCount(int count){

@@ -22,6 +22,7 @@ public class Mario implements Serializable {
 	private double jumpHeight;
 	private double jumpMax;
 	private boolean jump;
+	private boolean fall = false;
 	private SpriteAnimation marioAnimation;
 	private boolean right;
 	private boolean left;
@@ -343,10 +344,18 @@ public class Mario implements Serializable {
 	public boolean isJump() {
 		return jump;
 	}
+	
+	public boolean isFall() {
+		return fall;
+	}
 
 
 	public void setJump(boolean jump) {
 		this.jump = jump;
+	}
+	
+	public void setFall(boolean fall) {
+		this.fall = fall;
 	}
 
 	public SpriteAnimation getMarioAnimation() {

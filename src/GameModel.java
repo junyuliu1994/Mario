@@ -29,9 +29,7 @@ public class GameModel extends Observable implements Serializable {
     private static Image itemImage = new Image("resources/items.png");
 	private static Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private static GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 192, false, gcForMario);
-
     private Flagstaff flagstaff = new Flagstaff();
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
@@ -196,6 +194,7 @@ public class GameModel extends Observable implements Serializable {
 	    }
 
 		monsterMarioCollision();
+
 		if (!OUT_OF_CONTROL) {
 			move();
 			stop();
@@ -297,6 +296,9 @@ public class GameModel extends Observable implements Serializable {
 		removeDeadMonster();
 		fall();
 		eatMushroom();
+		koopaMonsterCollision();
+		move();
+
 		bulletMove();
 		resetBulletSpeed();
 
@@ -570,7 +572,7 @@ public class GameModel extends Observable implements Serializable {
             if (bricks.get(i) == null){
                 continue;
             }
-			if (mario.getRightTopC_x() == bricks.get(i).getX()) { //���ִ������������
+			if (mario.getRightTopC_x() == bricks.get(i).getX()) { 
 				if (mario.getRightTopC_y() >= bricks.get(i).getY() && mario.getRightTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					return true;
 				}
@@ -782,65 +784,90 @@ public class GameModel extends Observable implements Serializable {
 	}
 
     /**
-     * goombaMove
+     * monsterMove
      * This is method controls goomba's movement
-     * Goomba will intinally move to left if it collides with brick or sees cliff
+     * monster will intinally move to left if it collides with brick or sees cliff
      * It turns around.
      *
      * @return void
      *
      */
-	public void monsterMove(){
-    	for(Monster monster: monsters) {
-    		if(monster.isDead) {
-        			monster.setCount(2);
-        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
-        			
-        		    
-    		}else {
-    			//refresh Monster' move Animation  	
-    			if (monster.getCount() < 2) {
-        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
-        			monster.setCount(monster.getCount() + 1);
-                } else {
-                	monster.setCount(0);
-                }
-    			
-    			
-        		//Monster's actual Movement
-        		if(isLeftCollsion(monster) || isLeftCliff(monster)){
-        			monster.setSpeed(5);
-        		}
-        		
-        		if(isRightCollison(monster) || isRightCliff(monster)) {
-        			monster.setSpeed(-5);
-        		}
-        		monster.setX(monster.getX() + monster.getSpeed());
-    			
-    		}
-    	}
-    }
+	 public void monsterMove(){
+	    	for(Monster monster: monsters) {
+	    		if(monster != null) {
+	    			
+	    			//refresh Monster' move Animation  	
+	    			if (monster.getCount() < 2) {
+	        			monster.setOffset_x(monster.getIniOffsetX() + (monster.getWidth()*monster.getCount()));
+	        			monster.setCount(monster.getCount() + 1);
+	                } else {
+	                	monster.setCount(0);
+	                }
+	    			
+	        		//Monster's actual Movement
+	        		if(isLeftCollsion(monster) || isLeftCliff(monster)){
+	        			if(monster instanceof Koopa) {
+	        				((Koopa) monster).koopaMoveRight();
+	        			}
+	        			monster.setSpeed(5);
+	        		}
+	        		
+	        		if(isRightCollison(monster) || isRightCliff(monster)) {
+	        			if(monster instanceof Koopa) {
+	        				((Koopa) monster).koopaMoveLeft();
+	        				if(((Koopa) monster).getShell()) {
+	        					monster.isDead = true;
+	        				}
+	        			}
+	        			
+	        			monster.setSpeed(-5);
+	        		}
+	        		
+	        		if(monster instanceof Koopa) {
+	        			if(((Koopa) monster).getShell()) {
+	  
+	        				monster.setSpeed(0);
+	        			}
+	        			
+	        			if(((Koopa) monster).isRolling()) {
+	        				monster.setSpeed(25);
+	        			}
+	        			
+	        		}
+	        		
+	        		if(monster instanceof PiranhaPlant) {
+	        			monster.setSpeed(0);
+	        		}
+	        		
+	        	
+	        		//move monsters
+	        		monster.setX(monster.getX() + monster.getSpeed());
 
+	    		}
+	    		
+	    	}
+	    }
 
-	/**
-     * This is helper method to determine if that Enemy objects collides with brick
-     * Checking the left side collision
-     * @param monster Object
-     * @return boolean value
-     */
-	public boolean isLeftCollsion(Monster monster){
-    	//check if monster collide with brick
-    	for (int i = 0; i < bricks.size(); i++) {
-    		if(bricks.get(i) == null) {
-    			continue;
-    		}
-    		if(monster.getLeftX() == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
-    			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight())
-    			return true;
-    		}
-    	}
-		return false;
-    }
+		/**
+	     * This is helper method to determine if that Enemy objects collides with brick
+	     * Checking the left side collision
+	     * @param Monster Object
+	     * @return boolean value
+	     */
+	 public boolean isLeftCollsion(Monster monster){
+	    	//check if monster collide with brick
+	    	for (int i = 0; i < bricks.size(); i++) {
+	    		if(bricks.get(i) == null) {
+	    			continue;
+	    		}
+	    		if(monster.getLeftX() <= bricks.get(i).getX()+ bricks.get(i).getWidth() && monster.getLeftX() > bricks.get(i).getX()) {
+	    			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+	    			return true;
+	    		}
+	    	}
+			return false;
+			}
+	    
 
     /**
      * This is helper method to determine if that Monster objects' left is cliff
@@ -873,8 +900,10 @@ public class GameModel extends Observable implements Serializable {
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(monster.getRightX() == bricks.get(i).getX()) {
-    			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight())
+
+    		if(monster.getRightX() >= bricks.get(i).getX() && monster.getRightX() <= bricks.get(i).getX() +  bricks.get(i).getWidth()) {
+    			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
+
     			return true;
     		}
 	    }
@@ -907,74 +936,91 @@ public class GameModel extends Observable implements Serializable {
      * @param monster - Monster objects need to be check
      * @return boolean value
      */
-
-    public boolean stepOnByMario(Monster monster) {
-		if (monster != null && mario.getLeftF_y() == monster.getY()) {
-			 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
-				 return true;
+   public boolean stepOnByMario(Monster monster) {
+    	if(mario.isFall()) {
+    		if (mario.getLeftF_y() == monster.getY()) {
+				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
+					 return true;
+				 }
+				 if (mario.getRightF_x() >= monster.getX() && mario.getRightF_x() <= monster.getX() + monster.getWidth() && mario.isJump()) {  
+					 return true;
+				 }
 			 }
-			 if (mario.getRightF_x() >= monster.getX() && mario.getRightF_x() <= monster.getX() + monster.getWidth() && mario.isJump()) {  
-				 return true;
-			 }
-		 }
-	return false;
-}
-
+    	}
+    	return false;
+    }
+   
     /**
      * This method check if monster is collide by Mario
      */
-	public boolean isMarioCollideMonster(Monster monster) {
-    	//check all possible collision point
-    	if(mario.getInvincibleStatus() == false) {
-    		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
-        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+   /**
+    * This method check if monster is collide by Mario
+    */
+   public boolean isMarioCollideMonster(Monster monster) {
+   	
+   	
+   	//check all possible collision point
+   	if(mario.getInvincibleStatus() == false) {
+   		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
+       		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+       			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
+           			mario.setInvincible(true);
+           			return true;
+           		}
+           	}
+           	
+           	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
+           		if(mario.getLeftH_y()  >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
+           			mario.setInvincible(true);
+           			return true;
+           		}
+           	}
+       	}
+       	
+       	if(mario.getLevel()==2) {
+       		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
+       			if(mario.getRightH_y() + 20 >  monster.getUpLeftY() && mario.getRightH_y() + 20 < monster.getUpLeftY() + monster.getWidth()) {
+           			mario.setInvincible(true);
+           			return true;
+           		}
+           	}
+    
+           	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
+           		if(mario.getLeftH_y() + 20 >  monster.getUpRightY() && mario.getLeftH_y() + 20< monster.getUpRightY() + monster.getWidth()) {
+           			mario.setInvincible(true);
+           			return true;
+           		}
+           	}
+       		
+       	}
+   	}
+   	
+   	
+   	return false;
+   	}
 
-        			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
 
-            			mario.setInvincible(true);
-            			return true;
-            		}
-            	}
-
-            	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
-            		if(mario.getLeftH_y()  >  monster.getUpRightY() && mario.getLeftH_y() < monster.getUpRightY() + monster.getWidth()) {
-            			mario.setInvincible(true);
-            			return true;
-            		}
-            	}
-        	}
-
-        	if(mario.getLevel()==2) {
-        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
-        			if(mario.getRightH_y() + 20 >  monster.getUpLeftY() && mario.getRightH_y() + 20 < monster.getUpLeftY() + monster.getWidth()) {
-            			mario.setInvincible(true);
-            			return true;
-            		}
-            	}
-
-            	if(mario.getLeftH_x() <= monster.getRightX() && mario.getLeftH_x() >= monster.getX()) {
-            		if(mario.getLeftH_y() + 20 >  monster.getUpRightY() && mario.getLeftH_y() + 20< monster.getUpRightY() + monster.getWidth()) {
-            			mario.setInvincible(true);
-            			return true;
-            		}
-            	}
-
-        	}
-    	}
-
-
-    	return false;
-
-    }
-
+  
+    /**
+     * This method checks if all collisions between mario and monsters
+     */
     public void monsterMarioCollision() {
-   	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
-        	Monster temp = iterator.next();
-        	if(isMarioCollideMonster(temp)) {
-        		if (mario.getLevel() == 1){
-        			mario.setLife(mario.getLife() - 1);
-                   //mario is dead 
-        			System.out.println("mario dead");
+    	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+         	Monster temp = iterator.next();
+         	if(isMarioCollideMonster(temp)) {
+         		//check if monster is koopaShell
+            	if(temp instanceof Koopa) {
+            		if(((Koopa) temp).getShell()) {
+            			return;
+            		}
+            	}
+            	
+            	//Mario will level down or dead.
+         		if (mario.getLevel() == 1){
+         			mario.setLife(mario.getLife() - 1);
+                    //mario is dead 
+         			System.out.println("mario dead");
+
 				}else if(mario.getLevel() == 2) {
         		    mario.setLevel(1);
                    if (mario.getDirection() == 1) {
@@ -1041,16 +1087,61 @@ public class GameModel extends Observable implements Serializable {
 					System.out.println("mario become lv2");
 					
 				}
+
         		
         	}
         	
-        	if(stepOnByMario(temp)) {
-        		temp.isDead = true;
-        	}
+         	if(stepOnByMario(temp)) {
+         		if(temp instanceof Koopa) {
+         			if(!((Koopa) temp).getShell()) {
+         				((Koopa) temp).setShell();
+         				temp.setOffset_x(400);
+        			    temp.setInitiall_offsetX(400);
+        			    temp.setOffset_y(40);
+        			    temp.setHeight(40);
+        			    temp.setY(temp.getY()/9*10);
+         			}else {
+         				((Koopa) temp).setRolling();
+         			}
+         			
+      
+         		}
+         		if(temp instanceof Goomba) {
+         			temp.isDead = true;
+         		}
+         		
+         	}
         }
    }
 
-	public void removeDeadMonster() {
+
+
+    private void koopaMonsterCollision() {
+    	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+    		Monster temp = iterator.next();
+    		if(!(temp instanceof Koopa) ) {
+    			continue;
+    		}else {
+    			if(((Koopa) temp).getShell() && ((Koopa) temp).isRolling()) {
+    				
+    				for(Iterator<Monster> iterator2 = monsters.iterator(); iterator2.hasNext();) {
+            			Monster temp2 = iterator2.next();
+            			if(temp.getRightX() >= temp2.getLeftX() && temp.getRightX() < temp2.getLeftX() + temp2.getWidth() ) {
+                			if(temp.getRightY() >  temp2.getUpLeftY() && temp.getRightY() < temp2.getUpLeftY() + temp2.getWidth()) {
+                				temp2.isDead = true;
+                			
+                    		}
+                    	}
+            		}
+    			}
+    			
+    		}
+    	}
+    	
+    }
+    
+    private void removeDeadMonster() {
+
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
     		Monster temp = iterator.next();
          	if(temp.isDead) {
@@ -1282,7 +1373,10 @@ public class GameModel extends Observable implements Serializable {
 		mario.setJumpHeight(mario.getJumpHeight() + 4);
 	}
 
+
 	public void fall() {
+		mario.setFall(true);
+
 		if (mario.isRight()) {
 			if (!moveRightStockByBlocks()) {
 				moveMarioOrOhters();
