@@ -356,7 +356,7 @@ public class GameModel extends Observable{
             if (bricks.get(i) == null){
                 continue;
             }
-			if (mario.getRightTopC_x() == bricks.get(i).getX()) { //���ִ������������
+			if (mario.getRightTopC_x() == bricks.get(i).getX()) { 
 				if (mario.getRightTopC_y() >= bricks.get(i).getY() && mario.getRightTopC_y() <= bricks.get(i).getY() + bricks.get(i).getHeight()) {
 					return true;
 				}
@@ -780,6 +780,7 @@ public class GameModel extends Observable{
     	
     }
     
+ 
   
     
     private void monsterMarioCollision() {
@@ -829,6 +830,10 @@ public class GameModel extends Observable{
          		
          	}
          }
+    }
+    
+    private void koopaMonsterCollision(Monster monster) {
+    	
     }
     
     private void removeDeadMonster() {
