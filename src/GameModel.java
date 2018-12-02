@@ -60,8 +60,12 @@ public class GameModel extends Observable implements Serializable {
 	private boolean start = false;
 	private boolean paused = false;
 	private int score = 0;
+	private int i;
 
 	private boolean moveBackground = false;
+	public void setBackground(Image image){
+		background.setImage(image);
+	}
 
 	public boolean isStart() {
 		return start;
@@ -155,6 +159,17 @@ public class GameModel extends Observable implements Serializable {
         flashCoinsCount++;
 		monsterClockCount++;
 		invincibleCount++;
+		if(level == -1){
+			i++;
+			if(touchFlag()){
+				if(i%3 != 0){
+					return;
+				}
+			}
+			else if(i%10 != 0) {
+				return;
+			}
+		}
 
 		if(invincibleCount >= 128) {
 			invicibleEnd();

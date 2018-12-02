@@ -31,8 +31,10 @@ public class MarioGameView extends Application implements Observer{
     Image pause = new Image("resources/pause.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
     MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
+	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
 
-    int curr = 1;
+
+	int curr = 1;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -50,8 +52,6 @@ public class MarioGameView extends Application implements Observer{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-
-
 
 	private void initContent() {
 		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
@@ -148,15 +148,6 @@ public class MarioGameView extends Application implements Observer{
     	}
     }
 
-
-
-
-
-
-
-
-
-
 	@Override
 	public void update(Observable o, Object arg1) {
 		GameModel model = (GameModel)o;
@@ -164,7 +155,8 @@ public class MarioGameView extends Application implements Observer{
 		reDrawExceptionMario();
 		reDrawMario();
 		if(model.won()){
-		    if(this.gameModel.getLevel() != 2) {
+			gameModel.pause();
+		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
                 int currLevel = gameModel.getLevel()+1;
                 System.out.println("游戏结束");
                 model.deleteObserver(this);
@@ -174,12 +166,31 @@ public class MarioGameView extends Application implements Observer{
                 this.gameModel.setMarioLevel(level);
                 this.gameModel.addObserver(this);
                 this.gameModel.getMario().setSize(model.getMario().getSize());
-
                 gameController.restoreModel(this.gameModel, gcForMario, canvasForMario);
                 initContent();
                 gameModel.start();
             }
-        }
+        }else if(model.getMario().getY()<0){
+			int currLevel = -1;
+			model.deleteObserver(this);
+			BGM.stop();
+			BGM2.play();
+			int level = model.getMarioLevel();
+			this.gameModel.setBackground(new Image("resources/background_h.png"));
+
+			this.gameModel = new GameModel();
+			this.gameModel.setLevel(currLevel);
+			this.gameModel.setMarioLevel(level);
+			this.gameModel.addObserver(this);
+			this.gameModel.getMario().setSize(model.getMario().getSize());
+			gameController.restoreModel(this.gameModel, gcForMario, canvasForMario);
+			initContent();
+			gameModel.start();
+		}else if(model.getLevel() == -1){
+			gameController.setStart(true);
+			gameController.getMario().setSpeed(1);
+			gameController.getMario().setRight(true);
+		}
 	}
 
 	private void reDrawMario() {
@@ -341,6 +352,9 @@ public class MarioGameView extends Application implements Observer{
 			}
 			// when ESC has been hit, open or close the pause menu
 			if(event.getCode() == KeyCode.ESCAPE){
+				if(gameModel.getLevel() == -1){
+					gameModel.resume();
+				}
 				if(!gameModel.getPaused()) {
 				    BGM.pause();
 				    // set the model to paused, draw the pause menu image on gc
@@ -351,7 +365,9 @@ public class MarioGameView extends Application implements Observer{
 					curr = 1;
 					pauseMenu();
 				}else {
-				    BGM.play();
+					if(gameModel.getLevel()!= -1) {
+						BGM.play();
+					}
 					gameModel.resume();
 				}
 			// update the highlighted pauseMenu item when the game has been paused
@@ -373,6 +389,9 @@ public class MarioGameView extends Application implements Observer{
 			}else if(event.getCode() == KeyCode.ENTER){
 				if(gameModel.getPaused()){
 					if(curr == 1){
+						if(gameModel.getLevel() == -1 ){
+							return;
+						}
 						try {
 						    // save data for the first option
 							FileOutputStream file = new FileOutputStream("save_game.dat");
@@ -507,6 +526,7 @@ public class MarioGameView extends Application implements Observer{
 
 
 	private void aboutThisGame(Scene scene, GraphicsContext gc){
+		System.exit(0);
 		gc.clearRect(0,0,856,550);
 		gc.fillText("WORKING ON IT", 300,250);
 		// TODO: do something
@@ -537,7 +557,7 @@ public class MarioGameView extends Application implements Observer{
 		gc.setFont(newfont);
 		gc.fillText("New Game",410, 330);
 		gc.fillText("Load Game",408, 360);
-		gc.fillText("About",410, 390);
+		gc.fillText("Exit",410, 390);
 		gc.setFill(Color.BLACK);
 		// update highlighted item
 		if(curr == 1){
@@ -545,7 +565,7 @@ public class MarioGameView extends Application implements Observer{
 		}else if(curr == 2){
 			gc.fillText("Load Game",408, 360);
 		}else{
-			gc.fillText("About" ,410, 390);
+			gc.fillText("Exit" ,410, 390);
 		}
 	}
 
