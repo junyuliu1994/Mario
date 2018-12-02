@@ -473,7 +473,7 @@ public class GameModel extends Observable implements Serializable {
                     System.out.println(monsters.size());
                     bullets.remove(bullet);
 				    score+=100;
-
+				    monsters.get(i).isDead = true;
 					return true;
 				}
 			}
