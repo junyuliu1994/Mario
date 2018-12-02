@@ -82,6 +82,10 @@ public class GameModel extends Observable implements Serializable {
 		this.level = level;
 	}
 
+	public void setMario(Mario mario){
+		this.mario = mario;
+	}
+
 	public int getLevel(){
 		return level;
 	}

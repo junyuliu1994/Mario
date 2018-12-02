@@ -173,6 +173,8 @@ public class MarioGameView extends Application implements Observer{
                 this.gameModel.setLevel(currLevel);
                 this.gameModel.setMarioLevel(level);
                 this.gameModel.addObserver(this);
+                this.gameModel.getMario().setSize(model.getMario().getSize());
+
                 gameController.restoreModel(this.gameModel, gcForMario, canvasForMario);
                 initContent();
                 gameModel.start();

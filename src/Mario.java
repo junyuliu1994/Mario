@@ -84,11 +84,27 @@ public class Mario implements Serializable {
 	
 	private boolean invincible = false;
 
+
 	public int getInitialHeight() {
 		return initialHeight;
 	}
 
 	private final int initialHeight = 40;
+
+	public int[] getSize(){
+		int[] array = new int[2];
+		array[0] = width;
+		array[1] = height;
+		return array;
+	}
+
+	public void setSize(int[] array){
+		width = array[0];
+		height = array[1];
+		if(level == 2) {
+			y = 360;
+		}
+	}
 
 
 	public int getfCenter_y() {
