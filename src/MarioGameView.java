@@ -163,9 +163,11 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getMonsters().get(index3).getWidth(), // the destination rectangle's width.
     							gameController.getMonsters().get(index3).getHeight());
                     	break;
+                    case '6':
+                    	
                     
                     default:
-                    	
+    
                   
     			}
     		}

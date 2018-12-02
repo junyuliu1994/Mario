@@ -108,6 +108,7 @@ public class GameModel extends Observable{
 	
 		
 		monsterMarioCollision();
+		koopaMonsterCollision();
 		move();
 		bulletMove();
 		resetBulletSpeed();
@@ -614,8 +615,7 @@ public class GameModel extends Observable{
         		
         		if(monster instanceof Koopa) {
         			if(((Koopa) monster).getShell()) {
-        				monster.setOffset_x(400);
-             			monster.setInitiall_offsetX(400);
+  
         				monster.setSpeed(0);
         			}
         			
@@ -625,6 +625,7 @@ public class GameModel extends Observable{
         			
         		}
         		
+        	
         		//move monsters
         		monster.setX(monster.getX() + monster.getSpeed());
 
@@ -646,7 +647,7 @@ public class GameModel extends Observable{
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(monster.getLeftX() == bricks.get(i).getX()+ bricks.get(i).getWidth()) {
+    		if(monster.getLeftX() <= bricks.get(i).getX()+ bricks.get(i).getWidth() && monster.getLeftX() > bricks.get(i).getX()) {
     			if (monster.getLeftY() >= bricks.get(i).getY() && monster.getLeftY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
     			return true;
     		}
@@ -685,12 +686,11 @@ public class GameModel extends Observable{
     		if(bricks.get(i) == null) {
     			continue;
     		}
-    		if(monster.getRightX() == bricks.get(i).getX()) {
+    		if(monster.getRightX() >= bricks.get(i).getX() && monster.getRightX() <= bricks.get(i).getX() +  bricks.get(i).getWidth()) {
     			if (monster.getRightY() >= bricks.get(i).getY() && monster.getRightY() <= bricks.get(i).getY() + bricks.get(i).getHeight()) 
     			return true;
     		}
 	    }
-    	
 		return false;
     	
     }
@@ -782,7 +782,9 @@ public class GameModel extends Observable{
     
  
   
-    
+    /**
+     * This method checks if all collisions between mario and monsters
+     */
     private void monsterMarioCollision() {
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
          	Monster temp = iterator.next();
@@ -817,7 +819,11 @@ public class GameModel extends Observable{
          		if(temp instanceof Koopa) {
          			if(!((Koopa) temp).getShell()) {
          				((Koopa) temp).setShell();
-             			
+         				temp.setOffset_x(400);
+        			    temp.setInitiall_offsetX(400);
+        			    temp.setOffset_y(40);
+        			    temp.setHeight(40);
+        			    temp.setY(temp.getY()/9*10);
          			}else {
          				((Koopa) temp).setRolling();
          			}
@@ -832,7 +838,27 @@ public class GameModel extends Observable{
          }
     }
     
-    private void koopaMonsterCollision(Monster monster) {
+    private void koopaMonsterCollision() {
+    	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
+    		Monster temp = iterator.next();
+    		if(!(temp instanceof Koopa) ) {
+    			continue;
+    		}else {
+    			if(((Koopa) temp).getShell() && ((Koopa) temp).isRolling()) {
+    				
+    				for(Iterator<Monster> iterator2 = monsters.iterator(); iterator2.hasNext();) {
+            			Monster temp2 = iterator2.next();
+            			if(temp.getRightX() >= temp2.getLeftX() && temp.getRightX() < temp2.getLeftX() + temp2.getWidth() ) {
+                			if(temp.getRightY() >  temp2.getUpLeftY() && temp.getRightY() < temp2.getUpLeftY() + temp2.getWidth()) {
+                				temp2.isDead = true;
+                			
+                    		}
+                    	}
+            		}
+    			}
+    			
+    		}
+    	}
     	
     }
     
