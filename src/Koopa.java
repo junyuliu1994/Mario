@@ -4,11 +4,13 @@ public class Koopa extends Monster{
 	
 	private boolean isShell = false;
 	private boolean roll = false;
-	private Image originalImage = new Image("resources/enemies2.png");
-	private Image convertImage = new Image("resources/enemies2-ConvertImage.png");
+	private static Image image = new Image("resources/enemies2.png");
+
+
+	
 	
 	public Koopa(int offset_x, int offset_y,int x, int y) {
-		super(new Image("resources/enemies2.png"),offset_x,offset_y, 40, 80, x,y);
+		super(image,offset_x,offset_y, 40, 80, x,y);
 		setInitiall_offsetX(240);
 		setCount(2);
 		setCol(2);
@@ -19,15 +21,14 @@ public class Koopa extends Monster{
 	}
 	
 	
-	
 	public void koopaMoveRight() {
-		super.setImage(convertImage);
-		setOffset_x(1700);
-		setInitiall_offsetX(1700);
+		
+		setOffset_x(2020);
+		setInitiall_offsetX(2020);
 	}
 	
 	public void koopaMoveLeft() {
-		super.setImage(originalImage);
+		
 		setOffset_x(240);
 	    setInitiall_offsetX(240);
 	}
@@ -39,12 +40,7 @@ public class Koopa extends Monster{
 		return roll;
 	}
 	
-	public Image getConvertImage() {
-		return convertImage;
-	}
-	public Image getOriginalImage() {
-		return originalImage;
-	}
+  
 	
 	@Override
 	public void setX(double x) {

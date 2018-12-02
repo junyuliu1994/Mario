@@ -25,9 +25,8 @@ public class GameModel extends Observable{
 
 	private Image convertImage = new Image("resources/enemies2-ConvertImage.png");
 	private Image wxzImage = new Image("resources/wxz.png");
-
 	private Image wxzConvertImage = new Image("resources/wxz-convert.png");
-
+	private Image koopaConvertImage = new Image("resources/enemies2-ConvertImage.png");
     private Image itemImage = new Image("resources/items.png");
 	private Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
@@ -595,10 +594,9 @@ public class GameModel extends Observable{
     			
         		//Monster's actual Movement
         		if(isLeftCollsion(monster) || isLeftCliff(monster)){
-        			//if(monster instanceof Koopa) {
-        			//	((Koopa) monster).koopaMoveRight();
-        			//}
-        		
+        			if(monster instanceof Koopa) {
+        				((Koopa) monster).koopaMoveRight();
+        			}
         			monster.setSpeed(5);
         		}
         		
@@ -623,6 +621,10 @@ public class GameModel extends Observable{
         				monster.setSpeed(25);
         			}
         			
+        		}
+        		
+        		if(monster instanceof PiranhaPlant) {
+        			monster.setSpeed(0);
         		}
         		
         	

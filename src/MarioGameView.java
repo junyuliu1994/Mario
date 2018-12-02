@@ -164,8 +164,19 @@ public class MarioGameView extends Application implements Observer{
     							gameController.getMonsters().get(index3).getHeight());
                     	break;
                     case '6':
-                    	
-                    
+                    	Monster piranhaPlant = new PiranhaPlant(480,0,j*40, i*36);
+                    	gameController.getMonsters().add(piranhaPlant);
+                    	int index4 = gameController.getMonsters().size() -1;
+                    	gcForMario.drawImage(gameController.getMonsters().get(index4).getImage(), 
+    							gameController.getMonsters().get(index4).getOffset_x(),
+    							gameController.getMonsters().get(index4).getOffset_y(), // the source rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index4).getWidth(), // the source rectangle's width.
+    							gameController.getMonsters().get(index4).getHeight(), // the source rectangle's height.
+    							gameController.getMonsters().get(index4).getX(), // the destination rectangle's X coordinate position.
+    							gameController.getMonsters().get(index4).getY(), // the destination rectangle's Y coordinate position.
+    							gameController.getMonsters().get(index4).getWidth(), // the destination rectangle's width.
+    							gameController.getMonsters().get(index4).getHeight());
+                    	break;  
                     default:
     
                   
@@ -405,6 +416,7 @@ public class MarioGameView extends Application implements Observer{
 					curr ++;
 					reDrawStart(gc);
 				}
+				
 				// set up entry
 			}else if(event.getCode() == KeyCode.ENTER){
 				if(curr == 1){
