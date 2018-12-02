@@ -16,6 +16,8 @@ public class Mario implements Serializable {
 	private int x;
 	private int y;
 	private int direction; //1 right 0 left
+	private final int flagstaff_offset_x_small = 515;
+	private final int flagstaff_offset_y_small = 81;
 	private double speed;
 	private double jumpHeight;
 	private double jumpMax;
@@ -639,6 +641,14 @@ public class Mario implements Serializable {
 
 	public void setLv3_loffset_x(int lv3_loffset_x) {
 		this.lv3_loffset_x = lv3_loffset_x;
+	}
+
+	public int getFlagstaff_offset_x_small() {
+		return flagstaff_offset_x_small;
+	}
+
+	public int getFlagstaff_offset_y_small() {
+		return flagstaff_offset_y_small;
 	}
 
 

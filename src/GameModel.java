@@ -7,6 +7,8 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class GameModel extends Observable implements Serializable {
 	// didn't use this info yet
@@ -21,7 +23,7 @@ public class GameModel extends Observable implements Serializable {
 	private static Image marioImage = new Image("resources/mario.png");
 	private static Image blocks = new Image("resources/blocks.png");
 	private static Image marioConvertImage = new Image("resources/mario-ConvertImage.png");
-
+	private static Image fireWorkImage = new Image("resources/effects.png");
 	private static Image wxzImage = new Image("resources/wxz.png");
 	private static Image wxzConvertImage = new Image("resources/wxz-convert.png");
 
@@ -29,31 +31,61 @@ public class GameModel extends Observable implements Serializable {
 	private static Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private static GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
 	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 192, false, gcForMario);
+
+    private Flagstaff flagstaff = new Flagstaff();
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
     private ArrayList<Mushroom> mushrooms = new ArrayList<>();
     private ArrayList<Monster> monsters = new ArrayList<>();
     private ArrayList<Bullet> bullets = new ArrayList<>();
+	private ArrayList<Firework> fireworks = new ArrayList<>();
+	private ArrayList<BlackCircle> blackCircles = new ArrayList<>();
+	private ArrayList<Information> informations = new ArrayList<>();
 
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
 	private int flashCoinsCount = 0;
+
+    private int stopMarioCountChangeColor = 0;
+
+    private int disappearMarioCount = 0;
 	private int invincibleCount = 0;
 	private static AnimationTimer at;
 
+    private boolean OUT_OF_CONTROL = false;
+	private int level = 0;
 
-
-	private Brick standBrick;
+    private Brick standBrick;
 
 	private boolean start = false;
 	private boolean paused = false;
 	private int score = 0;
 
-    private boolean moveBackground = false;
+	private boolean moveBackground = false;
 
 	public boolean isStart() {
 		return start;
 	}
+
+	public boolean won(){
+			return stopMarioCountChangeColor == 6;
+	}
+
+	public int getMarioLevel(){
+		return mario.getLevel();
+	}
+
+	public void setMarioLevel(int level){
+		mario.setLevel(level);
+	}
+	public void setLevel(int level){
+		this.level = level;
+	}
+
+	public int getLevel(){
+		return level;
+	}
+
 
 	public void setStart(boolean start) {
 		this.start = start;
@@ -115,7 +147,7 @@ public class GameModel extends Observable implements Serializable {
 		paused = false;
 	}
 
-	private void tick() {
+	public void tick() {
         flashCoinsCount++;
 		monsterClockCount++;
 		invincibleCount++;
@@ -132,7 +164,7 @@ public class GameModel extends Observable implements Serializable {
 		if (flashCoinsCount == 8) {
 			flashCoins();
 			flashQuestionBrick();
-
+			flashFireworks();
 			flashCoinsCount = 0;
 		}
 
@@ -143,18 +175,111 @@ public class GameModel extends Observable implements Serializable {
 	    }
 
 		monsterMarioCollision();
-		move();
-		bulletMove();
-		resetBulletSpeed();
-		stop();
+		if (!OUT_OF_CONTROL) {
+			move();
+			stop();
+
+		} else {	// play the animation after Mario touch the flagstaff
+			// 690 is the position of gate
+			if(mario.getX() <= 690) {
+				mario.setX(mario.getX()+2);
+				moveRight();
+			} else {
+
+				if (stopMarioCountChangeColor == 3) {
+					disappearMarioCount--;
+				} else {
+					disappearMarioCount++;
+				}
+
+				if (stopMarioCountChangeColor == 0 && disappearMarioCount==10) {
+					// hide mario
+					stopMarioCountChangeColor++;
+					mario.setOffset_y(mario.getOffset_y()+2130);
+					disappearMarioCount=0;
+				}
+				if (stopMarioCountChangeColor == 1 && disappearMarioCount==5) {
+					// disappear mario
+					mario.setOffset_y(0);
+					mario.setOffset_x(0);
+					stopMarioCountChangeColor++;
+					disappearMarioCount = 0;
+				}
+				if (stopMarioCountChangeColor == 2 && disappearMarioCount == 10) {
+					// add fireworks
+					fireworks.add(new Firework(fireWorkImage, 660, 200, 0));
+					fireworks.add(new Firework(fireWorkImage, 680, 230, 3));
+					fireworks.add(new Firework(fireWorkImage, 720, 220, 4));
+					fireworks.add(new Firework(fireWorkImage, 740, 200, 0));
+					disappearMarioCount=40;
+					stopMarioCountChangeColor++;
+				}
+				// add circles
+				if (stopMarioCountChangeColor == 3) {
+					int x = -disappearMarioCount*20+590;
+					int y = -disappearMarioCount*20+230;
+					int diameter = 250+(disappearMarioCount*40);
+					blackCircles.add(new BlackCircle(x,y,diameter,false));
+				}
+				if (stopMarioCountChangeColor == 3 && disappearMarioCount == -1) {
+					// to stop draw circle
+					stopMarioCountChangeColor++;
+					disappearMarioCount = 0;
+				}
+				if (stopMarioCountChangeColor == 4 && disappearMarioCount == 10) {
+					int x = -disappearMarioCount*20+590;
+					int y = -disappearMarioCount*20+230;
+					int diameter = 250+(disappearMarioCount*40);
+					blackCircles.add(new BlackCircle(x,y,diameter,true));
+					stopMarioCountChangeColor++;
+                }
+				if (stopMarioCountChangeColor == 5) {
+//                    System.out.println("filling text");
+					informations.add(new Information("You won!", Color.WHITE, 410, 380,
+							Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),20)));
+					stopMarioCountChangeColor++;
+					setChanged();
+					notifyObservers();
+				}
+            }
+		}
+
+		// after touching the flag, no more interaction
+
+		if (touchFlag()) {
+			OUT_OF_CONTROL = true;
+			if (!standOnBlocks()) {
+				// set image of holding flagstaff
+				mario.setOffset_x(mario.getFlagstaff_offset_x_small());
+				if (mario.getLevel() == 1) {
+					mario.setOffset_y(mario.getFlagstaff_offset_y_small());
+				} else {
+					mario.setOffset_y(mario.getFlagstaff_offset_y_small() - mario.getHeight());
+				}
+
+				int fallingSpeed = 4;
+				mario.setY(mario.getY() + fallingSpeed);
+				// set location of image
+				mario.setX(flagstaff.getX() - mario.getWidth());
+
+			} else {
+				// stand on ground
+
+				// set 710 is the gate's location
+			}
+		}
+
+		if (touchCoin()) {
+			// TODO: play the score animation
+		}
 
 		removeDeadMonster();
-
 		fall();
-
-        eatMushroom();
-
-		if (mario.getLife() > 0){
+		eatMushroom();
+		bulletMove();
+		resetBulletSpeed();
+		// check mario's life
+		if (mario.getLife() > 0) {
 			if (jumpToHoleDeath()) {
 				mario.setLevel(1);
 				mario.setDirection(1);
@@ -164,11 +289,10 @@ public class GameModel extends Observable implements Serializable {
 				mario.setHeight(mario.getInitialHeight());
 
 				mario.setLife(mario.getLife() - 1);
-				mario.setX((int)standBrick.getX());
-				mario.setY((int)standBrick.getY()-mario.getHeight());
+				mario.setX((int) standBrick.getX());
+				mario.setY((int) standBrick.getY() - mario.getHeight());
 			}
-		}
-		else{
+		} else {
 			//gameover
 		}
 		setChanged();
@@ -199,7 +323,7 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
-	private void bulletMove(){
+	public void bulletMove(){
 		for (int i = 0; i < bullets.size(); i++){
 			if (bullets.get(i) != null){
 				if (bullets.get(i).getSpeed() > 0) {
@@ -367,7 +491,6 @@ public class GameModel extends Observable implements Serializable {
                             return true;
                         }
                         else if (mario.getLevel() == 2){
-
 							if (mario.getDirection() == 1){
                         		mario.setImage(wxzImage);
                         		mario.setOffset_x(mario.getLv3_offset_x());
@@ -456,9 +579,9 @@ public class GameModel extends Observable implements Serializable {
 
 
 	//when mario cor_x > 1/2 of 1000, then move other stuff contains background
-	private void moveMarioOrOhters() {
+	public void moveMarioOrOhters() {
 		if ((mario.getX() < 200 && background.getMoveLength() < 1000) || (background.getMoveLength() == 1000)) {
-			for (int i = 0; i < mario.getSpeed(); i++) {
+            for (int i = 0; i < mario.getSpeed(); i++) {
 				if (!moveRightStockByBlocks()) {
 					mario.setX((int) (mario.getX() + 1));
 				}
@@ -512,9 +635,9 @@ public class GameModel extends Observable implements Serializable {
                     monster.setX(monster.getX() - mario.getSpeed());
                 }
      		}
+			flagstaff.moveFlag(mario.getSpeed());
 		}
 	}
-
 
 	public void move() {
 		if (mario.isRight() && !mario.isJump()) {
@@ -585,7 +708,7 @@ public class GameModel extends Observable implements Serializable {
 	    }*/
 	}
 
-	private void moveRight() {
+	public void moveRight() {
 		if (mario.getLevel() < 3) {
 			mario.setImage(marioImage);
 			mario.setCol(4);
@@ -595,8 +718,7 @@ public class GameModel extends Observable implements Serializable {
 			} else {
 				mario.setCount(0);
 			}
-		}
-		else{
+		} else{
 			mario.setImage(wxzImage);
 			mario.setOffset_x(mario.getLv3_offset_x());
 			mario.setOffset_y(mario.getLv3_offset_y());
@@ -608,7 +730,7 @@ public class GameModel extends Observable implements Serializable {
 		moveMarioOrOhters();
 	}
 
-	private void moveLeft() {
+	public void moveLeft() {
 		if (mario.getLevel() < 3) {
 			mario.setImage(marioConvertImage);
 			mario.setCol(4);
@@ -635,8 +757,6 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
-
-	//====These are method of monsters' movement
     /**
      * goombaMove
      * This is method controls goomba's movement
@@ -646,7 +766,7 @@ public class GameModel extends Observable implements Serializable {
      * @return void
      *
      */
-    public void monsterMove(){
+	public void monsterMove(){
     	for(Monster monster: monsters) {
             if (monster != null) {
                 if (monster.isDead) {
@@ -686,7 +806,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster Object
      * @return boolean value
      */
-    public boolean isLeftCollsion(Monster monster){
+	public boolean isLeftCollsion(Monster monster){
     	//check if monster collide with brick
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
@@ -706,7 +826,7 @@ public class GameModel extends Observable implements Serializable {
      * @return boolean value
      */
 
-    public boolean isLeftCliff(Monster monster) {
+	public boolean isLeftCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
@@ -726,7 +846,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster Object
      * @return boolean value
      */
-    public boolean isRightCollison(Monster monster) {
+	public boolean isRightCollison(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
@@ -746,7 +866,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster Object
      * @return boolean value
      */
-    public boolean isRightCliff(Monster monster) {
+	public boolean isRightCliff(Monster monster) {
     	for (int i = 0; i < bricks.size(); i++) {
     		if(bricks.get(i) == null) {
     			continue;
@@ -765,7 +885,7 @@ public class GameModel extends Observable implements Serializable {
      * @param monster - Monster objects need to be check
      * @return boolean value
      */
-    public boolean stepOnByMario(Monster monster) {
+	public boolean stepOnByMario(Monster monster) {
     		if (monster != null && mario.getLeftF_y() == monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
@@ -780,13 +900,14 @@ public class GameModel extends Observable implements Serializable {
     /**
      * This method check if monster is collide by Mario
      */
-    public boolean isMarioCollideMonster(Monster monster) {
+	public boolean isMarioCollideMonster(Monster monster) {
     	//check all possible collision point
     	if(mario.getInvincibleStatus() == false && monster!=null) {
     		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
         		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
 
         			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
+
             			mario.setInvincible(true);
             			return true;
             		}
@@ -823,7 +944,7 @@ public class GameModel extends Observable implements Serializable {
 
     }
 
-    private void monsterMarioCollision() {
+	public void monsterMarioCollision() {
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
          	Monster temp = iterator.next();
          	if(isMarioCollideMonster(temp)) {
@@ -841,7 +962,6 @@ public class GameModel extends Observable implements Serializable {
                         mario.setHeight(mario.getInitialHeight());
                         mario.resetCollisionCor();
                         for (int i = 0; i < mario.getInitialHeight(); i++) {
-                            System.out.println(mario.getY() + ", " + mario.getHeight());
                             if (!standOnBlocks()) {
                                 mario.setY(mario.getY() + 1);
                             }
@@ -906,7 +1026,7 @@ public class GameModel extends Observable implements Serializable {
          }
     }
 
-    private void removeDeadMonster() {
+	public void removeDeadMonster() {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
     		Monster temp = iterator.next();
          	if(temp != null && temp.isDead) {
@@ -924,6 +1044,7 @@ public class GameModel extends Observable implements Serializable {
 	}
 	private void flashCoins(){
 		for (Coin coin : coins) {
+			if (coin == null) continue;
 			if (coin.getCount() < coin.getCol()) {
 				coin.setOffset_x(coin.initial_offset_x + (coin.getWidth()*coin.getCount()));
 				coin.setCount(coin.getCount() + 1);
@@ -949,7 +1070,19 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
-	public void jumpCollisionWithBrick(Brick brick, int i){
+	private void flashFireworks() {
+		for (Firework firework : fireworks) {
+			if (firework == null) continue;
+			if (firework.getCount() < firework.getCol()) {
+				firework.setOffsetX(firework.getInitial_offsetX() + (firework.getWidth() * firework.getCount()));
+				firework.setCount(firework.getCount() + 1);
+			} else {
+				firework.setCount(0);
+			}
+		}
+	}
+
+	private void jumpCollisionWithBrick(Brick brick, int i){
 	    if (brick instanceof Wall){
 	        if (mario.getLevel() > 1) {
 	            bricks.set(i, null);
@@ -993,7 +1126,7 @@ public class GameModel extends Observable implements Serializable {
             if (bricks.get(i) == null){
                 continue;
             }
-			if (mario.getRightTopC_y() == bricks.get(i).getY()  + bricks.get(i).getHeight()) { //���ִ������������
+            if (mario.getRightTopC_y() == bricks.get(i).getY()  + bricks.get(i).getHeight()) { //���ִ������������
 				if (mario.getRightTopC_x() >= bricks.get(i).getX() && mario.getRightTopC_x() <= bricks.get(i).getX() + bricks.get(i).getWidth()) {
 					return true;
 				}
@@ -1016,7 +1149,68 @@ public class GameModel extends Observable implements Serializable {
 		return;
 	}
 
-	private void jump() {
+	public boolean touchCoin() {
+//        System.out.println("getting check the coin");
+		for (int i = 0; i < coins.size(); i++) {
+			if (coins.get(i) == null) continue;
+			// when jump
+			if (mario.getHead_y() == coins.get(i).getY()+coins.get(i).getHeight()) {
+				if (mario.getHead_x() >= coins.get(i).getX() && mario.getHead_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+//                    jumpCollisionWithBrick(coin, i);
+					mario.setCount(mario.getCount() + coins.get(i).getScore());
+					coins.set(i, null);
+					return true;
+				}
+
+				if (mario.getLeft_tou_x() >= coins.get(i).getX() && mario.getLeft_tou_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+//                    jumpCollisionWithBrick(bricks.get(i), i);
+					mario.setCount(mario.getCount() + coins.get(i).getScore());
+					coins.set(i, null);
+					return true;
+				}
+
+				if (mario.getRight_tou_x() >= coins.get(i).getX() && mario.getRight_tou_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+//                    jumpCollisionWithBrick(bricks.get(i), i);
+					mario.setCount(mario.getCount() + coins.get(i).getScore());
+					coins.set(i, null);
+					return true;
+				}
+			}
+			if (mario.getRightTopC_y() == coins.get(i).getY()  + coins.get(i).getHeight()) {
+				if (mario.getRightTopC_x() >= coins.get(i).getX() && mario.getRightTopC_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+					mario.setCount(mario.getCount() + coins.get(i).getScore());
+					coins.set(i, null);
+					return true;
+				}
+
+				if (mario.getLeftTopC_x() >= coins.get(i).getX() && mario.getLeftTopC_x() <= coins.get(i).getX() + coins.get(i).getWidth()) {
+					mario.setCount(mario.getCount() + coins.get(i).getScore());
+					coins.set(i, null);
+					return true;
+				}
+			}
+			// while moving
+			if ((mario.getY() <= coins.get(i).getHeight()+coins.get(i).getY() && mario.getY() >= coins.get(i).getY()) ||
+					(mario.getY()+mario.getHeight() >= coins.get(i).getY() && mario.getY()+mario.getHeight() <= coins.get(i).getY()+BLOCK_HEIGHT)) {
+				if ((mario.getX() <= coins.get(i).getX()+coins.get(i).getWidth() && mario.getX() >= coins.get(i).getX()) ||
+						(mario.getX()+mario.getWidth() >= coins.get(i).getX() && mario.getX()+mario.getWidth() <= coins.get(i).getX()+coins.get(i).getWidth())) {
+					mario.setCount(mario.getCount() + coins.get(i).getScore());
+					coins.set(i, null);
+					return true;
+				}
+			}
+
+
+		}
+
+		return false;
+	}
+
+	public boolean touchFlag() {
+		return (mario.getX()+mario.getWidth() >= flagstaff.getX());
+	}
+
+	public void jump() {
 		if (mario.isRight()) {
 			moveMarioOrOhters();
 		} else if (mario.isLeft()) {
@@ -1058,12 +1252,13 @@ public class GameModel extends Observable implements Serializable {
 				mario.setY((int) (mario.getY() - 1));
 			} else {
 				mario.setJumpHeight(mario.getJumpMax());
+				return;
 			}
 		}
 		mario.setJumpHeight(mario.getJumpHeight() + 4);
 	}
 
-	private void fall() {
+	public void fall() {
 		if (mario.isRight()) {
 			if (!moveRightStockByBlocks()) {
 				moveMarioOrOhters();
@@ -1082,29 +1277,15 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
-	public Image getMarioImage() {
-		return marioImage;
-	}
-
-	public void setMarioImage(Image marioImage) {
-		this.marioImage = marioImage;
-	}
 
 	public Image getMarioConvertImage() {
 		return marioConvertImage;
-	}
-
-	public void setMarioConvertImage(Image marioConvertImage) {
-		this.marioConvertImage = marioConvertImage;
 	}
 
 	public Image getBlocks() {
 		return blocks;
 	}
 
-	public void setBlocks(Image blocks) {
-		this.blocks = blocks;
-	}
 
 	public Background getBackground() {
 		return background;
@@ -1114,47 +1295,26 @@ public class GameModel extends Observable implements Serializable {
 		return mario;
 	}
 
-	public void setMario(Mario mario) {
-		this.mario = mario;
-	}
 
 	public ArrayList<Brick> getBricks() {
 		return bricks;
 	}
 
-    public Image getItemImage() {
-        return itemImage;
-    }
-
-    public void setItemImage(Image itemImage) {
-        this.itemImage = itemImage;
-    }
 
 	public ArrayList<Coin> getCoins() {
 		return coins;
 	}
+
 	public Canvas getCanvasForMario() {
 		return canvasForMario;
-	}
-
-	public void setCanvasForMario(Canvas canvasForMario) {
-		this.canvasForMario = canvasForMario;
 	}
 
 	public GraphicsContext getGcForMario() {
 		return gcForMario;
 	}
 
-	public void setGcForMario(GraphicsContext gcForMario) {
-		this.gcForMario = gcForMario;
-	}
-
     public ArrayList<Mushroom> getMushrooms() {
         return mushrooms;
-    }
-
-    public void setMushrooms(ArrayList<Mushroom> mushrooms) {
-        this.mushrooms = mushrooms;
     }
 
 
@@ -1165,40 +1325,56 @@ public class GameModel extends Observable implements Serializable {
 		return wxzImage;
 	}
 
-	public void setWxzImage(Image wxzImage) {
-		this.wxzImage = wxzImage;
-	}
 
 	public Image getWxzConvertImage() {
 		return wxzConvertImage;
 	}
 
-	public void setWxzConvertImage(Image wxzConvertImage) {
-		this.wxzConvertImage = wxzConvertImage;
-	}
 
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
 	}
 
-	public void setBullets(ArrayList<Bullet> bullets) {
-		this.bullets = bullets;
+
+	public ArrayList<BlackCircle> getBlackCircles() { return this.blackCircles; }
+
+	public ArrayList<Firework> getFireworks() { return this.fireworks; }
+
+	public ArrayList<Information> getInformations() { return this.informations; }
+
+	public boolean isOUT_OF_CONTROL() {return this.OUT_OF_CONTROL;}
+
+	public boolean isMoveBackground() {
+		return moveBackground;
 	}
 
-	public int getScore() {
-		return score;
+	public void setMoveBackground(boolean moveBackground) {
+		this.moveBackground = moveBackground;
 	}
 
-	public void setScore(int score) {
-		this.score = score;
-	}
-
-    public boolean isMoveBackground() {
-        return moveBackground;
+    public void setOUT_OF_CONTROL(boolean OUT_OF_CONTROL) {
+        this.OUT_OF_CONTROL = OUT_OF_CONTROL;
     }
 
-    public void setMoveBackground(boolean moveBackground) {
-        this.moveBackground = moveBackground;
+    public void setStandBrick(Brick standBrick) {
+        this.standBrick = standBrick;
+    }
+
+
+    public void setStopMarioCountChangeColor(int stopMarioCountChangeColor) {
+        this.stopMarioCountChangeColor = stopMarioCountChangeColor;
+    }
+
+    public int getDisappearMarioCount() {
+        return disappearMarioCount;
+    }
+
+    public void setDisappearMarioCount(int disappearMarioCount) {
+        this.disappearMarioCount = disappearMarioCount;
+    }
+
+    public Flagstaff getFlagstaff() {
+        return flagstaff;
     }
 
 }

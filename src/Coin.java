@@ -3,36 +3,32 @@ import javafx.scene.image.Image;
 import java.io.Serializable;
 
 public class Coin implements Serializable {
-	private final static int SCORE = 100;
+	private final int SCORE = 100;
 
 	private static Image image;
 	private  int col = 3;
 	private  int count = 3;
 	final int initial_offset_x = 948;
 	private int offset_x = 948;
-	final int initial_offset_y = 41;
 	private int offset_y = 41;
-	static final long serialVersionUID = 1;
 
 	// to remove the side of coins, have set this values
-	//    private final int BLOCK_WIDTH = 38;        // the pixels of one block
-	//    private final int BLOCK_HEIGHT = 37;
-	public SpriteAnimation animation;
+	private final int BLOCK_WIDTH = 38;        // the pixels of one block
+	private final int BLOCK_HEIGHT = 37;
+
 	private int width;
 	private int height;
 	private double x;
 	private double y;
 
-	public Coin(Image image, int width, int height, int x, int y) {
+	public Coin(Image image, int x, int y) {
 		this.image = image;
-		this.width = width;
-		this.height = height;
+		this.width = 38;
+		this.height = 37;
 		this.x = x;
 		this.y = y;
 	}
 
-	void setAnimation(SpriteAnimation newAnimation) { this.animation = newAnimation;}
-	//	SpriteAnimation getAnimation() {return this.animation;}
 	public Image getImage() {
 		return image;
 	}
@@ -76,7 +72,7 @@ public class Coin implements Serializable {
 	public void setY(int y) {
 		this.y = y;
 	}
-	public static int getScore() {
+	public int getScore() {
 		return SCORE;
 	}
 }
