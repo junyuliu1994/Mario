@@ -26,9 +26,6 @@ public class GameModel extends Observable implements Serializable {
 	private static Image fireWorkImage = new Image("resources/effects.png");
 	private static Image wxzImage = new Image("resources/wxz.png");
 	private static Image wxzConvertImage = new Image("resources/wxz-convert.png");
-
-	private Image convertImage = new Image("resources/enemies2-ConvertImage.png");
-
     private static Image itemImage = new Image("resources/items.png");
 	private static Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private static GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
