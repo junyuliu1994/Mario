@@ -1,3 +1,9 @@
+/**
+ * It is a Wall class of mario game
+ * @author Junyu Liu， Pengyu Yang, Zhengxiang Jin, Feiran Yange
+ * It can be destroyed
+ */
+
 import javafx.scene.image.Image;
 
 public class Wall extends Brick{

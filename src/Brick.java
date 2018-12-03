@@ -1,3 +1,9 @@
+/**
+ * It is a brick class of mario game
+ * @author Junyu Liu， Pengyu Yang, Zhengxiang Jin, Feiran Yange
+ *
+ */
+
 import javafx.scene.image.Image;
 
 import java.io.Serializable;

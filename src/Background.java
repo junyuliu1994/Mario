@@ -1,3 +1,10 @@
+/**
+ * It is a background class of mario game
+ * @author Junyu Liu， Pengyu Yang, Zhengxiang Jin, Feiran Yange
+ *
+ * This program background object
+ */
+
 import javafx.scene.image.Image;
 
 import java.io.Serializable;

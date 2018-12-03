@@ -1,3 +1,9 @@
+/**
+ * It is a sprite animation class of mario game
+ * @author Junyu Liu， Pengyu Yang, Zhengxiang Jin, Feiran Yange
+ *
+ */
+
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.geometry.Rectangle2D;
