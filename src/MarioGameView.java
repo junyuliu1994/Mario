@@ -157,9 +157,7 @@ public class MarioGameView extends Application implements Observer{
 		reDrawMario();
 		if(model.won()){
 			//gameModel.pause();
-			slow = 0;
 		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
-		    	slow = 1;
                 int currLevel = gameModel.getLevel()+1;
                 System.out.println("游戏结束");
                 model.deleteObserver(this);
@@ -190,9 +188,11 @@ public class MarioGameView extends Application implements Observer{
 			initContent();
 			gameModel.start();
 		}else if(model.getLevel() == -1){
-			gameController.setStart(true);
-			gameController.getMario().setSpeed(slow);
-			gameController.getMario().setRight(true);
+			if(!gameModel.touchFlag()) {
+				gameController.setStart(true);
+				gameController.getMario().setSpeed(slow);
+				gameController.getMario().setRight(true);
+			}
 		}
 	}
 
