@@ -215,7 +215,7 @@ public class Mario implements Serializable {
 
 	public int getSCORE() { return this.SCORE; }
 
-	public void setSCORE(int Score) { this.SCORE+=Score; }
+	public void setSCORE(int Score) { this.SCORE = Score; }
 
 	public int getCOINS() { return this.COINS; }
 

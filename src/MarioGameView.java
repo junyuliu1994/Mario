@@ -24,6 +24,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.management.InstanceNotFoundException;
+import javax.swing.text.InternationalFormatter;
+
 
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
@@ -36,10 +39,16 @@ public class MarioGameView extends Application implements Observer{
 	private int slow = 1;
 	Image background = new Image("resources/start_background.png");
     Image pause = new Image("resources/pause.png");
+	private static Image blocksImage = new Image("resources/blocks.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
     MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
 	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
 	Media jumpSound = new Media("http://www.codem.xyz/resource/mp3/マリオジャンプ.mp3");
+	DropShadow ds = new DropShadow();
+	//		ds.setOffsetY(3.0f);
+//		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+//		gcForMario.setEffect(ds);
+
 
 	int curr = 1;
 
@@ -97,10 +106,10 @@ public class MarioGameView extends Application implements Observer{
 		gameController.getInformations().add(new Information("Mario", Color.WHITE, 100, 50, infofont));
 		// initial score
 		gameController.getInformations().add(new Information(Integer.valueOf(gameController.getMario().getSCORE()).toString(),
-				Color.WHITE, 100, 70, infofont));
+				Color.WHITE, 100, 70, infofont, 1));
 		// initial coins
 		gameController.getInformations().add(new Information("*"+Integer.valueOf(gameController.getMario().getCOINS()).toString(),
-				Color.WHITE, 250, 70, infofont));
+				Color.WHITE, 250, 70, infofont, 2));
 
 		// TODO: add a coin image before coin, and the coin cannot be collected
 
@@ -286,6 +295,7 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getBackground().getWidth(), // the destination rectangle's width.
 				gameController.getBackground().getHeight()); // the destination rectangle's height.
 
+		gcForMario.drawImage(blocksImage, 948, 41, 38, 37, 225, 45, 25, 25);
 
 		for (int i = 0; i < gameController.getBricks().size(); i++) {
 		    if (gameController.getBricks().get(i) == null){
@@ -378,10 +388,22 @@ public class MarioGameView extends Application implements Observer{
 		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
 		gcForMario.setEffect(ds);
 		for (Information information: gameController.getInformations()) {
+			if (information.isNeedUpdate() == 3) {
+				if (information.getCurrentCount() > information.getCount()) {
+					information = null;
+					continue;
+				} else {
+					information.setCurrentCount(information.getCurrentCount()+1);
+					information.setY(information.getY()-1);
+				}
+			} else if (information.isNeedUpdate() == 1) {
+				information.setText(Integer.valueOf(gameController.getMario().getSCORE()).toString());
+			}
 			gcForMario.setFill(information.getColor());
 			gcForMario.setFont(information.getFont());
 			gcForMario.fillText(information.getText(), information.getX(), information.getY());
 		}
+		gcForMario.setEffect(null);
 	}
         	
         	
