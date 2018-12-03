@@ -19,6 +19,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.management.InstanceNotFoundException;
+import javax.swing.text.InternationalFormatter;
+
 
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
@@ -359,11 +362,12 @@ public class MarioGameView extends Application implements Observer{
 					information.setCurrentCount(information.getCurrentCount()+1);
 					information.setY(information.getY()-1);
 				}
+			} else if (information.isNeedUpdate() == 1) {
+				information.setText(Integer.valueOf(gameController.getMario().getSCORE()).toString());
 			}
 			gcForMario.setFill(information.getColor());
 			gcForMario.setFont(information.getFont());
 			gcForMario.fillText(information.getText(), information.getX(), information.getY());
-
 		}
 		gcForMario.setEffect(null);
 	}

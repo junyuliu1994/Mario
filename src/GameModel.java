@@ -298,9 +298,9 @@ public class GameModel extends Observable implements Serializable {
 			mario.setSCORE(mario.getSCORE() + 100);
 			mario.setCOINS(mario.getCOINS() + 1);
 			for (Information information: informations) {
-				if (information.isNeedUpdate() == 1) {
-					information.setText(Integer.valueOf(mario.getSCORE()).toString());
-				} else if (information.isNeedUpdate() == 2) {
+//				if (information.isNeedUpdate() == 1) {
+//					information.setText(Integer.valueOf(mario.getSCORE()).toString());
+				if (information.isNeedUpdate() == 2) {
 					information.setText("*"+Integer.valueOf(mario.getCOINS()).toString());
 				}
 			}
@@ -1158,6 +1158,9 @@ public class GameModel extends Observable implements Serializable {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
     		Monster temp = iterator.next();
          	if(temp.isDead) {
+         		informations.add(new Information(Integer.valueOf(temp.getScore()).toString(), Color.WHITE,
+						(int)temp.getX(), (int)temp.getY(), null,3));
+         		mario.setSCORE(mario.getSCORE()+temp.getScore());
          		iterator.remove();
 
          	}
