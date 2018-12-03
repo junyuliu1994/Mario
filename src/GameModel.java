@@ -155,6 +155,7 @@ public class GameModel extends Observable implements Serializable {
 	}
 
 	public void tick() {
+		removeDeadMonster();
         flashCoinsCount++;
 
 		monsterClockCount++;
@@ -194,6 +195,7 @@ public class GameModel extends Observable implements Serializable {
 	    }
 
 		monsterMarioCollision();
+		removeDeadMonster();
 
 		if (!OUT_OF_CONTROL) {
 			move();
@@ -293,7 +295,7 @@ public class GameModel extends Observable implements Serializable {
 			// TODO: play the score animation
 		}
 
-		removeDeadMonster();
+		
 		fall();
 		eatMushroom();
 		koopaMonsterCollision();
@@ -301,15 +303,13 @@ public class GameModel extends Observable implements Serializable {
 
 		bulletMove();
 		resetBulletSpeed();
+		
 
 		stop();
 		
 		removeDeadMonster();
        
 
-		fall();
-
-        eatMushroom();
 
 		
 
@@ -468,11 +468,9 @@ public class GameModel extends Observable implements Serializable {
 			}
 			if (bullet.getX() + bullet.getWidth() == monsters.get(i).getX()){
 				if (bullet.getY() + bullet.getHeight()/2 >= monsters.get(i).getY() && bullet.getY() + bullet.getHeight()/2 <= monsters.get(i).getY() + monsters.get(i).getHeight()){
-				    System.out.println(monsters.size());
-				    monsters.set(i, null);
-                    System.out.println(monsters.size());
+					
                     bullets.remove(bullet);
-				    score+=100;
+				    score += monsters.get(i).getScore();
 				    monsters.get(i).isDead = true;
 					return true;
 				}
@@ -1113,9 +1111,7 @@ public class GameModel extends Observable implements Serializable {
          	}
         }
    }
-
-
-
+    
     private void koopaMonsterCollision() {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
     		Monster temp = iterator.next();
@@ -1149,12 +1145,6 @@ public class GameModel extends Observable implements Serializable {
 
          	}
          }
-
-		for (int i = 0; i > mario.getSpeed(); i--) {
-			if (!moveLeftStockByBlocks()) {
-				mario.setX((int) (mario.getX() - 1));
-			}
-		}
 
 	}
 	private void flashCoins(){
