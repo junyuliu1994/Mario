@@ -27,6 +27,7 @@ public class MarioGameView extends Application implements Observer{
 	GraphicsContext gcForMario = gameModel.getGcForMario();
 	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
 	private Duration coinDuration = Duration.millis(1000);
+	private int slow = 1;
 	Image background = new Image("resources/start_background.png");
     Image pause = new Image("resources/pause.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
@@ -189,7 +190,7 @@ public class MarioGameView extends Application implements Observer{
 			gameModel.start();
 		}else if(model.getLevel() == -1){
 			gameController.setStart(true);
-			gameController.getMario().setSpeed(1);
+			gameController.getMario().setSpeed(slow);
 			gameController.getMario().setRight(true);
 		}
 	}
@@ -354,6 +355,9 @@ public class MarioGameView extends Application implements Observer{
 					}
 				}else if(event.getCode() == KeyCode.X){
 					gameModel.skip();
+					if(!gameModel.touchFlag()) {
+						slow = 2;
+					}
 				}
 			}
 			// when ESC has been hit, open or close the pause menu
@@ -430,6 +434,7 @@ public class MarioGameView extends Application implements Observer{
 				}
 				if(event.getCode() == KeyCode.X){
 					gameModel.unSkip();
+					slow = 1;
 				}
 			}
 		});
