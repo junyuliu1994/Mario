@@ -469,7 +469,7 @@ public class GameModel extends Observable implements Serializable {
 			if (bullet.getX() + bullet.getWidth() == monsters.get(i).getX()){
 				if (bullet.getY() + bullet.getHeight()/2 >= monsters.get(i).getY() && bullet.getY() + bullet.getHeight()/2 <= monsters.get(i).getY() + monsters.get(i).getHeight()){
 					
-                    bullets.remove(bullet);
+                    
 				    score += monsters.get(i).getScore();
 				    monsters.get(i).isDead = true;
 					return true;
