@@ -1,3 +1,9 @@
+/**
+ * It is a mario class of mario game
+ * @author Junyu Liu， Pengyu Yang, Zhengxiang Jin, Feiran Yange
+ *
+ */
+
 import javafx.animation.Animation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

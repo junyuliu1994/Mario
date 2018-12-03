@@ -1,3 +1,8 @@
+/**
+ * It is a view class of mario game
+ * @author Junyu Liu， Pengyu Yang, Zhengxiang Jin, Feiran Yange
+ *
+ */
 
 import java.io.*;
 import java.util.Observable;
@@ -41,7 +46,10 @@ public class MarioGameView extends Application implements Observer{
 		launch(args);
 	}
 
-
+	/**
+	 * start method
+	 * @param primaryStage - stage
+	 */
 	public void start(Stage primaryStage) {
 	    BGM.setAutoPlay(true);
 		Group root = new Group();
@@ -54,6 +62,9 @@ public class MarioGameView extends Application implements Observer{
 		primaryStage.show();
 	}
 
+	/**
+	 * init all the content
+	 */
 	private void initContent() {
 		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
 				gameController.getBackground().getOffset_x(), // the source rectangle's X coordinate position.
@@ -243,6 +254,9 @@ public class MarioGameView extends Application implements Observer{
 		}
 	}
 
+	/**
+	 * redraw the mario
+	 */
 	private void reDrawMario() {
 		gcForMario.drawImage(gameController.getMario().getImage(), // the image to be drawn or null.
 				gameController.getMario().getOffset_x(), // the source rectangle's X coordinate position.
@@ -255,6 +269,9 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getHeight()); // the destination rectangle's height.
 	}
 
+	/**
+	 * redraw the stuff except mario
+	 */
 	private void reDrawExceptionMario() {
 		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
 				gameController.getBackground().getOffset_x(), // the source rectangle's X coordinate position.
