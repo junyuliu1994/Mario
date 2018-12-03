@@ -358,9 +358,6 @@ public class MarioGameView extends Application implements Observer{
 			}
 			// when ESC has been hit, open or close the pause menu
 			if(event.getCode() == KeyCode.ESCAPE){
-				if(gameModel.getLevel() == -1){
-					gameModel.resume();
-				}
 				if(!gameModel.getPaused()) {
 				    BGM.pause();
 				    // set the model to paused, draw the pause menu image on gc
