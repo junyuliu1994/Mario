@@ -88,7 +88,11 @@ public class MarioGameView extends Application implements Observer{
 				Color.WHITE, 100, 70, infofont));
 		// initial coins
 		gameController.getInformations().add(new Information("*"+Integer.valueOf(gameController.getMario().getCOINS()).toString(),
-				Color.WHITE, 150, 70, infofont));
+				Color.WHITE, 250, 70, infofont));
+
+		// TODO: add a coin image before coin, and the coin cannot be collected
+
+		// TODO: add info to show the level of world
 
 		for (int i = 0; i < LevelData.getMap(gameModel.getLevel()).length; i++) {
 			String line = LevelData.getMap(gameModel.getLevel())[i];
