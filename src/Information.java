@@ -1,16 +1,18 @@
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.io.Serializable;
+
 /**
  * @author Shawn Jin
  * this class
  */
-public class Information {
+public class Information implements Serializable {
 
     private String text;
-    private Color color;
+    private static Color color;
     private int x, y, currentCount, count = 20;
-    private Font font;
+    private static Font font;
     // value of needUpdate -> (0 is don't need to update, 1 is need to update for score, 2 is need to update for coins)
     private int needUpdate = 0;
 
