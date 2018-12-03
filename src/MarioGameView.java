@@ -30,9 +30,14 @@ public class MarioGameView extends Application implements Observer{
 	private Duration coinDuration = Duration.millis(1000);
 	Image background = new Image("resources/start_background.png");
     Image pause = new Image("resources/pause.png");
+	private static Image blocksImage = new Image("resources/blocks.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
     MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
 	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
+	DropShadow ds = new DropShadow();
+	//		ds.setOffsetY(3.0f);
+//		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+//		gcForMario.setEffect(ds);
 
 
 	int curr = 1;
@@ -43,6 +48,8 @@ public class MarioGameView extends Application implements Observer{
 
 
 	public void start(Stage primaryStage) {
+
+
 	    BGM.setAutoPlay(true);
 		Group root = new Group();
 		root.getChildren().add(canvasForMario);
@@ -85,14 +92,11 @@ public class MarioGameView extends Application implements Observer{
 		gameController.getInformations().add(new Information("Mario", Color.WHITE, 100, 50, infofont));
 		// initial score
 		gameController.getInformations().add(new Information(Integer.valueOf(gameController.getMario().getSCORE()).toString(),
-				Color.WHITE, 100, 70, infofont));
+				Color.WHITE, 100, 70, infofont, 1));
 		// initial coins
 		gameController.getInformations().add(new Information("*"+Integer.valueOf(gameController.getMario().getCOINS()).toString(),
-				Color.WHITE, 250, 70, infofont));
+				Color.WHITE, 250, 70, infofont, 2));
 
-		// TODO: add a coin image before coin, and the coin cannot be collected
-
-		// TODO: add info to show the level of world
 
 		for (int i = 0; i < LevelData.getMap(gameModel.getLevel()).length; i++) {
 			String line = LevelData.getMap(gameModel.getLevel())[i];
@@ -266,6 +270,7 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getBackground().getWidth(), // the destination rectangle's width.
 				gameController.getBackground().getHeight()); // the destination rectangle's height.
 
+		gcForMario.drawImage(blocksImage, 948, 41, 38, 37, 225, 45, 25, 25);
 
 		for (int i = 0; i < gameController.getBricks().size(); i++) {
 		    if (gameController.getBricks().get(i) == null){
@@ -283,16 +288,6 @@ public class MarioGameView extends Application implements Observer{
 		}
 
 		for (Coin coin : gameController.getCoins()) {
-////		    coin.animation.setOffsetX((int)coin.getX());
-////            coin.animation.
-//		    coin.animation.stop();
-//		    coin.animation = new SpriteAnimation(coin.getImage(), coinDuration, coin.getCount(),
-//                    coin.getCol(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(), coin.getHeight(),
-//                    coin.getX(), coin.getY(),gcForMario, 1, false);
-//		    coin.animation.setCycleCount(Animation.INDEFINITE);
-//		    coin.animation.play();
-//        }
-
 			if (coin == null) continue;
 			gcForMario.drawImage(coin.getImage(),
 					coin.getOffset_x(), coin.getOffset_y(),
@@ -309,7 +304,6 @@ public class MarioGameView extends Application implements Observer{
                         mushroom.getX(), mushroom.getY(), mushroom.getWidth(), mushroom.getHeight()
                 );
             }
-
         }
 
         for (Bullet bullet : gameController.getBullets()){
@@ -353,15 +347,25 @@ public class MarioGameView extends Application implements Observer{
 		}
 		// draw information
 		// set effect
-		DropShadow ds = new DropShadow();
 		ds.setOffsetY(3.0f);
 		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
 		gcForMario.setEffect(ds);
 		for (Information information: gameController.getInformations()) {
+			if (information.isNeedUpdate() == 3) {
+				if (information.getCurrentCount() > information.getCount()) {
+					information = null;
+					continue;
+				} else {
+					information.setCurrentCount(information.getCurrentCount()+1);
+					information.setY(information.getY()-1);
+				}
+			}
 			gcForMario.setFill(information.getColor());
 			gcForMario.setFont(information.getFont());
 			gcForMario.fillText(information.getText(), information.getX(), information.getY());
+
 		}
+		gcForMario.setEffect(null);
 	}
         	
         	

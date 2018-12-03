@@ -236,6 +236,7 @@ public class GameModel extends Observable implements Serializable {
 					fireworks.add(new Firework(fireWorkImage, 740, 200, 0));
 					disappearMarioCount=40;
 					stopMarioCountChangeColor++;
+					informations.clear();
 				}
 				// add circles
 				if (stopMarioCountChangeColor == 3) {
@@ -248,7 +249,7 @@ public class GameModel extends Observable implements Serializable {
 					// to stop draw circle
 					stopMarioCountChangeColor++;
 					disappearMarioCount = 0;
-					informations.clear();
+
 				}
 				if (stopMarioCountChangeColor == 4 && disappearMarioCount == 10) {
 					int x = -disappearMarioCount*20+590;
@@ -294,7 +295,17 @@ public class GameModel extends Observable implements Serializable {
 		}
 
 		if (touchCoin()) {
-			// TODO: play the score animation
+			mario.setSCORE(mario.getSCORE() + 100);
+			mario.setCOINS(mario.getCOINS() + 1);
+			for (Information information: informations) {
+				if (information.isNeedUpdate() == 1) {
+					information.setText(Integer.valueOf(mario.getSCORE()).toString());
+				} else if (information.isNeedUpdate() == 2) {
+					information.setText("*"+Integer.valueOf(mario.getCOINS()).toString());
+				}
+			}
+			informations.add(new Information("100", Color.WHITE, mario.getHead_x(), mario.getRight_tou_y(),
+					null, 3));
 		}
 
 		
@@ -663,6 +674,12 @@ public class GameModel extends Observable implements Serializable {
             for(Monster monster: monsters) {
             	monster.setX(monster.getX() - mario.getSpeed());
      		}
+
+            for (Information information: informations) {
+            	if (information.isNeedUpdate() == 3) {
+            		information.setX((int)(information.getX() - mario.getSpeed()));
+				}
+			}
 			flagstaff.moveFlag(mario.getSpeed());
 		}
 	}

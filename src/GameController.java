@@ -14,6 +14,7 @@ public class GameController {
 	public void setStart(boolean start) {
 		gameModel.setStart(start);
 	}
+
 	public GameController(GameModel gameModel){
 		this.gameModel = gameModel;
 	}
