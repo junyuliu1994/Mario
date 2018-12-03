@@ -35,7 +35,6 @@ public class MarioGameView extends Application implements Observer{
 	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
 	Media jumpSound = new Media("http://www.codem.xyz/resource/mp3/マリオジャンプ.mp3");
 
-
 	int curr = 1;
 
 	public static void main(String[] args) {
@@ -157,8 +156,10 @@ public class MarioGameView extends Application implements Observer{
 		reDrawExceptionMario();
 		reDrawMario();
 		if(model.won()){
-			gameModel.pause();
+			//gameModel.pause();
+			slow = 0;
 		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
+		    	slow = 1;
                 int currLevel = gameModel.getLevel()+1;
                 System.out.println("游戏结束");
                 model.deleteObserver(this);
