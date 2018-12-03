@@ -168,7 +168,7 @@ public class GameModel extends Observable implements Serializable {
         flashCoinsCount++;
 		monsterClockCount++;
 		invincibleCount++;
-		//if(level == -1){
+		if(level == -1){
 			i++;
 			if(touchFlag()){
 				if(i%3 != 0){
@@ -178,7 +178,7 @@ public class GameModel extends Observable implements Serializable {
 			else if(i%slow != 0) {
 				return;
 			}
-		//}
+		}
 
 		if(invincibleCount >= 128) {
 			invicibleEnd();
