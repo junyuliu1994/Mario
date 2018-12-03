@@ -50,6 +50,7 @@ public class GameModel extends Observable implements Serializable {
 	private int invincibleCount = 0;
 	private static AnimationTimer at;
 
+	private int FALL_SPEED = 0;
     private boolean OUT_OF_CONTROL = false;
 	private int level = 0;
 
@@ -247,6 +248,7 @@ public class GameModel extends Observable implements Serializable {
 					// to stop draw circle
 					stopMarioCountChangeColor++;
 					disappearMarioCount = 0;
+					informations.clear();
 				}
 				if (stopMarioCountChangeColor == 4 && disappearMarioCount == 10) {
 					int x = -disappearMarioCount*20+590;
@@ -847,7 +849,7 @@ public class GameModel extends Observable implements Serializable {
 		/**
 	     * This is helper method to determine if that Enemy objects collides with brick
 	     * Checking the left side collision
-	     * @param Monster Object
+	     * @param monster Object
 	     * @return boolean value
 	     */
 	 public boolean isLeftCollsion(Monster monster){
@@ -1376,7 +1378,9 @@ public class GameModel extends Observable implements Serializable {
 			}
 		}
 
+
 		for (int i = 0; i < 4; i++) {
+
 			if (!standOnBlocks()) {
 				mario.setY((int) (mario.getY() + 1));
 			}

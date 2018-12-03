@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
@@ -74,6 +75,20 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().getY(), // the destination rectangle's Y coordinate position.
 				gameController.getMario().getWidth(), // the destination rectangle's width.
 				gameController.getMario().getHeight()); // the destination rectangle's height.
+
+		// initial information
+		//
+
+		Font infofont = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),20);
+
+		// initial Mario
+		gameController.getInformations().add(new Information("Mario", Color.WHITE, 100, 50, infofont));
+		// initial score
+		gameController.getInformations().add(new Information(Integer.valueOf(gameController.getMario().getSCORE()).toString(),
+				Color.WHITE, 100, 70, infofont));
+		// initial coins
+		gameController.getInformations().add(new Information("*"+Integer.valueOf(gameController.getMario().getCOINS()).toString(),
+				Color.WHITE, 150, 70, infofont));
 
 		for (int i = 0; i < LevelData.getMap(gameModel.getLevel()).length; i++) {
 			String line = LevelData.getMap(gameModel.getLevel())[i];
@@ -333,6 +348,11 @@ public class MarioGameView extends Application implements Observer{
 			}
 		}
 		// draw information
+		// set effect
+		DropShadow ds = new DropShadow();
+		ds.setOffsetY(3.0f);
+		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+		gcForMario.setEffect(ds);
 		for (Information information: gameController.getInformations()) {
 			gcForMario.setFill(information.getColor());
 			gcForMario.setFont(information.getFont());

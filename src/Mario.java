@@ -18,6 +18,8 @@ public class Mario implements Serializable {
 	private int direction; //1 right 0 left
 	private final int flagstaff_offset_x_small = 515;
 	private final int flagstaff_offset_y_small = 81;
+	private int SCORE = 0;
+	private int COINS = 0;
 	private double speed;
 	private double jumpHeight;
 	private double jumpMax;
@@ -204,6 +206,14 @@ public class Mario implements Serializable {
 	public void setCount(int count) {
 		this.count = count;
 	}
+
+	public int getSCORE() { return this.SCORE; }
+
+	public void setSCORE(int Score) { this.SCORE+=Score; }
+
+	public int getCOINS() { return this.COINS; }
+
+	public void setCOINS(int x) { this.COINS=x; }
 
 	public int getOffset_x() {
 		return offset_x;
