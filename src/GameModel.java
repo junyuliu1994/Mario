@@ -17,7 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import javax.print.attribute.SetOfIntegerSyntax;
+
 
 public class GameModel extends Observable implements Serializable {
 	// didn't use this info yet
@@ -990,7 +990,7 @@ public class GameModel extends Observable implements Serializable {
      */
    public boolean stepOnByMario(Monster monster) {
     	if(mario.isFall()) {
-    		if (mario.getLeftF_y() == monster.getY()) {
+    		if (mario.getLeftF_y() >= monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
@@ -1012,7 +1012,7 @@ public class GameModel extends Observable implements Serializable {
    	
    	
    	//check all possible collision point
-   	if(mario.getInvincibleStatus() == false) {
+   	if(!mario.getInvincibleStatus()) {
    		if(mario.getLevel() == 1 || mario.getLevel() == 3) {
        		if(mario.getRightH_x() >= monster.getLeftX() && mario.getRightH_x() < monster.getLeftX() + monster.getWidth() ) {
        			if(mario.getRightH_y() >  monster.getUpLeftY() && mario.getRightH_y() < monster.getUpLeftY() + monster.getWidth()) {
@@ -1060,7 +1060,7 @@ public class GameModel extends Observable implements Serializable {
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
          	Monster temp = iterator.next();
          	if(isMarioCollideMonster(temp)) {
-         		//check if monster is koopaShell
+         		//check if monster is koopa Shell
             	if(temp instanceof Koopa) {
             		if(((Koopa) temp).getShell()) {
             			return;
@@ -1194,7 +1194,7 @@ public class GameModel extends Observable implements Serializable {
     }
 
     /**
-     * remove the deadmonsters
+     * remove the dead monsters
      */
     private void removeDeadMonster() {
 
@@ -1472,12 +1472,14 @@ public class GameModel extends Observable implements Serializable {
 			}
 		}
 
-
-		for (int i = 0; i < 4; i++) {
+        FALL_SPEED++;
+		for (int i = 0; i < FALL_SPEED; i++) {
 
 			if (!standOnBlocks()) {
 				mario.setY((int) (mario.getY() + 1));
-			}
+			} else {
+			    FALL_SPEED = 0;
+            }
 		}
 	}
 

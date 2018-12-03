@@ -14,7 +14,8 @@ public class Information {
     private int x, y, currentCount, count = 20;
     // the font style
     private Font font;
-    // value of needUpdate -> (0 is don't need to update, 1 is need to update for score, 2 is need to update for coins)
+    // value of needUpdate -> (0 is don't need to update, 1 is need to update for score, 2 is need to update for coins,
+    // 3 is need to disappear the information after showing in enough time)
     private int needUpdate = 0;
 
     /**
