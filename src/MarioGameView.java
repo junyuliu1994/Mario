@@ -33,12 +33,13 @@ public class MarioGameView extends Application implements Observer{
 	GraphicsContext gcForMario = gameModel.getGcForMario();
 	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
 	private Duration coinDuration = Duration.millis(1000);
+	private int slow = 1;
 	Image background = new Image("resources/start_background.png");
     Image pause = new Image("resources/pause.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
     MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
 	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
-
+	Media jumpSound = new Media("http://www.codem.xyz/resource/mp3/マリオジャンプ.mp3");
 
 	int curr = 1;
 
@@ -216,7 +217,7 @@ public class MarioGameView extends Application implements Observer{
 		reDrawExceptionMario();
 		reDrawMario();
 		if(model.won()){
-			gameModel.pause();
+			//gameModel.pause();
 		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
                 int currLevel = gameModel.getLevel()+1;
                 System.out.println("游戏结束");
@@ -248,9 +249,11 @@ public class MarioGameView extends Application implements Observer{
 			initContent();
 			gameModel.start();
 		}else if(model.getLevel() == -1){
-			gameController.setStart(true);
-			gameController.getMario().setSpeed(1);
-			gameController.getMario().setRight(true);
+			if(!gameModel.touchFlag()) {
+				gameController.setStart(true);
+				gameController.getMario().setSpeed(slow);
+				gameController.getMario().setRight(true);
+			}
 		}
 	}
 
@@ -409,6 +412,9 @@ public class MarioGameView extends Application implements Observer{
 					gameController.getMario().setSpeed(-2);
 					gameController.getMario().setLeft(true);
 				} else if (event.getCode().toString().equals("W")) {
+					if(!gameController.getMario().isJump()){
+						(new MediaPlayer(jumpSound)).play();
+					}
 					gameController.setStart(true);
 					gameController.getMario().setJump(true);
 				} else if (event.getCode().toString().equals("K")) {
@@ -425,13 +431,15 @@ public class MarioGameView extends Application implements Observer{
 							bullet.setSpeed(-6);
 						}
 					}
+				}else if(event.getCode() == KeyCode.X){
+					gameModel.skip();
+					if(!gameModel.touchFlag()) {
+						slow = 2;
+					}
 				}
 			}
 			// when ESC has been hit, open or close the pause menu
 			if(event.getCode() == KeyCode.ESCAPE){
-				if(gameModel.getLevel() == -1){
-					gameModel.resume();
-				}
 				if(!gameModel.getPaused()) {
 				    BGM.pause();
 				    // set the model to paused, draw the pause menu image on gc
@@ -501,6 +509,10 @@ public class MarioGameView extends Application implements Observer{
 				if (event.getCode().toString().equals("A")) {
 					gameController.getMario().setLeft(false);
 					gameController.getMario().setSpeed(0);
+				}
+				if(event.getCode() == KeyCode.X){
+					gameModel.unSkip();
+					slow = 1;
 				}
 			}
 		});
