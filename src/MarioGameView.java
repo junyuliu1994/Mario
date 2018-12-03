@@ -32,6 +32,7 @@ public class MarioGameView extends Application implements Observer{
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
     MediaPlayer BGM = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/jicouBGM.mp3"));
 	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
+	Media jumpSound = new Media("http://www.codem.xyz/resource/mp3/マリオジャンプ.mp3");
 
 
 	int curr = 1;
@@ -332,6 +333,9 @@ public class MarioGameView extends Application implements Observer{
 					gameController.getMario().setSpeed(-2);
 					gameController.getMario().setLeft(true);
 				} else if (event.getCode().toString().equals("W")) {
+					if(!gameController.getMario().isJump()){
+						(new MediaPlayer(jumpSound)).play();
+					}
 					gameController.setStart(true);
 					gameController.getMario().setJump(true);
 				} else if (event.getCode().toString().equals("K")) {
@@ -348,6 +352,8 @@ public class MarioGameView extends Application implements Observer{
 							bullet.setSpeed(-6);
 						}
 					}
+				}else if(event.getCode() == KeyCode.X){
+					gameModel.skip();
 				}
 			}
 			// when ESC has been hit, open or close the pause menu
@@ -424,6 +430,9 @@ public class MarioGameView extends Application implements Observer{
 				if (event.getCode().toString().equals("A")) {
 					gameController.getMario().setLeft(false);
 					gameController.getMario().setSpeed(0);
+				}
+				if(event.getCode() == KeyCode.X){
+					gameModel.unSkip();
 				}
 			}
 		});

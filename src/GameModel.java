@@ -45,6 +45,7 @@ public class GameModel extends Observable implements Serializable {
 	private final int monsterFrameRate = 4;
 	private int monsterClockCount = 0;
 	private int flashCoinsCount = 0;
+	private int slow = 10;
 
     private int stopMarioCountChangeColor = 0;
 
@@ -155,21 +156,29 @@ public class GameModel extends Observable implements Serializable {
 		paused = false;
 	}
 
+	public void skip(){
+		slow = 1;
+	}
+
+	public void unSkip(){
+		slow = 10;
+	}
+
 	public void tick() {
         flashCoinsCount++;
 		monsterClockCount++;
 		invincibleCount++;
-		if(level == -1){
+		//if(level == -1){
 			i++;
 			if(touchFlag()){
 				if(i%3 != 0){
 					return;
 				}
 			}
-			else if(i%10 != 0) {
+			else if(i%slow != 0) {
 				return;
 			}
-		}
+		//}
 
 		if(invincibleCount >= 128) {
 			invicibleEnd();
