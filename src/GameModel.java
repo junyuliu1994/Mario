@@ -51,6 +51,7 @@ public class GameModel extends Observable implements Serializable {
 	private int monsterClockCount = 0;
 	private int flashCoinsCount = 0;
 	private int slow = 10;
+	private int fallSpeed = 0;
 
     private int stopMarioCountChangeColor = 0;
 
@@ -823,7 +824,11 @@ public class GameModel extends Observable implements Serializable {
 		}
 		mario.setDirection(0);
 
-		mario.setX((int) (mario.getX() + mario.getSpeed()));
+		for (int i = 0; i > mario.getSpeed(); i--) {
+			if (!moveLeftStockByBlocks()) {
+				mario.setX((int) (mario.getX() - 1));
+			}
+		}
 	}
 
     /**
@@ -981,7 +986,7 @@ public class GameModel extends Observable implements Serializable {
      */
    public boolean stepOnByMario(Monster monster) {
     	if(mario.isFall()) {
-    		if (mario.getLeftF_y() == monster.getY()) {
+    		if (mario.getLeftF_y() <= monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
@@ -1463,11 +1468,13 @@ public class GameModel extends Observable implements Serializable {
 			}
 		}
 
-
-		for (int i = 0; i < 4; i++) {
+		fallSpeed++;
+		for (int i = 0; i < fallSpeed; i++) {
 
 			if (!standOnBlocks()) {
 				mario.setY((int) (mario.getY() + 1));
+			} else {
+				fallSpeed=0;
 			}
 		}
 	}

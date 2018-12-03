@@ -3,17 +3,28 @@ import javafx.scene.text.Font;
 
 /**
  * @author Shawn Jin
- * this class
+ * this class is helping to show information fo Mario.
  */
 public class Information {
-
+    // the info that will be shown
     private String text;
+    // the text color
     private Color color;
+    // the position and int to update location info
     private int x, y, currentCount, count = 20;
+    // the font style
     private Font font;
     // value of needUpdate -> (0 is don't need to update, 1 is need to update for score, 2 is need to update for coins)
     private int needUpdate = 0;
 
+    /**
+     * constrict information that don't need to move
+     * @param text the info that will
+     * @param color the color of font
+     * @param x the x position of text
+     * @param y the y position of text
+     * @param font the font style
+     */
     public Information(String text, Color color, int x, int y, Font font) {
         this.text = text;
         this.color = color;
@@ -21,6 +32,16 @@ public class Information {
         this.y = y;
         this.font = font;
     }
+
+    /**
+     *
+     * @param text the info that will
+     * @param color the color of font
+     * @param x the x position of text
+     * @param y the y position of text
+     * @param font the font style
+     * @param needUpdate the integer to present if the data needs to update and how to update
+     */
     public Information(String text, Color color, int x, int y, Font font, int needUpdate) {
         this.text = text;
         this.color = color;
