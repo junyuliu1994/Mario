@@ -1,10 +1,12 @@
 import javafx.scene.image.Image;
 
+import java.io.Serializable;
+
 /**
  * @author Shawn Jin
  */
-public class Firework {
-    Image image;
+public class Firework implements Serializable {
+    static Image  image;
     private int initial_offsetX = 0;
     private int offsetX = 0;
     private int offsetY = 0;

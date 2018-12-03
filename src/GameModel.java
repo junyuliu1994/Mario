@@ -17,6 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import javax.print.attribute.SetOfIntegerSyntax;
+
 public class GameModel extends Observable implements Serializable {
 	// didn't use this info yet
 	private final int BLOCK_WIDTH = 40;
@@ -36,7 +38,7 @@ public class GameModel extends Observable implements Serializable {
     private static Image itemImage = new Image("resources/items.png");
 	private static Canvas canvasForMario = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 	private static GraphicsContext gcForMario = canvasForMario.getGraphicsContext2D();
-	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 192, false, gcForMario);
+	private Mario mario = new Mario(marioImage, 4, 0, 195, 80, 40, 40, 100, 400, 1, 0, 150, false, gcForMario);
     private Flagstaff flagstaff = new Flagstaff();
 	private ArrayList<Brick> bricks= new ArrayList<>();
 	private ArrayList<Coin> coins= new ArrayList<>();
@@ -51,7 +53,6 @@ public class GameModel extends Observable implements Serializable {
 	private int monsterClockCount = 0;
 	private int flashCoinsCount = 0;
 	private int slow = 10;
-	private int fallSpeed = 0;
 
     private int stopMarioCountChangeColor = 0;
 
@@ -779,6 +780,9 @@ public class GameModel extends Observable implements Serializable {
 		}
 	}
 
+    /**
+     * mario move right
+     */
 	public void moveRight() {
 		if (mario.getLevel() < 3) {
 			mario.setImage(marioImage);
@@ -824,11 +828,11 @@ public class GameModel extends Observable implements Serializable {
 		}
 		mario.setDirection(0);
 
-		for (int i = 0; i > mario.getSpeed(); i--) {
-			if (!moveLeftStockByBlocks()) {
-				mario.setX((int) (mario.getX() - 1));
-			}
-		}
+        for (int i = 0; i > mario.getSpeed(); i--) {
+            if (!moveLeftStockByBlocks()) {
+                mario.setX((int) (mario.getX() - 1));
+            }
+        }
 	}
 
     /**
@@ -986,7 +990,7 @@ public class GameModel extends Observable implements Serializable {
      */
    public boolean stepOnByMario(Monster monster) {
     	if(mario.isFall()) {
-    		if (mario.getLeftF_y() <= monster.getY()) {
+    		if (mario.getLeftF_y() == monster.getY()) {
 				 if (mario.getLeftF_x() >= monster.getX() && mario.getLeftF_x() <=monster.getX() + monster.getWidth() && mario.isJump()) {
 					 return true;
 				 }
@@ -1468,13 +1472,11 @@ public class GameModel extends Observable implements Serializable {
 			}
 		}
 
-		fallSpeed++;
-		for (int i = 0; i < fallSpeed; i++) {
+
+		for (int i = 0; i < 4; i++) {
 
 			if (!standOnBlocks()) {
 				mario.setY((int) (mario.getY() + 1));
-			} else {
-				fallSpeed=0;
 			}
 		}
 	}
