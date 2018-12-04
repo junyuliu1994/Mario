@@ -1349,7 +1349,7 @@ public class GameModel extends Observable implements Serializable {
 	}
 
     /**
-     * touch the coin
+     * check if mario touch the coin
      * @return - true if mario ouch a coin
      */
 	public boolean touchCoin() {
