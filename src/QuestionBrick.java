@@ -18,34 +18,58 @@ public class QuestionBrick extends Brick{
         this.setOffset_y(0);
     }
 
+    /**
+     * @return int s_offset_x of Question brick
+     */
     public int[] getS_offset_x() {
         return s_offset_x;
     }
 
+    /**
+     * @param int s_offset_x of Question brick
+     */
     public void setS_offset_x(int[] s_offset_x) {
         this.s_offset_x = s_offset_x;
     }
 
+    /**
+     * @return int count  of Question brick
+     */
     public int getCount() {
         return count;
     }
 
+    /**
+     * @param int count - count of Question brick 
+     */
     public void setCount(int count) {
         this.count = count;
     }
 
+    /**
+     * @return int col - col of Question brick
+     */
     public int getCol() {
         return col;
     }
 
+    /**
+     * @param int col - col of Question brick
+     */
     public void setCol(int col) {
         this.col = col;
     }
 
+    /**
+     * @return int contains - contians of Question brick
+     */
     public int getContains() {
         return contains;
     }
 
+    /**
+     * @param int contains- contains of Question brick
+     */
     public void setContains(int contains) {
         this.contains = contains;
     }
