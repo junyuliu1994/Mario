@@ -14,6 +14,7 @@ public class PiranhaPlant extends Monster{
 		setCollisionPoint();
 	}
 	
+	
 	@Override
 	public void setX(double x) {
 		super.setX(x);
