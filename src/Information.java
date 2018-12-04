@@ -1,19 +1,21 @@
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.io.Serializable;
+
 /**
  * @author Shawn Jin
  * this class is helping to show information fo Mario.
  */
-public class Information {
+public class Information implements Serializable {
     // the info that will be shown
     private String text;
     // the text color
-    private Color color;
+    private static Color color;
     // the position and int to update location info
     private int x, y, currentCount, count = 20;
     // the font style
-    private Font font;
+    private static Font font;
     // value of needUpdate -> (0 is don't need to update, 1 is need to update for score, 2 is need to update for coins,
     // 3 is need to disappear the information after showing in enough time)
     private int needUpdate = 0;
