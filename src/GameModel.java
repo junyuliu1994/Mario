@@ -194,9 +194,7 @@ public class GameModel extends Observable implements Serializable {
 		paused = false;
 	}
 
-    /**
-     * most important part of the model, tick is called by each frame
-     */
+     
 	public void skip(){
 		slow = 1;
 	}
@@ -205,6 +203,12 @@ public class GameModel extends Observable implements Serializable {
 		slow = 10;
 	}
 
+	
+	/**
+	 * This will be method cotains the every frame happen
+	 * most important part of the model, tick is called by each frame
+	 * 
+	 */
 	public void tick() {
 		removeDeadMonster();
         flashCoinsCount++;

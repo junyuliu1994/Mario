@@ -68,7 +68,7 @@ public class MarioGameView extends Application implements Observer{
 	}
 
 	/**
-	 * init all the content
+	 * init all the content based on the level data 
 	 */
 	private void initContent() {
 		gcForMario.drawImage(gameController.getBackground().getImage(), // the image to be drawn or null.
@@ -409,7 +409,7 @@ public class MarioGameView extends Application implements Observer{
         
 
 	/**
-	 * init the game
+	 * initial the game
 	 * @param scene Scene
 	 */
 	public void initGame(Scene scene){
@@ -571,6 +571,8 @@ public class MarioGameView extends Application implements Observer{
 
     /**
      * draw the pause menu
+     * @param null
+     * @return void 
      */
 	private void pauseMenu(){
 		double[] x = {0,0,240};

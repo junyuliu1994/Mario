@@ -1,3 +1,14 @@
+/**
+ * This is Level Data for each level
+ * 0 = null
+ * 1 = unbreakable brick
+ * 2 = breakable brick
+ * 3 = qustion mark brick
+ * 5 = coin
+ * g = goomba
+ * k = koopa
+ * h = piranhaPlant 
+ */
 import java.io.Serializable;
 
 public class LevelData implements Serializable {
