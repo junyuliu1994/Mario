@@ -259,6 +259,11 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getMario().setSpeed(slow);
 				gameController.getMario().setRight(true);
 			}
+		}else if(model.getMario().getLife() < 0 && !model.touchFlag()){
+			gcForMario.setFill(Color.BLACK);
+			gcForMario.fillRect(0,0,1000,480);
+			gcForMario.setFill(Color.WHITE);
+			gcForMario.fillText("GAME OVER", 400, 100);
 		}
 	}
 
@@ -501,12 +506,13 @@ public class MarioGameView extends Application implements Observer{
 							e.printStackTrace();
 						}
 					}else if(curr == 2){
-					    BGM.play();
 						loadGame();
 					}else{
 					    // exit for the last option
 						System.exit(0);
 					}
+					BGM.play();
+					gameModel.resume();
 				}
 			}
 
