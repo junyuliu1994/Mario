@@ -3,6 +3,7 @@ import javafx.scene.image.Image;
 import java.io.Serializable;
 
 /**
+ * This is a firework class to help Mario to show fireworks
  * @author Shawn Jin
  */
 public class Firework implements Serializable {
@@ -17,8 +18,7 @@ public class Firework implements Serializable {
     private int count;
     private final int col = 4;
 
-    public Firework(Image image , int x, int y, int count) {
-//        image = new Image("resources/blocks.png");
+    Firework(Image image, int x, int y, int count) {
         this.image = image;
         this.x = x;
         this.y = y;
@@ -39,8 +39,6 @@ public class Firework implements Serializable {
     public void setOffsetX(int offsetX) { this.offsetX = offsetX; }
 
     public int getOffsetY() { return this.offsetY; }
-
-//    public void setOffsetY(int offsetY) { this.offsetY = offsetY; }
 
     public int getWidth() { return this.width; }
 

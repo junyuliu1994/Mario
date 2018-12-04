@@ -98,7 +98,7 @@ public class Mario implements Serializable {
 		return initialHeight;
 	}
 
-	private final int initialHeight = 40;
+	private final int initialHeight = 38;
 
 	public int[] getSize(){
 		int[] array = new int[2];

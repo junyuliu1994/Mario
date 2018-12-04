@@ -22,22 +22,17 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import javax.management.InstanceNotFoundException;
-import javax.swing.text.InternationalFormatter;
 
 
 public class MarioGameView extends Application implements Observer{
 	private GameModel gameModel= new GameModel();
 	private GameController gameController = new GameController(gameModel);
-	//	SpriteAnimation coinAnimation = null;
 	Canvas canvasForMario = gameModel.getCanvasForMario();
 	GraphicsContext gcForMario = gameModel.getGcForMario();
-	//    GraphicsContext gcForStuff = gameModel.getGCForStuff();
-	private Duration coinDuration = Duration.millis(1000);
 	private int slow = 1;
 	Image background = new Image("resources/start_background.png");
+	Image marioImage = new Image("resources/mario.png");
     Image pause = new Image("resources/pause.png");
 	private static Image blocksImage = new Image("resources/blocks.png");
     Font font = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),13);
@@ -45,10 +40,6 @@ public class MarioGameView extends Application implements Observer{
 	MediaPlayer BGM2 = new MediaPlayer(new Media("http://www.codem.xyz/resource/mp3/君のヒロインでいるために.mp3"));
 	Media jumpSound = new Media("http://www.codem.xyz/resource/mp3/マリオジャンプ.mp3");
 	DropShadow ds = new DropShadow();
-	//		ds.setOffsetY(3.0f);
-//		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
-//		gcForMario.setEffect(ds);
-
 
 	int curr = 1;
 
@@ -61,6 +52,10 @@ public class MarioGameView extends Application implements Observer{
 	 * @param primaryStage - stage
 	 */
 	public void start(Stage primaryStage) {
+		// set effect
+		ds.setOffsetY(3.0f);
+		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+
 	    BGM.setAutoPlay(true);
 		Group root = new Group();
 		root.getChildren().add(canvasForMario);
@@ -99,10 +94,8 @@ public class MarioGameView extends Application implements Observer{
 
 		// initial information
 		//
-
 		Font infofont = Font.loadFont(getClass().getResourceAsStream("resources/font.ttf"),20);
-
-		// initial Mario
+		// initial name Mario
 		gameController.getInformations().add(new Information("Mario", Color.WHITE, 100, 50, infofont));
 		// initial score
 		gameController.getInformations().add(new Information(Integer.valueOf(gameController.getMario().getSCORE()).toString(),
@@ -110,10 +103,12 @@ public class MarioGameView extends Application implements Observer{
 		// initial coins
 		gameController.getInformations().add(new Information("*"+Integer.valueOf(gameController.getMario().getCOINS()).toString(),
 				Color.WHITE, 250, 70, infofont, 2));
+		// initial mario's life
+		gameController.getInformations().add(new Information("*"+Integer.valueOf(gameController.getMario().getLife()).toString(),
+				Color.WHITE, 650, 70, infofont, 5));
 
-		// TODO: add a coin image before coin, and the coin cannot be collected
 
-		// TODO: add info to show the level of world
+
 
 		for (int i = 0; i < LevelData.getMap(gameModel.getLevel()).length; i++) {
 			String line = LevelData.getMap(gameModel.getLevel())[i];
@@ -295,7 +290,11 @@ public class MarioGameView extends Application implements Observer{
 				gameController.getBackground().getWidth(), // the destination rectangle's width.
 				gameController.getBackground().getHeight()); // the destination rectangle's height.
 
+		// show the coin image and the coin is cannot be collected
 		gcForMario.drawImage(blocksImage, 948, 41, 38, 37, 225, 45, 25, 25);
+
+		// show the mario image and the mario cannot be move or touched
+		gcForMario.drawImage(marioImage,198, 80, 40,38, 625, 45, 25, 25);
 
 		for (int i = 0; i < gameController.getBricks().size(); i++) {
 		    if (gameController.getBricks().get(i) == null){
@@ -383,9 +382,7 @@ public class MarioGameView extends Application implements Observer{
 		}
 		// draw information
 		// set effect
-		DropShadow ds = new DropShadow();
-		ds.setOffsetY(3.0f);
-		ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+
 		gcForMario.setEffect(ds);
 		for (Information information: gameController.getInformations()) {
 			if (information.isNeedUpdate() == 3) {
@@ -398,6 +395,8 @@ public class MarioGameView extends Application implements Observer{
 				}
 			} else if (information.isNeedUpdate() == 1) {
 				information.setText(Integer.valueOf(gameController.getMario().getSCORE()).toString());
+			} else if (information.isNeedUpdate() == 5) {
+				information.setText("*"+Integer.valueOf(gameController.getMario().getLife()).toString());
 			}
 			gcForMario.setFill(information.getColor());
 			gcForMario.setFont(information.getFont());

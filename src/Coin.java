@@ -49,11 +49,9 @@ public class Coin implements Serializable {
 	public int getOffset_x() {
 		return offset_x;
 	}
-	void setoffset_y(int y) {this.offset_y = y;}
 	public int getOffset_y() {
 		return offset_y;
 	}
-
 	public int getWidth() {
 		return width;
 	}
