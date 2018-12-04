@@ -752,7 +752,10 @@ public class GameModel extends Observable implements Serializable {
             }
 
             for(Monster monster: monsters) {
-            	monster.setX(monster.getX() - mario.getSpeed());
+            	if(!moveRightStockByBlocks()) {
+            		monster.setX(monster.getX() - mario.getSpeed());
+            	}
+            	
      		}
 
             for (Information information: informations) {
