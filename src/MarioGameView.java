@@ -221,7 +221,7 @@ public class MarioGameView extends Application implements Observer{
 		reDrawExceptionMario();
 		reDrawMario();
 		if(model.won()){
-			//gameModel.pause();
+			//switch stage when curr stage has been cleared
 		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
                 int currLevel = gameModel.getLevel()+1;
                 System.out.println("游戏结束");
@@ -237,6 +237,7 @@ public class MarioGameView extends Application implements Observer{
                 gameModel.start();
             }
         }else if(model.getMario().getY()<0){
+			// switch to hidden stage
 			int currLevel = -1;
 			model.deleteObserver(this);
 			BGM.stop();
@@ -312,16 +313,6 @@ public class MarioGameView extends Application implements Observer{
 		}
 
 		for (Coin coin : gameController.getCoins()) {
-////		    coin.animation.setOffsetX((int)coin.getX());
-////            coin.animation.
-//		    coin.animation.stop();
-//		    coin.animation = new SpriteAnimation(coin.getImage(), coinDuration, coin.getCount(),
-//                    coin.getCol(), coin.getOffset_x(), coin.getOffset_y(), coin.getWidth(), coin.getHeight(),
-//                    coin.getX(), coin.getY(),gcForMario, 1, false);
-//		    coin.animation.setCycleCount(Animation.INDEFINITE);
-//		    coin.animation.play();
-//        }
-
 			if (coin == null) continue;
 			gcForMario.drawImage(coin.getImage(),
 					coin.getOffset_x(), coin.getOffset_y(),
