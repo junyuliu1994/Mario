@@ -52,28 +52,76 @@ public class Information {
         this.needUpdate = needUpdate;
     }
 
+    /**
+     *  return is need to update
+     * @return a int represent if the data need to be updated
+     */
     public int isNeedUpdate() { return this.needUpdate; }
 
+    /**
+     * return the text that the data has
+     * @return a String represent the info
+     */
     public String getText() { return this.text; }
 
+    /**
+     *  set the text that the  data has
+     * @param text the new text
+     */
     public void setText(String text) { this.text = text; }
 
+    /**
+     * get color the data has
+     * @return a color
+     */
     public Color getColor() { return this.color; }
 
+    /**
+     * set x
+     * @param x the x position
+     */
     public void setX(int x) { this.x = x; }
 
+    /**
+     * get x postion
+     * @return
+     */
     public int getX() { return this.x; }
 
+    /**
+     * set y position
+     * @param y the y position of data will show
+     */
     public void setY(int y) { this.y = y; }
 
+    /**
+     * get y position
+     * @return the y position of data will show
+     */
     public int getY() { return this.y; }
 
+    /**
+     * get the font that the data has
+     * @return the font that the data has
+     */
     public Font getFont() { return this.font; }
 
+    /**
+     *  get count that to help show animation
+     * @return a int that to help show animation
+     */
     public int getCount() { return this.count; }
 
+    /**
+     * get current count that to help show animation
+     * @return  a int that to help show animation
+     */
     public int getCurrentCount() { return this.currentCount; }
 
+    /**
+     * set current count that to help show animation
+     * @param x a int that to help show animation
+     */
     public void setCurrentCount(int x) { this.currentCount = x; }
 
 

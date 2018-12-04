@@ -337,7 +337,10 @@ public class GameModel extends Observable implements Serializable {
 				}
 
 				int fallingSpeed = 4;
-				mario.setY(mario.getY() + fallingSpeed);
+				for (int i = 0; i < fallingSpeed; i++) {
+					mario.setY(mario.getY() + 1);
+					if (standOnBlocks()) break;
+				}
 				// set location of image
 				mario.setX(flagstaff.getX() - mario.getWidth());
 
@@ -1062,8 +1065,6 @@ public class GameModel extends Observable implements Serializable {
   
     /**
      * This method checks if all collisions between mario and monsters
-     * @param null
-     * @return null
      */
     public void monsterMarioCollision() {
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
@@ -1177,8 +1178,6 @@ public class GameModel extends Observable implements Serializable {
 
     /**
      * koopa collision with other monster
-     * @param null
-     * @return null
      */
     private void koopaMonsterCollision() {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
@@ -1206,8 +1205,6 @@ public class GameModel extends Observable implements Serializable {
 
     /**
      * remove the all dead monsters from arraylist
-     * @param null
-     * @return null
      * 
      */
     private void removeDeadMonster() {
@@ -1336,7 +1333,6 @@ public class GameModel extends Observable implements Serializable {
 
     /**
      * the invicible status of mario end
-     * @param null
      * @ruturn naull
      */
 	private void invicibleEnd() {
@@ -1345,7 +1341,6 @@ public class GameModel extends Observable implements Serializable {
 
     /**
      * invicible frame, can implement everything happen in invicilbe frame in future
-     * @param null
      * @return null
      */
 	private void invincibleFrame() {

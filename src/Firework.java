@@ -18,6 +18,13 @@ public class Firework implements Serializable {
     private int count;
     private final int col = 4;
 
+    /**
+     * constructor of firework
+     * @param image the image of firework
+     * @param x the x position of firework
+     * @param y the y position of firework
+     * @param count a int to help show firework
+     */
     Firework(Image image, int x, int y, int count) {
         this.image = image;
         this.x = x;
@@ -26,8 +33,17 @@ public class Firework implements Serializable {
         this.count = count;
     }
 
+
+    /**
+     *  return the image of firework
+     * @return the image of firework
+     */
     public Image getImage() { return this.image; }
 
+    /**
+     * set the count to help show firework
+     * @param count a int to help show firework
+     */
     public void setCount(int count) { this.count = count; }
 
     public int getCount() {return this.count;}
