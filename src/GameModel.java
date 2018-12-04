@@ -1055,6 +1055,8 @@ public class GameModel extends Observable implements Serializable {
   
     /**
      * This method checks if all collisions between mario and monsters
+     * @param null
+     * @return null
      */
     public void monsterMarioCollision() {
     	 for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
@@ -1167,7 +1169,9 @@ public class GameModel extends Observable implements Serializable {
    }
 
     /**
-     * koopa collision with other stuff contain mario
+     * koopa collision with other monster
+     * @param null
+     * @return null
      */
     private void koopaMonsterCollision() {
     	for(Iterator<Monster> iterator = monsters.iterator(); iterator.hasNext();) {
@@ -1194,7 +1198,10 @@ public class GameModel extends Observable implements Serializable {
     }
 
     /**
-     * remove the dead monsters
+     * remove the all dead monsters from arraylist
+     * @param null
+     * @return null
+     * 
      */
     private void removeDeadMonster() {
 
@@ -1322,13 +1329,17 @@ public class GameModel extends Observable implements Serializable {
 
     /**
      * the invicible status of mario end
+     * @param null
+     * @ruturn naull
      */
 	private void invicibleEnd() {
 		mario.setInvincible(false);
 	}
 
     /**
-     * invicible frame
+     * invicible frame, can implement everything happen in invicilbe frame in future
+     * @param null
+     * @return null
      */
 	private void invincibleFrame() {
 

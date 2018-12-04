@@ -1,5 +1,10 @@
 import javafx.scene.image.Image;
 
+/**
+ * 
+ * @author Pengyu Yang
+ * Inherited monster object PirhanhaPlant, stay unmoved all the time 
+ */
 public class PiranhaPlant extends Monster{
 	private static Image image = new Image("resources/enemies2.png");
 	
@@ -15,12 +20,22 @@ public class PiranhaPlant extends Monster{
 	}
 	
 	
+	/**
+	 * overide method, call parent setX() and reset collisioon point
+	 * @param double - x coordiante of monster
+	 * @return null
+	 */
 	@Override
 	public void setX(double x) {
 		super.setX(x);
 		setCollisionPoint();
 	}
 	
+	/**
+	 * overide method, call parent setY() and reset collisioon point
+	 * @param double - y coordiante of monster
+	 * @return null
+	 */
 	@Override
 	public void setY(double y) {
 		super.setY(y);

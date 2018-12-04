@@ -1,5 +1,10 @@
 import javafx.scene.image.Image;
 
+/**
+ * 
+ * @author Pengyu Yang
+ * Inherited monster object goomba, moving left and right in pattern
+ */
 public class Goomba extends Monster {
 	private final static Image image = new Image("resources/enemies2.png");
 	
@@ -15,16 +20,31 @@ public class Goomba extends Monster {
 	}
 	
 	
+
+	/**
+	 * setImage of goomba
+	 * @param null
+	 * @return null
+	 */
 	public void setImage() {
 		super.setImage(image);
 	}
-	
+	/**
+	 * overide method, call parent setX() and reset collisioon point
+	 * @param double - x coordiante of monster
+	 * @return null
+	 */
 	@Override
 	public void setX(double x) {
 		super.setX(x);
 		setCollisionPoint();
 	}
 	
+	/**
+	 * overide method, call parent setY() and reset collisioon point
+	 * @param double - y coordiante of monster
+	 * @return null
+	 */
 	@Override
 	public void setY(double y) {
 		super.setY(y);
