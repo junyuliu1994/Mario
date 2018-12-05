@@ -1,5 +1,7 @@
 import javafx.application.Application;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -453,6 +455,38 @@ public class MarioTest {
         assertTrue(model.isMoveBackground());
     }
 
+    @Test
+    void effectsTest() throws Exception {
+        // information
+        Information newInformation = new Information("test", Color.WHITE,3,4,null);
+        Information newInformation1 = new Information("test", Color.WHITE,4,4,null, 1);
+        Information newInformation2 = new Information("test", Color.WHITE,3,4,null, 2);
+        Information newInformation3 = new Information("test", Color.WHITE,3,4,null, 3);
+        Information newInformation4 = new Information("test", Color.WHITE,3,4,null, 4);
+        Information newInformation5 = new Information("test", Color.WHITE,3,4,null, 5);
+        assertEquals(newInformation.isNeedUpdate(), 0);
+        newInformation1.setText("test");
+        assertEquals("test", newInformation1.getText());
+        newInformation2.getCurrentCount();
+        newInformation3.getX();
+        newInformation4.getY();
+        newInformation5.getColor();
+        newInformation.getFont();
+        newInformation.getCount();
+        // fireworks
+        Firework firework = new Firework(new Image("resources/blocks.png"), 20, 20, 4);
+        firework.getCount();
+        firework.getWidth();
+        firework.getCol();
+        firework.getHeight();
+        firework.getImage();
+        firework.getInitial_offsetX();
+        firework.getOffsetY();
+        firework.getOffsetX();
+        firework.getX();
+        firework.getY();
+
+    }
 
     @Test
     void ControllerTest()throws Exception {
