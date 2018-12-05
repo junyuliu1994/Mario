@@ -5,17 +5,17 @@
  * This program simulate the gmae of mario
  */
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Observable;
-
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Observable;
 
 
 
@@ -1081,7 +1081,7 @@ public class GameModel extends Observable implements Serializable {
          		if (mario.getLevel() == 1){
          			mario.setLife(mario.getLife() - 1);
                     //mario is dead 
-         			System.out.println("mario dead");
+         			// System.out.println("mario dead");
 
 				}else if(mario.getLevel() == 2) {
         		    mario.setLevel(1);
@@ -1093,7 +1093,7 @@ public class GameModel extends Observable implements Serializable {
                        mario.setHeight(mario.getInitialHeight());
                        mario.resetCollisionCor();
                        for (int i = 0; i < mario.getInitialHeight(); i++) {
-                           System.out.println(mario.getY() + ", " + mario.getHeight());
+                           // System.out.println(mario.getY() + ", " + mario.getHeight());
                            if (!standOnBlocks()) {
                                mario.setY(mario.getY() + 1);
                            }
@@ -1114,7 +1114,7 @@ public class GameModel extends Observable implements Serializable {
                    }
 					
 					//back to level 1
-					System.out.println("mario become lv1");
+					// System.out.println("mario become lv1");
 				}else {
                    mario.setLevel(2);
                    if (mario.getDirection() == 1){
@@ -1146,7 +1146,7 @@ public class GameModel extends Observable implements Serializable {
                        }
                    }
                    //back to level 2
-					System.out.println("mario become lv2");
+					//System.out.println("mario become lv2");
 					
 				}
 

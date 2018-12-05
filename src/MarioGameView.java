@@ -4,10 +4,6 @@
  *
  */
 
-import java.io.*;
-import java.util.Observable;
-import java.util.Observer;
-
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -22,6 +18,10 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.*;
+import java.util.Observable;
+import java.util.Observer;
 
 
 
@@ -224,7 +224,7 @@ public class MarioGameView extends Application implements Observer{
 			//switch stage when curr stage has been cleared
 		    if(this.gameModel.getLevel() != 2 &&this.gameModel.getLevel() != -1) {
                 int currLevel = gameModel.getLevel()+1;
-                System.out.println("游戏结束");
+                System.out.println("Game Over");
                 model.deleteObserver(this);
                 int level = model.getMarioLevel();
                 this.gameModel = new GameModel();
@@ -501,7 +501,7 @@ public class MarioGameView extends Application implements Observer{
 							out.writeObject(gameModel);
 							out.close();
 							file.close();
-							System.out.println("Game Saved");
+//							System.out.println("Game Saved");
 						}catch (IOException e){
 							e.printStackTrace();
 						}
